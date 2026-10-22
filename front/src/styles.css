@@ -1,31 +1,37 @@
 /* =========================================================
    TONARI — estilos globales
-   Identidad: editorial oscura, inspirada en las viñetas del manga.
+   Moderno y limpio; lo llamativo es la portada con trama de manga.
    ========================================================= */
 
 /* ---------- 1. Variables (tokens de diseño) ---------- */
 :root {
   /* Colores de la marca */
-  --color-carbon: #111116; /* fondo general */
-  --color-superficie: #25252d; /* paneles, tarjetas, menús */
-  --color-menta: #b9f3e4; /* acento: acciones importantes y estados activos */
-  --color-blanco: #f0ede5; /* texto principal */
-  --color-tinta: #171717; /* texto sobre fondo menta */
-  --color-texto-sec: #a6a4b0; /* texto secundario: fechas, ayudas */
-  --color-error: #ff9b8f; /* mensajes de error */
-  --color-borde: #3a3a44; /* líneas decorativas */
-  --color-borde-campo: #6e6e7a; /* borde de los inputs (contraste 3:1) */
+  --color-noche: #111116; /* fondo general */
+  --color-panel: #18181f; /* tarjetas y paneles */
+  --color-campo: #1f1f27; /* fondo de los inputs */
+  --color-menta: #b9f3e4; /* acento: acciones y estados activos */
+  --color-lila: #c7b8ff; /* segundo tono, solo en ilustraciones */
+  --color-hueso: #f0ede5; /* texto principal */
+  --color-tinta: #171717; /* texto sobre menta */
+  --color-texto-sec: #a6a4b0; /* texto secundario: ayudas, fechas */
+  --color-error: #ff9b8f; /* errores */
 
-  /* Tipografías: títulos con personalidad, texto legible */
+  /* Líneas: transparentes para que se apoyen sobre cualquier fondo */
+  --linea-suave: rgb(240 237 229 / 0.08);
+  --linea-campo: rgb(240 237 229 / 0.36); /* borde de inputs: contraste 3:1 */
+  --halo-menta: 0 0 0 4px rgb(185 243 228 / 0.18);
+
+  /* Tipografías */
   --fuente-titulo: 'Dela Gothic One', 'Arial Black', system-ui, sans-serif;
   --fuente-texto: 'Zen Kaku Gothic New', system-ui, 'Segoe UI', sans-serif;
 
-  /* Forma */
-  --radio: 4px;
-  --sombra-vineta: 4px 4px 0 var(--color-menta);
-  --ancho-contenido: 960px;
+  /* Radios según jerarquía: panel > campo; los botones son píldoras */
+  --radio-panel: 24px;
+  --radio-campo: 12px;
+  --radio-pildora: 999px;
 
-  color-scheme: dark; /* scrollbars y controles nativos en modo oscuro */
+  --ancho-contenido: 1120px;
+  color-scheme: dark;
 }
 
 /* ---------- 2. Base ---------- */
@@ -38,11 +44,12 @@
 body {
   margin: 0;
   min-height: 100dvh;
-  background: var(--color-carbon);
-  color: var(--color-blanco);
+  background: var(--color-noche);
+  color: var(--color-hueso);
   font-family: var(--fuente-texto);
   font-size: 1rem;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1,
@@ -51,11 +58,12 @@ h3 {
   margin: 0 0 0.5em;
   font-family: var(--fuente-titulo);
   font-weight: 400; /* Dela Gothic One ya es muy gruesa */
-  line-height: 1.15;
+  line-height: 1.1;
 }
 
 a {
   color: var(--color-menta);
+  text-underline-offset: 3px;
 }
 
 /* Foco visible para navegar con teclado (accesibilidad) */
@@ -64,15 +72,22 @@ a {
   outline-offset: 3px;
 }
 
-/* ---------- 3. Estructura general (cabecera + contenido) ---------- */
+/* ---------- 3. Estructura general ---------- */
+
+/* Cabecera fija y translúcida */
 .cabecera {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  border-bottom: 2px solid var(--color-borde);
+  gap: 0.75rem 1.5rem;
+  padding: 0.75rem clamp(1rem, 4vw, 2.5rem);
+  background: rgb(17 17 22 / 0.78);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--linea-suave);
 }
 
 .marca {
@@ -80,15 +95,14 @@ a {
   align-items: center;
   gap: 0.6rem;
   font-family: var(--fuente-titulo);
-  font-size: 1.5rem;
-  color: var(--color-blanco);
+  font-size: 1.35rem;
+  color: var(--color-hueso);
   text-decoration: none;
 }
 
-/* Logo: dos globos de diálogo, uno al lado del otro ("tonari" = al lado) */
 .marca-logo {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.1rem;
+  height: 2.1rem;
 }
 
 .navegacion {
@@ -98,57 +112,176 @@ a {
 }
 
 .navegacion a {
-  padding: 0.4rem 0.75rem;
-  border-bottom: 2px solid transparent;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radio-pildora);
   color: var(--color-texto-sec);
+  font-size: 0.95rem;
   font-weight: 500;
   text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .navegacion a:hover {
-  color: var(--color-blanco);
+  color: var(--color-hueso);
+  background: rgb(240 237 229 / 0.06);
 }
 
 .navegacion a.activo {
   color: var(--color-menta);
-  border-bottom-color: var(--color-menta);
+  background: rgb(185 243 228 / 0.12);
 }
 
 .contenido {
   width: 100%;
   max-width: var(--ancho-contenido);
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2.5rem);
 }
 
-/* ---------- 4. Componentes reutilizables ---------- */
+/* En pantallas chicas la navegación se compacta para entrar en una línea */
+@media (max-width: 480px) {
+  .navegacion a {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.875rem;
+  }
+}
 
-/* Viñeta: panel con borde y sombra dura, como un cuadro de manga */
-.vineta {
-  padding: 1.5rem;
-  background: var(--color-superficie);
-  border: 2px solid var(--color-blanco);
-  border-radius: var(--radio);
-  box-shadow: var(--sombra-vineta);
+/* ---------- 4. Pantallas de acceso (registro y login) ---------- */
+
+/* Dos columnas: portada a la izquierda, formulario a la derecha */
+.acceso {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+}
+
+/* La portada: el momento llamativo de TONARI */
+.portada {
+  position: sticky;
+  top: 6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  min-height: 34rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  overflow: hidden;
+  border-radius: var(--radio-panel);
+  background: var(--color-panel);
+  isolation: isolate;
+  animation: aparecer 0.6s ease-out both;
+}
+
+/* Trama de puntos (screentone) en dos tonos, como en una página de manga.
+   Dos capas de puntos desfasadas (menta y lila) y una máscara diagonal
+   que las desvanece, así el lema se lee sobre el fondo liso. */
+.portada::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle, var(--color-menta) 1.7px, transparent 2px) 0 0 / 16px 16px,
+    radial-gradient(circle, var(--color-lila) 1.7px, transparent 2px) 8px 8px / 16px 16px;
+  opacity: 0.5;
+  mask-image: linear-gradient(200deg, #000 0%, rgb(0 0 0 / 0.6) 30%, transparent 62%);
+}
+
+.portada-logo {
+  width: min(62%, 15rem);
+  height: auto;
+  align-self: flex-end;
+  filter: drop-shadow(0 18px 40px rgb(0 0 0 / 0.45));
+}
+
+.portada-lema {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: clamp(2.6rem, 5.2vw, 4.4rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.portada-texto {
+  margin: 1rem 0 0;
+  max-width: 28ch;
+  color: var(--color-texto-sec);
+}
+
+.formulario-acceso h1 {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* En el celular la portada pasa a ser una franja arriba del formulario */
+@media (max-width: 860px) {
+  .acceso {
+    grid-template-columns: 1fr;
+  }
+
+  .portada {
+    position: static;
+    min-height: 0;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .portada-logo {
+    order: 2;
+    width: 5.5rem;
+    align-self: center;
+  }
+
+  .portada-lema {
+    font-size: clamp(1.9rem, 8vw, 2.6rem);
+  }
+
+  .portada-texto {
+    display: none;
+  }
+}
+
+/* ---------- 5. Componentes reutilizables ---------- */
+
+.panel {
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  background: var(--color-panel);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-panel);
 }
 
 /* Botones */
 .boton {
-  padding: 0.75rem 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0 1.6rem;
   font: 700 1rem var(--fuente-texto);
   color: var(--color-tinta);
   background: var(--color-menta);
-  border: 2px solid var(--color-menta);
-  border-radius: var(--radio);
+  border: 1px solid var(--color-menta);
+  border-radius: var(--radio-pildora);
   cursor: pointer;
   transition:
-    transform 0.12s ease,
-    box-shadow 0.12s ease;
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .boton:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0 var(--color-blanco);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px -10px rgb(185 243 228 / 0.55);
 }
 
 .boton:active {
@@ -168,77 +301,68 @@ a {
   background: transparent;
 }
 
+.boton-ancho {
+  width: 100%;
+}
+
 /* Campos de formulario */
 .campo {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  margin-bottom: 1rem;
+  gap: 0.4rem;
+  margin-bottom: 1.1rem;
 }
 
 .campo label {
+  font-size: 0.9rem;
   font-weight: 500;
 }
 
 .campo input,
 .campo textarea {
-  padding: 0.65rem 0.8rem;
+  min-height: 3rem;
+  padding: 0.7rem 0.95rem;
   font: inherit;
-  color: var(--color-blanco);
-  background: var(--color-carbon);
-  border: 2px solid var(--color-borde-campo);
-  border-radius: var(--radio);
+  color: var(--color-hueso);
+  background: var(--color-campo);
+  border: 1px solid var(--linea-campo);
+  border-radius: var(--radio-campo);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.campo input:hover,
+.campo textarea:hover {
+  border-color: rgb(240 237 229 / 0.55);
 }
 
 .campo input:focus-visible,
 .campo textarea:focus-visible {
+  outline: none;
   border-color: var(--color-menta);
+  box-shadow: var(--halo-menta);
 }
 
-/* Contraseña con "ojito" para mostrar/ocultar lo que se escribe */
-.campo-contraseña {
-  position: relative;
-  display: flex;
-  flex-direction: column;
+/* Campo con error (aria-invalid lo pone el componente) */
+.campo [aria-invalid='true'] {
+  border-color: var(--color-error);
 }
 
-.campo-contraseña input {
-  padding-right: 2.75rem; /* lugar para el botón, así el texto no queda abajo */
+/* El autocompletado del navegador pinta los inputs de azul: lo llevamos a nuestros colores */
+.campo input:-webkit-autofill {
+  -webkit-text-fill-color: var(--color-hueso);
+  box-shadow: 0 0 0 100px var(--color-campo) inset;
+  caret-color: var(--color-hueso);
 }
 
-/* Edge trae su propio ojito: lo sacamos para que no aparezcan dos */
-.campo-contraseña input::-ms-reveal {
-  display: none;
-}
-
-.boton-ojo {
-  position: absolute;
-  top: 50%;
-  right: 0.4rem;
-  transform: translateY(-50%);
-  display: flex;
-  padding: 0.35rem;
-  color: var(--color-texto-sec);
-  background: transparent;
-  border: none;
-  border-radius: var(--radio);
-  cursor: pointer;
-}
-
-.boton-ojo:hover {
-  color: var(--color-blanco);
-}
-
-.boton-ojo svg {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.ayuda,
+.mensaje-error {
+  margin: 0;
+  font-size: 0.85rem;
 }
 
 .mensaje-error {
-  font-size: 0.875rem;
   color: var(--color-error);
 }
 
@@ -246,8 +370,7 @@ a {
   color: var(--color-texto-sec);
 }
 
-/* ---------- 5. Movimiento reducido ---------- */
-/* Si el sistema operativo pide menos animaciones, las sacamos. */
+/* ---------- 6. Movimiento reducido ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -1,8 +1,3 @@
-.registro {
-  max-width: 640px;
-  margin: 0 auto;
-}
-
 /* Dos campos por fila en pantallas anchas; uno solo en el celular */
 .fila {
   display: grid;
@@ -16,18 +11,6 @@
   }
 }
 
-.ayuda,
-.mensaje-error {
-  margin: 0;
-  font-size: 0.875rem;
-}
-
-/* Borde rojo en los campos con error (aria-invalid lo pone el componente) */
-input[aria-invalid='true'],
-textarea[aria-invalid='true'] {
-  border-color: var(--color-error);
-}
-
 .imagen {
   display: flex;
   flex-wrap: wrap; /* en el celular, el input baja abajo de la vista previa */
@@ -39,23 +22,24 @@ textarea[aria-invalid='true'] {
   flex: 1;
   min-width: 0; /* sin esto, el input se sale del panel en pantallas chicas */
   max-width: 100%;
+  padding: 0.45rem;
 }
 
 /* El botón "Elegir archivo" del navegador, con el estilo de TONARI */
 .imagen input::file-selector-button {
   margin-right: 0.75rem;
-  padding: 0.4rem 0.8rem;
+  padding: 0.45rem 1rem;
   font: 700 0.875rem var(--fuente-texto);
   color: var(--color-menta);
-  background: transparent;
-  border: 2px solid var(--color-menta);
-  border-radius: var(--radio);
+  background: rgb(185 243 228 / 0.1);
+  border: 0;
+  border-radius: var(--radio-pildora);
   cursor: pointer;
 }
 
 .vista-previa {
-  width: 64px;
-  height: 64px;
+  width: 3.5rem;
+  height: 3.5rem;
   object-fit: cover;
   border: 2px solid var(--color-menta);
   border-radius: 50%;
@@ -68,4 +52,5 @@ textarea[aria-invalid='true'] {
 
 .pie {
   margin: 1.5rem 0 0;
+  text-align: center;
 }
