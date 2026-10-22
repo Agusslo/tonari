@@ -62,14 +62,14 @@
 ## 🏃 Sprint 1 — 05/11
 
 ### Front
-- [ ] Creación del proyecto front (Angular)
+- [x] Creación del proyecto front (Angular)
 - [ ] Pantalla Registro
 - [ ] Pantalla Login
 - [ ] Pantalla Publicaciones
 - [ ] Pantalla Mi Perfil
 - [ ] Deploy en hosting
-- [ ] Navegación entre componentes (sin límites de accesibilidad)
-- [ ] Favicon propio
+- [x] Navegación entre componentes (sin límites de accesibilidad)
+- [x] Favicon propio
 - **Login**
   - [ ] Formulario con validaciones y mensajes acordes
   - [ ] Por correo o por nombre de usuario (el elegido debe ser único en la base de datos)

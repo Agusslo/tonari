@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="298 312 636 636">
+  <rect x="298" y="312" width="636" height="636" rx="120" fill="#111116" />
+  <defs>
+    <!-- Recorta el globo de contorno donde pasa por detrás del globo menta (deja un espacio) -->
+    <mask id="hueco">
+      <rect x="338" y="352" width="556" height="556" fill="#fff" />
+      <path d="M567 552 Q567 504 614 497 L812 455 Q880 446 880 510 V762 Q880 812 834 815 L820 816 V872 Q820 884 810 877 L712 803 L614 791 Q567 786 567 740 Z"
+            fill="#000" stroke="#000" stroke-width="44" stroke-linejoin="round" />
+    </mask>
+  </defs>
+  <!-- Globo 1: contorno blanco cálido -->
+  <path mask="url(#hueco)"
+        d="M645.5 480 V433 Q645.5 384 594 391 L402 437 Q358.5 448 358.5 492 V683 Q358.5 722 402 727 L529 742 V824 L573 798"
+        fill="none" stroke="#f0ede5" stroke-width="21.5" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Destello de 4 puntas -->
+  <path d="M473 503 Q479 572 541 581 Q479 590 473 661 Q467 590 406 581 Q467 572 473 503 Z" fill="#b9f3e4" />
+  <!-- Globo 2: relleno menta -->
+  <path d="M567 552 Q567 504 614 497 L812 455 Q880 446 880 510 V762 Q880 812 834 815 L820 816 V872 Q820 884 810 877 L712 803 L614 791 Q567 786 567 740 Z"
+        fill="#b9f3e4" />
+</svg>
