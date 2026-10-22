@@ -39,9 +39,9 @@
 
 ## 🧩 Requisitos generales (aplican a todo el TP)
 
-- [ ] Repositorio privado con el nombre `NOMBRE-APELLIDO-TP2-PROG4-2026-C2`
-- [ ] Colaborador `afriadenrich` agregado
-- [ ] Colaborador `ndiez-utn` agregado
+- [x] Repositorio privado con el nombre `NOMBRE-APELLIDO-TP2-PROG4-2026-C2`
+- [x] Colaborador `afriadenrich` agregado
+- [x] Colaborador `ndiez-utn` agregado
 - [ ] Idea original (no copiar el diseño de una red social existente)
 - [ ] Los usuarios pueden hacer publicaciones, reaccionar y comentarlas
 - [ ] Cada usuario puede ver y editar su perfil
@@ -83,11 +83,11 @@
 ### Back
 - [x] Creación del proyecto back (NestJS)
 - [ ] Módulo Publicaciones
-- [ ] Módulo Autenticación
-- [ ] Módulo Usuarios
+- [x] Módulo Autenticación
+- [x] Módulo Usuarios
 - **Ruta registro (POST)**
   - [ ] Recibe todos los datos del usuario, los valida y lo guarda en la base de datos
-  - [ ] La contraseña queda encriptada
+  - [x] La contraseña queda encriptada
   - [ ] Recibe la imagen de perfil, la guarda apropiadamente y guarda la URL en la base de datos
 - **Ruta login (POST)**
   - [ ] Recibe usuario/correo y contraseña sin encriptar
