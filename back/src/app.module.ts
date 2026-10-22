@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
@@ -7,11 +8,20 @@ import { AuthModule } from './auth/auth.module.js';
 
 @Module({
   imports: [
-    // Conexión única a MongoDB para toda la app.
-    // Usa MONGO_URI si existe (por ejemplo Atlas); si no, el Mongo local de Compass.
-    MongooseModule.forRoot(
-      process.env.MONGO_URI ?? 'mongodb://localhost:27017/tonari',
-    ),
+    // Lee el archivo back/.env y carga sus variables.
+    // isGlobal: cualquier módulo puede usar ConfigService sin importarlo de nuevo.
+    ConfigModule.forRoot({ isGlobal: true }),
+
+    // Conexión única a MongoDB (Atlas) para toda la app.
+    // forRootAsync + useFactory: espera a que ConfigModule haya leído el .env
+    // antes de conectarse (evita el bug del .env de la clase 14).
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        uri: config.getOrThrow<string>('MONGO_URI'),
+      }),
+    }),
+
     UsuariosModule,
     AuthModule,
   ],

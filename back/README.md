@@ -86,13 +86,13 @@
 - [x] Módulo Autenticación
 - [x] Módulo Usuarios
 - **Ruta registro (POST)**
-  - [ ] Recibe todos los datos del usuario, los valida y lo guarda en la base de datos
+  - [x] Recibe todos los datos del usuario, los valida y lo guarda en la base de datos
   - [x] La contraseña queda encriptada
-  - [ ] Recibe la imagen de perfil, la guarda apropiadamente y guarda la URL en la base de datos
+  - [x] Recibe la imagen de perfil, la guarda apropiadamente y guarda la URL en la base de datos
 - **Ruta login (POST)**
-  - [ ] Recibe usuario/correo y contraseña sin encriptar
-  - [ ] Encripta la contraseña recibida para confirmar el login
-  - [ ] Devuelve todos los datos del usuario
+  - [x] Recibe usuario/correo y contraseña sin encriptar
+  - [x] Encripta la contraseña recibida para confirmar el login
+  - [x] Devuelve todos los datos del usuario
 
 ---
 
