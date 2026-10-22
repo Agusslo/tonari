@@ -1,4 +1,4 @@
-# [TONARI] — TP2 Programación IV
+# TONARI — TP2 Programación IV
 
 > Red social con **Angular** (front) + **NestJS** (back) + **MongoDB** (base de datos).
 > UTN Avellaneda · Programación IV · 2026 C2 · Agustín López

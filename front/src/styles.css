@@ -195,6 +195,48 @@ a {
   border-color: var(--color-menta);
 }
 
+/* Contraseña con "ojito" para mostrar/ocultar lo que se escribe */
+.campo-contraseña {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.campo-contraseña input {
+  padding-right: 2.75rem; /* lugar para el botón, así el texto no queda abajo */
+}
+
+/* Edge trae su propio ojito: lo sacamos para que no aparezcan dos */
+.campo-contraseña input::-ms-reveal {
+  display: none;
+}
+
+.boton-ojo {
+  position: absolute;
+  top: 50%;
+  right: 0.4rem;
+  transform: translateY(-50%);
+  display: flex;
+  padding: 0.35rem;
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: none;
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+.boton-ojo:hover {
+  color: var(--color-blanco);
+}
+
+.boton-ojo svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .mensaje-error {
   font-size: 0.875rem;
   color: var(--color-error);
