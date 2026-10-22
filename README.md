@@ -82,7 +82,7 @@
 
 ### Back
 - [x] Creación del proyecto back (NestJS)
-- [ ] Módulo Publicaciones
+- [x] Módulo Publicaciones
 - [x] Módulo Autenticación
 - [x] Módulo Usuarios
 - **Ruta registro (POST)**
