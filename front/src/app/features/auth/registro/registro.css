@@ -1,21 +1,98 @@
+/* Grupos del formulario: "01 Sobre vos", "02 Tu cuenta", "03 Tu perfil" */
+.grupo {
+  min-width: 0; /* sin esto, un fieldset no se achica dentro de la grilla */
+  margin: 1.75rem 0 0.5rem;
+  padding: 0;
+  border: 0;
+}
+
+/* float + width: truco para que el legend se comporte como un bloque común
+   (si no, el navegador lo dibuja "montado" sobre el borde del fieldset) */
+.grupo legend {
+  float: left;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-texto-sec);
+}
+
+/* Línea fina que completa el renglón del título */
+.grupo legend::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--linea-suave);
+}
+
+.grupo legend + * {
+  clear: both;
+}
+
+.grupo-numero {
+  font-family: var(--fuente-titulo);
+  font-size: 1rem;
+  letter-spacing: 0;
+  color: var(--color-menta);
+}
+
 /* Dos campos por fila en pantallas anchas; uno solo en el celular */
 .fila {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* minmax(0, …): sin esto, los inputs estiran la columna y se salen del panel */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0 1rem;
 }
 
 @media (max-width: 560px) {
   .fila {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
+/* La fecha va centrada dentro del campo. El padding izquierdo compensa el
+   ícono del calendario de la derecha, así queda centrada en todo el ancho. */
+.campo input[type='date'] {
+  padding-left: 2.4rem;
+  text-align: center;
+}
+
+/* Imagen de perfil: círculo con la vista previa + botón para elegir archivo */
 .imagen {
   display: flex;
-  flex-wrap: wrap; /* en el celular, el input baja abajo de la vista previa */
+  flex-wrap: wrap; /* en el celular, el input baja abajo del círculo */
   align-items: center;
   gap: 1rem;
+}
+
+.avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  overflow: hidden;
+  color: var(--color-texto-sec);
+  background: var(--color-campo);
+  border: 1px dashed var(--linea-campo);
+  border-radius: 50%;
+}
+
+/* Con foto elegida, el borde pasa a ser menta y sólido */
+.avatar:has(.vista-previa) {
+  border: 2px solid var(--color-menta);
+}
+
+.vista-previa {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .imagen input {
@@ -31,23 +108,23 @@
   padding: 0.45rem 1rem;
   font: 700 0.875rem var(--fuente-texto);
   color: var(--color-menta);
-  background: rgb(185 243 228 / 0.1);
+  background: var(--velo-menta);
   border: 0;
   border-radius: var(--radio-pildora);
   cursor: pointer;
 }
 
-.vista-previa {
-  width: 3.5rem;
-  height: 3.5rem;
-  object-fit: cover;
-  border: 2px solid var(--color-menta);
-  border-radius: 50%;
+/* El contador de caracteres va a la derecha, debajo del textarea */
+.contador {
+  align-self: flex-end;
 }
 
 .aviso {
   margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
   color: var(--color-menta);
+  background: var(--velo-menta);
+  border-radius: var(--radio-campo);
 }
 
 .pie {
