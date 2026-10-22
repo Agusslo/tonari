@@ -3,7 +3,6 @@ import {
   IsEmail,
   IsNotEmpty,
   IsString,
-  IsUrl,
   Matches,
   MaxLength,
   MinLength,
@@ -58,9 +57,4 @@ export class RegistroDto {
     message: 'La descripción puede tener hasta 200 caracteres',
   })
   descripcion: string;
-
-  // TEMPORAL: por ahora recibe una URL. En la próxima tanda se reemplaza
-  // por la subida real del archivo de imagen.
-  @IsUrl({}, { message: 'La imagen de perfil debe ser una URL válida' })
-  imagenPerfil: string;
 }
