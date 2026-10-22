@@ -1,4 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import bcrypt from 'bcryptjs';
@@ -7,6 +12,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { Usuario } from '../usuarios/entities/usuario.entity.js';
 import { RegistroDto } from './dto/registro.dto.js';
+import { LoginDto } from './dto/login.dto.js';
 
 @Injectable()
 export class AuthService {
@@ -48,8 +54,49 @@ export class AuthService {
       imagenPerfil: urlImagen,
     });
 
-    // 5. Devolver los datos SIN la contraseña. select:false solo aplica a las
-    //    búsquedas: el documento recién creado todavía la trae, hay que sacarla.
+    // 5. Devolver los datos SIN la contraseña.
+    return this.sinContraseña(usuario);
+  }
+
+  async login(loginDto: LoginDto) {
+    // 1. Buscar por correo O por nombre de usuario.
+    //    select('+contraseña'): pide explícitamente el campo que el schema oculta
+    //    (select: false), porque acá sí lo necesitamos para comparar.
+    const usuario = await this.usuarioModel
+      .findOne({
+        $or: [
+          { correo: loginDto.usuario.toLowerCase() },
+          { nombreUsuario: loginDto.usuario },
+        ],
+      })
+      .select('+contraseña');
+
+    // 2. Comparar la contraseña recibida con el hash guardado.
+    //    bcrypt.compare hashea la recibida con los mismos datos y compara.
+    const contraseñaCorrecta =
+      usuario !== null &&
+      (await bcrypt.compare(loginDto.contraseña, usuario.contraseña));
+
+    // Mismo mensaje si no existe el usuario o si la contraseña está mal:
+    // así nadie puede averiguar qué correos están registrados.
+    if (!usuario || !contraseñaCorrecta) {
+      throw new UnauthorizedException('Usuario o contraseña incorrectos'); // 401
+    }
+
+    // 3. Un usuario deshabilitado no puede ingresar (consigna, Sprint 4).
+    if (!usuario.habilitado) {
+      throw new ForbiddenException(
+        'Tu cuenta está deshabilitada. Contactá a un administrador.',
+      ); // 403
+    }
+
+    // 4. Devolver todos los datos del usuario, menos la contraseña.
+    return this.sinContraseña(usuario);
+  }
+
+  // select:false solo aplica a las búsquedas: un documento recién creado,
+  // o uno pedido con '+contraseña', la trae. Acá se la sacamos antes de responder.
+  private sinContraseña(usuario: { toObject(): Usuario }) {
     const { contraseña: _contraseña, ...datos } = usuario.toObject();
     return datos;
   }
