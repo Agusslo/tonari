@@ -42,7 +42,7 @@
 - [x] Repositorio privado con el nombre `NOMBRE-APELLIDO-TP2-PROG4-2026-C2`
 - [x] Colaborador `afriadenrich` agregado
 - [x] Colaborador `ndiez-utn` agregado
-- [ ] Idea original (no copiar el diseño de una red social existente)
+- [x] Idea original (no copiar el diseño de una red social existente)
 - [ ] Los usuarios pueden hacer publicaciones, reaccionar y comentarlas
 - [ ] Cada usuario puede ver y editar su perfil
 - [ ] Solo se accede a la aplicación estando registrado o logueado
@@ -54,7 +54,7 @@
 - [ ] Publicaciones con "Me gusta"
 - [ ] Publicaciones con comentarios
 - [ ] UX: diseño trabajado y uniforme en toda la aplicación
-- [ ] UX: navegación entre pantallas
+- [x] UX: navegación entre pantallas
 - [ ] UX: información clara y completa al mostrar mensajes o realizar acciones
 
 ---
@@ -75,9 +75,9 @@
   - [ ] Por correo o por nombre de usuario (el elegido debe ser único en la base de datos)
   - [ ] Contraseña: al menos 8 caracteres, una mayúscula y un número
 - **Registro**
-  - [ ] Formulario con validaciones y mensajes acordes
-  - [ ] Campos: nombre, apellido, correo, nombre de usuario, contraseña, repetir contraseña, fecha de nacimiento, descripción breve
-  - [ ] Campo de tipo file para la imagen de perfil
+  - [x] Formulario con validaciones y mensajes acordes
+  - [x] Campos: nombre, apellido, correo, nombre de usuario, contraseña, repetir contraseña, fecha de nacimiento, descripción breve
+  - [x] Campo de tipo file para la imagen de perfil
   - [ ] Atributo perfil: por defecto "usuario", modificable a "administrador"
 
 ### Back
