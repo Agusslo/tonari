@@ -65,7 +65,7 @@
 - [x] Creación del proyecto front (Angular)
 - [x] Pantalla Registro
 - [x] Pantalla Login
-- [ ] Pantalla Publicaciones
+- [x] Pantalla Publicaciones
 - [ ] Pantalla Mi Perfil
 - [ ] Deploy en hosting
 - [x] Navegación entre componentes (sin límites de accesibilidad)
