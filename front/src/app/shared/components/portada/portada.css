@@ -1,0 +1,6 @@
+    /* display: contents hace que la etiqueta <app-portada> "no exista" para el diseño:
+        el <aside> de adentro queda como hijo directo de la grilla .acceso,
+        igual que antes de pasarlo a un componente (y el sticky sigue funcionando). */
+    :host {
+        display: contents;
+    }

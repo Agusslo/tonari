@@ -1,0 +1,14 @@
+/* El formulario de login es corto: lo centramos en su columna
+   para que no quede pegado arriba al lado de la portada alta. */
+.formulario-acceso {
+  align-self: center;
+}
+
+form {
+  margin-top: 1.75rem;
+}
+
+.pie {
+  margin: 1.5rem 0 0;
+  text-align: center;
+}

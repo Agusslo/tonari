@@ -1,1 +1,92 @@
-<p>login works!</p>
+    <div class="acceso">
+    <app-portada />
+
+    <section class="panel formulario-acceso" aria-labelledby="titulo-login">
+        <p class="kicker" lang="ja" aria-hidden="true">ログイン</p>
+        <h1 id="titulo-login">Ingresar</h1>
+        <p class="texto-secundario">Usá tu correo o tu nombre de usuario.</p>
+
+        <form [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+        <div class="campo">
+            <label for="usuario">Correo o nombre de usuario</label>
+            <input
+            id="usuario"
+            type="text"
+            formControlName="usuario"
+            autocomplete="username"
+            [attr.aria-invalid]="mostrarError('usuario')"
+            aria-describedby="error-usuario"
+            />
+            @if (mostrarError('usuario')) {
+            <p id="error-usuario" class="mensaje-error">{{ mensajeError('usuario') }}</p>
+            }
+        </div>
+
+        <div class="campo">
+            <label for="contraseña">Contraseña</label>
+            <div class="campo-contraseña">
+            <input
+                id="contraseña"
+                [type]="verContrasena() ? 'text' : 'password'"
+                formControlName="contraseña"
+                autocomplete="current-password"
+                [attr.aria-invalid]="mostrarError('contraseña')"
+                aria-describedby="error-contraseña"
+            />
+            <button
+                type="button"
+                class="boton-ojo"
+                (click)="verContrasena.set(!verContrasena())"
+                [attr.aria-label]="verContrasena() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                aria-controls="contraseña"
+            >
+                <svg class="icono" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+                <circle cx="12" cy="12" r="3" />
+                @if (verContrasena()) {
+                    <line x1="3" y1="3" x2="21" y2="21" />
+                }
+                </svg>
+            </button>
+            </div>
+            @if (mostrarError('contraseña')) {
+            <p id="error-contraseña" class="mensaje-error">{{ mensajeError('contraseña') }}</p>
+            }
+        </div>
+
+        <button
+            type="submit"
+            class="boton boton-ancho"
+            [attr.aria-disabled]="enviando()"
+            [attr.aria-busy]="enviando()"
+        >
+            @if (enviando()) {
+            <span class="spinner" aria-hidden="true"></span>
+            Ingresando…
+            } @else {
+            Ingresar
+            <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+            }
+        </button>
+        </form>
+
+        <p class="pie texto-secundario">
+        ¿Todavía no tenés cuenta? <a routerLink="/registro">Creá una</a>
+        </p>
+    </section>
+    </div>
+
+    <!-- Modal de error (credenciales incorrectas, cuenta deshabilitada, sin conexión) -->
+    <app-modal
+    [abierto]="error() !== null"
+    titulo="No se pudo ingresar"
+    tipo="error"
+    (cerrar)="error.set(null)"
+    >
+    <p>{{ error() }}</p>
+    <div acciones>
+        <button type="button" class="boton" (click)="error.set(null)">Volver a intentar</button>
+    </div>
+    </app-modal>

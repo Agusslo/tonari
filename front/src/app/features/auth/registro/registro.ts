@@ -4,6 +4,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
 import { Modal } from '../../../shared/components/modal/modal';
+import { Portada } from '../../../shared/components/portada/portada';
+import { mensajeDeError } from '../../../shared/utils/errores-http';
 import {
   camposIguales,
   contraseñaSegura,
@@ -19,7 +21,7 @@ const PATRON_USUARIO = /^[a-zA-Z0-9_.]+$/;
 
 @Component({
   selector: 'app-registro',
-  imports: [ReactiveFormsModule, RouterLink, Modal],
+  imports: [ReactiveFormsModule, RouterLink, Modal, Portada],
   templateUrl: './registro.html',
   styleUrl: './registro.css',
 })
@@ -59,6 +61,7 @@ export class Registro {
   protected readonly vistaPrevia = signal<string | null>(null);
   protected readonly errorImagen = signal<string | null>(null);
   protected readonly intentoEnviar = signal(false);
+
   // Mientras se espera la respuesta del back: botón deshabilitado y "Creando cuenta…"
   protected readonly enviando = signal(false);
   // Lo que muestra el modal (null = modal cerrado)
@@ -156,7 +159,7 @@ export class Registro {
         this.resultado.set({
           tipo: 'error',
           titulo: 'No se pudo crear la cuenta',
-          mensaje: this.mensajeDelServidor(error),
+          mensaje: mensajeDeError(error),
         });
       },
     });
@@ -167,19 +170,6 @@ export class Registro {
     const fueExito = this.resultado()?.tipo === 'exito';
     this.resultado.set(null);
     if (fueExito) this.router.navigate(['/login']);
-  }
-
-  // Convierte la respuesta de error del back en un mensaje claro.
-  private mensajeDelServidor(error: HttpErrorResponse): string {
-    // status 0: el pedido ni llegó (back apagado, sin internet, CORS)
-    if (error.status === 0) {
-      return 'No se pudo conectar con el servidor. Revisá tu conexión e intentá de nuevo.';
-    }
-    // Nest manda { message: '...' } o, si falló el DTO, { message: ['...', '...'] }
-    const mensaje = error.error?.message;
-    if (Array.isArray(mensaje)) return mensaje.join('. ');
-    if (typeof mensaje === 'string') return mensaje;
-    return 'Ocurrió un error inesperado. Intentá de nuevo en unos minutos.';
   }
 }
 

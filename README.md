@@ -47,7 +47,7 @@
 - [ ] Cada usuario puede ver y editar su perfil
 - [ ] Solo se accede a la aplicación estando registrado o logueado
 - [ ] Diseño trabajado, no HTML plano
-- [ ] No usar `alert()`: usar modales
+- [x] No usar `alert()`: usar modales
 - [ ] Login y registro contra el servidor Nest propio, con JWT
 - [ ] Status correctos en la API (400, 401, 201, etc.). Nunca 200 en errores ni 400 en respuestas correctas
 - [ ] Publicaciones con título, mensaje e imagen opcional
@@ -63,17 +63,17 @@
 
 ### Front
 - [x] Creación del proyecto front (Angular)
-- [ ] Pantalla Registro
-- [ ] Pantalla Login
+- [x] Pantalla Registro
+- [x] Pantalla Login
 - [ ] Pantalla Publicaciones
 - [ ] Pantalla Mi Perfil
 - [ ] Deploy en hosting
 - [x] Navegación entre componentes (sin límites de accesibilidad)
 - [x] Favicon propio
 - **Login**
-  - [ ] Formulario con validaciones y mensajes acordes
-  - [ ] Por correo o por nombre de usuario (el elegido debe ser único en la base de datos)
-  - [ ] Contraseña: al menos 8 caracteres, una mayúscula y un número
+  - [x] Formulario con validaciones y mensajes acordes
+  - [x] Por correo o por nombre de usuario (el elegido debe ser único en la base de datos)
+  - [x] Contraseña: al menos 8 caracteres, una mayúscula y un número
 - **Registro**
   - [x] Formulario con validaciones y mensajes acordes
   - [x] Campos: nombre, apellido, correo, nombre de usuario, contraseña, repetir contraseña, fecha de nacimiento, descripción breve

@@ -119,14 +119,6 @@
   align-self: flex-end;
 }
 
-.aviso {
-  margin: 1rem 0 0;
-  padding: 0.75rem 1rem;
-  color: var(--color-menta);
-  background: var(--velo-menta);
-  border-radius: var(--radio-campo);
-}
-
 .pie {
   margin: 1.5rem 0 0;
   text-align: center;

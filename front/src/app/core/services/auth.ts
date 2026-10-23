@@ -1,5 +1,6 @@
     import { HttpClient } from '@angular/common/http';
-    import { inject, Service } from '@angular/core';
+    import { inject, Service, signal } from '@angular/core';
+    import { tap } from 'rxjs';
     import { environment } from '../../../environments/environment';
     import IUsuario from '../interfaces/usuario';
 
@@ -21,6 +22,12 @@
     private readonly http = inject(HttpClient);
     private readonly url = `${environment.apiUrl}/auth`;
 
+    // El usuario que ingresó (null = nadie). Lo leen las pantallas, por ejemplo
+    // Mi Perfil. Por ahora vive en memoria: si recargás la página se pierde.
+    // En el Sprint 3, con el token JWT, lo vamos a recuperar al recargar.
+    private readonly usuario = signal<IUsuario | null>(null);
+    readonly usuarioActual = this.usuario.asReadonly();
+
     // POST /auth/registro. Va como FormData (multipart/form-data) porque lleva
     // un archivo: con JSON no se puede mandar una imagen.
     registro(datos: DatosRegistro, imagenPerfil: File) {
@@ -35,6 +42,8 @@
 
     // POST /auth/login. "usuario" puede ser el correo o el nombre de usuario.
     login(usuario: string, contraseña: string) {
-        return this.http.post<IUsuario>(`${this.url}/login`, { usuario, contraseña });
+        return this.http
+        .post<IUsuario>(`${this.url}/login`, { usuario, contraseña })
+        .pipe(tap((usuarioLogueado) => this.usuario.set(usuarioLogueado)));
     }
     }
