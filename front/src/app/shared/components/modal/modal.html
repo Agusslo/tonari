@@ -1,0 +1,32 @@
+    <dialog
+    #dialogo
+    class="modal"
+    [class.modal-error]="tipo() === 'error'"
+    [attr.aria-labelledby]="idTitulo"
+    (close)="cerrar.emit()"
+    >
+    <div class="modal-icono" aria-hidden="true">
+        @if (tipo() === 'exito') {
+        <svg class="icono" viewBox="0 0 24 24" width="28" height="28">
+            <path d="M5 12.5l4.5 4.5L19 7.5" />
+        </svg>
+        } @else {
+        <svg class="icono" viewBox="0 0 24 24" width="28" height="28">
+            <path d="M12 7.5v6M12 17h.01" />
+            <circle cx="12" cy="12" r="9.5" />
+        </svg>
+        }
+    </div>
+
+    <h2 [id]="idTitulo" class="modal-titulo">{{ titulo() }}</h2>
+
+    <!-- Lo que el padre ponga adentro de <app-modal> se muestra acá -->
+    <div class="modal-contenido">
+        <ng-content />
+    </div>
+
+    <!-- Los botones: el padre los marca con el atributo "acciones" -->
+    <div class="modal-acciones">
+        <ng-content select="[acciones]" />
+    </div>
+    </dialog>

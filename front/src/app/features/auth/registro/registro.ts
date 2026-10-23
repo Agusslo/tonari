@@ -1,6 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { Auth } from '../../../core/services/auth';
+import { Modal } from '../../../shared/components/modal/modal';
 import {
   camposIguales,
   contraseñaSegura,
@@ -16,12 +19,14 @@ const PATRON_USUARIO = /^[a-zA-Z0-9_.]+$/;
 
 @Component({
   selector: 'app-registro',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Modal],
   templateUrl: './registro.html',
   styleUrl: './registro.css',
 })
 export class Registro {
   private readonly formBuilder = inject(FormBuilder);
+  private readonly auth = inject(Auth);
+  private readonly router = inject(Router);
 
   protected readonly hoy = fechaLocalHoy();
 
@@ -54,7 +59,10 @@ export class Registro {
   protected readonly vistaPrevia = signal<string | null>(null);
   protected readonly errorImagen = signal<string | null>(null);
   protected readonly intentoEnviar = signal(false);
-  protected readonly formularioListo = signal(false);
+  // Mientras se espera la respuesta del back: botón deshabilitado y "Creando cuenta…"
+  protected readonly enviando = signal(false);
+  // Lo que muestra el modal (null = modal cerrado)
+  protected readonly resultado = signal<Resultado | null>(null);
 
   // El "ojito" de cada contraseña: true = se ve el texto, false = puntitos.
   // Van sin ñ porque el template de Angular no la acepta en los nombres.
@@ -126,12 +134,57 @@ export class Registro {
       this.errorImagen.set(this.errorImagen() ?? 'La imagen de perfil es obligatoria');
     }
 
-    if (this.formulario.invalid || !this.imagen()) {
-      this.formularioListo.set(false);
-      return;
-    }
+    const imagen = this.imagen();
+    if (this.formulario.invalid || !imagen || this.enviando()) return;
 
-    // TEMPORAL: en la próxima tanda acá se envían los datos al back.
-    this.formularioListo.set(true);
+    // "repetirContraseña" solo sirve en el front: al back no se manda.
+    const { repetirContraseña: _repetida, ...datos } = this.formulario.getRawValue();
+
+    this.enviando.set(true);
+    this.auth.registro(datos, imagen).subscribe({
+      next: (usuario) => {
+        this.enviando.set(false);
+        this.resultado.set({
+          tipo: 'exito',
+          titulo: `¡Bienvenido, ${usuario.nombre}!`,
+          mensaje:
+            'Tu cuenta quedó creada. Ya podés ingresar con tu correo o tu nombre de usuario.',
+        });
+      },
+      error: (error: HttpErrorResponse) => {
+        this.enviando.set(false);
+        this.resultado.set({
+          tipo: 'error',
+          titulo: 'No se pudo crear la cuenta',
+          mensaje: this.mensajeDelServidor(error),
+        });
+      },
+    });
   }
+
+  // Se llama al cerrar el modal (con el botón o con Escape).
+  cerrarResultado() {
+    const fueExito = this.resultado()?.tipo === 'exito';
+    this.resultado.set(null);
+    if (fueExito) this.router.navigate(['/login']);
+  }
+
+  // Convierte la respuesta de error del back en un mensaje claro.
+  private mensajeDelServidor(error: HttpErrorResponse): string {
+    // status 0: el pedido ni llegó (back apagado, sin internet, CORS)
+    if (error.status === 0) {
+      return 'No se pudo conectar con el servidor. Revisá tu conexión e intentá de nuevo.';
+    }
+    // Nest manda { message: '...' } o, si falló el DTO, { message: ['...', '...'] }
+    const mensaje = error.error?.message;
+    if (Array.isArray(mensaje)) return mensaje.join('. ');
+    if (typeof mensaje === 'string') return mensaje;
+    return 'Ocurrió un error inesperado. Intentá de nuevo en unos minutos.';
+  }
+}
+
+interface Resultado {
+  tipo: 'exito' | 'error';
+  titulo: string;
+  mensaje: string;
 }
