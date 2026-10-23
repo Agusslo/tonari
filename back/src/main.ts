@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'node:path';
 import { AppModule } from './app.module.js';
@@ -8,6 +9,14 @@ async function bootstrap() {
   // NestExpressApplication: le dice a TypeScript que usamos Express,
   // así tenemos disponible useStaticAssets.
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const config = app.get(ConfigService);
+
+  // CORS: el front corre en otro origen (otro puerto en tu PC, otro dominio en
+  // el deploy), y el navegador bloquea esos pedidos salvo que el back los permita.
+  // URL_FRONT puede tener varias URLs separadas por coma.
+  app.enableCors({
+    origin: config.get<string>('URL_FRONT', 'http://localhost:4200').split(','),
+  });
 
   // Valida todos los @Body() contra su DTO antes de llegar al controller.
   // whitelist: borra los campos que no estén declarados (con decoradores) en el DTO.
