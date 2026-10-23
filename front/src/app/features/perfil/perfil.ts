@@ -1,9 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { Auth } from '../../core/services/auth';
 
 @Component({
-  imports: [],
   selector: 'app-perfil',
-  styleUrl: './perfil.css',
+  imports: [DatePipe, RouterLink],
   templateUrl: './perfil.html',
+  styleUrl: './perfil.css',
 })
-export class Perfil {}
+export class Perfil {
+  // El usuario que ingresó (o null), el mismo que usa Publicaciones.
+  protected readonly usuario = inject(Auth).usuarioActual;
+}

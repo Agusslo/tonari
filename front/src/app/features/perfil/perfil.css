@@ -1,0 +1,186 @@
+/* Grilla del perfil: la cabecera ocupa todo el ancho; abajo, datos y publicaciones */
+.perfil {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: clamp(1.25rem, 3vw, 2rem);
+  align-items: start;
+}
+
+.perfil h2 {
+  font-size: 1.25rem;
+}
+
+/* ---------- Cabecera del perfil ---------- */
+.portada-perfil {
+  grid-column: 1 / -1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(1.25rem, 4vw, 2.5rem);
+  overflow: hidden;
+  isolation: isolate;
+  animation: aparecer 0.5s ease-out both;
+}
+
+/* La misma trama de puntos de la portada de acceso, en la esquina */
+.portada-perfil::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle, var(--color-menta) 1.5px, transparent 1.8px) 0 0 / 14px 14px,
+    radial-gradient(circle, var(--color-lila) 1.5px, transparent 1.8px) 7px 7px / 14px 14px;
+  opacity: 0.25;
+  mask-image: linear-gradient(to top left, #000, transparent 40%);
+}
+
+.foto {
+  flex: none;
+  width: clamp(6rem, 14vw, 8rem);
+  height: clamp(6rem, 14vw, 8rem);
+  object-fit: cover;
+  border: 3px solid var(--color-menta);
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px var(--velo-menta);
+}
+
+.identidad {
+  min-width: 0;
+}
+
+.identidad h1 {
+  margin-bottom: 0.35rem;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  overflow-wrap: anywhere; /* un nombre larguísimo no rompe el diseño */
+}
+
+.alias {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  color: var(--color-texto-sec);
+}
+
+/* "Usuario" / "Administrador" como chip menta */
+.insignia {
+  padding: 0.15rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-radius: var(--radio-pildora);
+}
+
+.descripcion {
+  max-width: 60ch;
+  margin: 1rem 0 0;
+}
+
+/* ---------- Mis datos ---------- */
+.datos {
+  animation: aparecer 0.5s 0.08s ease-out both;
+}
+
+/* Lista de definiciones: cada dato es "etiqueta" + "valor" */
+.datos dl {
+  margin: 1.25rem 0 0;
+}
+
+.datos dl > div {
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--linea-suave);
+}
+
+.datos dt {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-texto-sec);
+}
+
+.datos dd {
+  margin: 0.15rem 0 0;
+  overflow-wrap: anywhere; /* para correos largos */
+}
+
+/* ---------- Mis últimas publicaciones ---------- */
+.publicaciones {
+  animation: aparecer 0.5s 0.16s ease-out both;
+}
+
+.vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1.25rem;
+  padding: clamp(2rem, 6vw, 3.5rem) 1rem;
+  text-align: center;
+  border: 1px dashed var(--linea-campo);
+  border-radius: var(--radio-campo);
+}
+
+.vacio-icono {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 1rem;
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-radius: 50%;
+}
+
+.vacio p {
+  max-width: 34ch;
+  margin: 0;
+}
+
+.vacio .vacio-titulo {
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+}
+
+/* ---------- Sin sesión ---------- */
+.sin-sesion {
+  max-width: 32rem;
+  margin: 0 auto;
+  text-align: center;
+  animation: aparecer 0.5s ease-out both;
+}
+
+.sin-sesion .kicker {
+  justify-content: center;
+}
+
+.sin-sesion .texto-secundario {
+  margin: 0 0 1.5rem;
+}
+
+.sin-sesion .boton {
+  text-decoration: none;
+}
+
+/* ---------- Celular: todo en una columna ---------- */
+@media (max-width: 760px) {
+  .perfil {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .portada-perfil {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .alias {
+    justify-content: center;
+  }
+
+  .portada-perfil .kicker {
+    justify-content: center;
+  }
+}

@@ -66,7 +66,7 @@
 - [x] Pantalla Registro
 - [x] Pantalla Login
 - [x] Pantalla Publicaciones
-- [ ] Pantalla Mi Perfil
+- [x] Pantalla Mi Perfil
 - [ ] Deploy en hosting
 - [x] Navegación entre componentes (sin límites de accesibilidad)
 - [x] Favicon propio
