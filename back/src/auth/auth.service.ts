@@ -7,12 +7,10 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { randomUUID } from 'node:crypto';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
 import { Usuario } from '../usuarios/entities/usuario.entity.js';
 import { RegistroDto } from './dto/registro.dto.js';
 import { LoginDto } from './dto/login.dto.js';
+import { guardarImagen } from '../common/imagenes.js';
 
 @Injectable()
 export class AuthService {
@@ -40,7 +38,7 @@ export class AuthService {
     const hash = await bcrypt.hash(registroDto.contraseña, 10);
 
     // 3. Guardar la imagen de perfil y obtener su URL.
-    const urlImagen = await this.guardarImagen(imagen, 'perfiles');
+    const urlImagen = await guardarImagen(imagen, 'perfiles');
 
     // 4. Guardar el usuario con el hash en lugar de la contraseña.
     const usuario = await this.usuarioModel.create({
@@ -99,21 +97,5 @@ export class AuthService {
   private sinContraseña(usuario: { toObject(): Usuario }) {
     const { contraseña: _contraseña, ...datos } = usuario.toObject();
     return datos;
-  }
-
-  // Guarda la imagen en back/uploads/<carpeta>/ con un nombre único
-  // y devuelve la URL pública para guardarla en la base de datos.
-  private async guardarImagen(imagen: Express.Multer.File, carpeta: string) {
-    const extension = imagen.mimetype.split('/')[1]; // jpeg | png | webp
-    const nombreArchivo = `${randomUUID()}.${extension}`;
-
-    const directorio = join(process.cwd(), 'uploads', carpeta);
-    await mkdir(directorio, { recursive: true }); // crea la carpeta si no existe
-    await writeFile(join(directorio, nombreArchivo), imagen.buffer);
-
-    // Se lee acá adentro (y no arriba del archivo) para que tome el valor real
-    // de la variable de entorno cuando exista (el bug del .env de la clase 14).
-    const urlPublica = process.env.URL_PUBLICA ?? 'http://localhost:3000';
-    return `${urlPublica}/uploads/${carpeta}/${nombreArchivo}`;
   }
 }
