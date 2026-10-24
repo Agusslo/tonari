@@ -115,7 +115,7 @@
   - [ ] Alta, listado y baja de publicaciones (baja lógica)
   - [ ] POST: guarda una publicación relacionada a un usuario (título, descripción, URL de la imagen si tiene). La imagen se guarda
   - [ ] DELETE: baja lógica, solo por el usuario que la creó o un administrador
-  - [ ] GET: listar las últimas publicaciones
+  - [x] GET: listar las últimas publicaciones
   - [ ] GET: parámetro para ordenar por fecha / por cantidad de "Me gusta"
   - [ ] GET: filtrar las publicaciones de un usuario particular
   - [ ] GET: parámetros `offset` y `limit` para paginar
