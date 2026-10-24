@@ -1,7 +1,17 @@
-    import { Body, Controller, Get, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+    import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    UploadedFile,
+    UseInterceptors,
+    } from '@nestjs/common';
     import { FileInterceptor } from '@nestjs/platform-express';
     import { PublicacionesService } from './publicaciones.service.js';
     import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
+    import { AccionUsuarioDto } from './dto/accion-usuario.dto.js';
     import { validarImagen } from '../common/imagenes.js';
 
     @Controller('publicaciones')
@@ -26,5 +36,24 @@
     @Get()
     listar() {
         return this.publicacionesService.listar();
+    }
+
+    // DELETE /publicaciones/:id -> 200 OK (baja lógica)
+    // :id es un parámetro de ruta: /publicaciones/6adc04a3... -> id = '6adc04a3...'
+    @Delete(':id')
+    eliminar(@Param('id') id: string, @Body() accionUsuarioDto: AccionUsuarioDto) {
+        return this.publicacionesService.eliminar(id, accionUsuarioDto.usuario);
+    }
+
+    // POST /publicaciones/:id/me-gusta -> 201 Created (se crea un "Me gusta")
+    @Post(':id/me-gusta')
+    darMeGusta(@Param('id') id: string, @Body() accionUsuarioDto: AccionUsuarioDto) {
+        return this.publicacionesService.darMeGusta(id, accionUsuarioDto.usuario);
+    }
+
+    // DELETE /publicaciones/:id/me-gusta -> 200 OK (se quita el "Me gusta")
+    @Delete(':id/me-gusta')
+    quitarMeGusta(@Param('id') id: string, @Body() accionUsuarioDto: AccionUsuarioDto) {
+        return this.publicacionesService.quitarMeGusta(id, accionUsuarioDto.usuario);
     }
     }
