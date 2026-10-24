@@ -3,9 +3,14 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'node:path';
+import dns from 'node:dns';
 import { AppModule } from './app.module.js';
 
 async function bootstrap() {
+  // Algunos routers/proveedores responden mal las consultas DNS de tipo SRV
+  // que usa "mongodb+srv://". Usamos DNS públicos (Google y Cloudflare).
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+
   // NestExpressApplication: le dice a TypeScript que usamos Express,
   // así tenemos disponible useStaticAssets.
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
