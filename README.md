@@ -112,15 +112,15 @@
 
 ### Back
 - **Publicaciones controller**
-  - [ ] Alta, listado y baja de publicaciones (baja lógica)
+  - [x] Alta, listado y baja de publicaciones (baja lógica)
   - [x] POST: guarda una publicación relacionada a un usuario (título, descripción, URL de la imagen si tiene). La imagen se guarda
-  - [ ] DELETE: baja lógica, solo por el usuario que la creó o un administrador
+  - [x] DELETE: baja lógica, solo por el usuario que la creó o un administrador
   - [x] GET: listar las últimas publicaciones
   - [ ] GET: parámetro para ordenar por fecha / por cantidad de "Me gusta"
   - [ ] GET: filtrar las publicaciones de un usuario particular
   - [ ] GET: parámetros `offset` y `limit` para paginar
-  - [ ] POST: dar "Me gusta" (un solo "Me gusta" por usuario por publicación)
-  - [ ] DELETE: quitar "Me gusta", solo si el usuario lo había dado
+  - [x] POST: dar "Me gusta" (un solo "Me gusta" por usuario por publicación)
+  - [x] DELETE: quitar "Me gusta", solo si el usuario lo había dado
 
 ---
 
