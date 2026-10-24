@@ -18,9 +18,11 @@ async function bootstrap() {
     origin: config.get<string>('URL_FRONT', 'http://localhost:4200').split(','),
   });
 
-  // Valida todos los @Body() contra su DTO antes de llegar al controller.
+  // Valida todos los @Body() y @Query() contra su DTO antes de llegar al controller.
   // whitelist: borra los campos que no estén declarados (con decoradores) en el DTO.
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  // transform: entrega al controller el DTO ya convertido (por ejemplo, "10" -> 10)
+  // y con sus valores por defecto.
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   // Sirve los archivos de la carpeta "uploads" como públicos:
   // back/uploads/perfiles/foto.png -> http://localhost:3000/uploads/perfiles/foto.png

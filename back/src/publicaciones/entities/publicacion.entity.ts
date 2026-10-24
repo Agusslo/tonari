@@ -19,9 +19,14 @@
     @Prop({ type: MongooseSchema.Types.ObjectId, ref: Usuario.name, required: true })
     usuario: Types.ObjectId;
 
-    // Los _id de los usuarios que dieron "Me gusta" (Sprint 2, más adelante).
+    // Los _id de los usuarios que dieron "Me gusta" (uno por usuario).
     @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: Usuario.name }], default: [] })
     meGusta: Types.ObjectId[];
+
+    // Cuántos "Me gusta" tiene (siempre igual a meGusta.length).
+    // Se guarda aparte para poder ORDENAR por cantidad directamente en Mongo.
+    @Prop({ default: 0 })
+    cantidadMeGusta: number;
 
     // Baja lógica: en vez de borrarla, se marca como inactiva.
     @Prop({ default: true })
