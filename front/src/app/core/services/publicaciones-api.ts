@@ -29,4 +29,9 @@
     quitarMeGusta(id: string, usuario: string) {
         return this.http.delete<IPublicacion>(`${this.url}/${id}/me-gusta`, { body: { usuario } });
     }
+
+    // DELETE /publicaciones/:id -> baja lógica
+    eliminar(id: string, usuario: string) {
+        return this.http.delete<{ mensaje: string }>(`${this.url}/${id}`, { body: { usuario } });
+    }
     }

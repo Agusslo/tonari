@@ -107,8 +107,8 @@
   - [ ] Dar y quitar "Me gusta" cuando corresponda
   - [x] Eliminar mis propias publicaciones
 - **Mi Perfil**
-  - [x] Todos los datos del usuario y su foto de perfil
-  - [x] Mis últimas 3 publicaciones y sus comentarios
+  - [] Todos los datos del usuario y su foto de perfil
+  - [] Mis últimas 3 publicaciones y sus comentarios
 
 ### Back
 - **Publicaciones controller**
