@@ -20,6 +20,77 @@
   margin: 0;
 }
 
+/* Selector de orden: dos "pestañas" dentro de una píldora */
+.orden {
+  display: inline-flex;
+  gap: 0.25rem;
+  margin-bottom: 1.25rem;
+  padding: 0.25rem;
+  background: var(--color-panel);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-pildora);
+}
+
+.orden button {
+  padding: 0.45rem 1rem;
+  font: 500 0.9rem var(--fuente-texto);
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+}
+
+.orden button:hover {
+  color: var(--color-hueso);
+}
+
+.orden button[aria-pressed='true'] {
+  color: var(--color-menta);
+  background: var(--velo-menta);
+}
+
+/* Paginación: Anterior · Página X de Y · Siguiente */
+.paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Las publicaciones, una debajo de la otra */
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Cargando y error: un panel centrado */
+.estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding-block: 3rem;
+  text-align: center;
+}
+
+.estado h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.estado p {
+  margin: 0;
+}
+
+.estado .spinner {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--color-menta);
+}
+
 /* Estado vacío: centrado, con un ícono en un círculo menta */
 .vacio {
   display: flex;

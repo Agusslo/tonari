@@ -1,0 +1,93 @@
+/* La etiqueta <app-tarjeta-publicacion> se comporta como un bloque común */
+:host {
+  display: block;
+}
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  transition: border-color 0.15s ease;
+}
+
+.tarjeta:hover {
+  border-color: rgb(240 237 229 / 0.16);
+}
+
+.tarjeta p {
+  margin: 0;
+}
+
+/* ---------- Autor ---------- */
+.autor {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.autor-foto {
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  object-fit: cover;
+  border: 2px solid var(--color-menta);
+  border-radius: 50%;
+}
+
+.autor-datos {
+  min-width: 0; /* deja que los textos largos se corten con "…" */
+}
+
+.autor-nombre {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.autor-detalle {
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Contenido ---------- */
+.titulo {
+  margin: 0;
+  font-size: 1.3rem;
+  overflow-wrap: anywhere;
+}
+
+.descripcion {
+  white-space: pre-line; /* respeta los saltos de línea que escribió el autor */
+  overflow-wrap: anywhere;
+}
+
+.imagen {
+  width: 100%;
+  max-height: 32rem;
+  object-fit: cover;
+  background: var(--color-campo);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-campo);
+}
+
+/* ---------- Pie ---------- */
+.pie {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--linea-suave);
+}
+
+.me-gusta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--color-texto-sec);
+}
