@@ -100,15 +100,15 @@
 
 ### Front
 - **Página Publicaciones**
-  - [ ] Listado de publicaciones ordenado por fecha por defecto
-  - [ ] Cambiar el ordenamiento a cantidad de "Me gusta"
-  - [ ] Cantidad limitada de publicaciones, con paginación
-  - [ ] Cada publicación es un componente
+  - [x] Listado de publicaciones ordenado por fecha por defecto
+  - [x] Cambiar el ordenamiento a cantidad de "Me gusta"
+  - [x] Cantidad limitada de publicaciones, con paginación
+  - [x] Cada publicación es un componente
   - [ ] Dar y quitar "Me gusta" cuando corresponda
-  - [ ] Eliminar mis propias publicaciones
+  - [x] Eliminar mis propias publicaciones
 - **Mi Perfil**
-  - [ ] Todos los datos del usuario y su foto de perfil
-  - [ ] Mis últimas 3 publicaciones y sus comentarios
+  - [x] Todos los datos del usuario y su foto de perfil
+  - [x] Mis últimas 3 publicaciones y sus comentarios
 
 ### Back
 - **Publicaciones controller**

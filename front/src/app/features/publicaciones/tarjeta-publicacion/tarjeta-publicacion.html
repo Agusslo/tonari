@@ -23,13 +23,21 @@
         <img [src]="pub.imagen" [alt]="'Imagen de la publicación: ' + pub.titulo" class="imagen" loading="lazy" />
     }
 
-    <!-- Cantidad de "Me gusta" (los botones llegan en la próxima tanda) -->
     <footer class="pie">
-        <span class="me-gusta">
+        <!-- aria-pressed: el lector de pantalla anuncia si el "Me gusta" está activo -->
+        <button
+        type="button"
+        class="me-gusta"
+        [class.activo]="leGusta()"
+        [attr.aria-pressed]="leGusta()"
+        [disabled]="!usuario() || ocupada()"
+        [attr.title]="usuario() ? null : 'Ingresá para dar Me gusta'"
+        (click)="alternarMeGusta.emit(publicacion())"
+        >
         <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
             <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />
         </svg>
         {{ pub.cantidadMeGusta }} Me gusta
-        </span>
+        </button>
     </footer>
     </article>

@@ -88,6 +88,37 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.9rem;
+  min-height: 2.5rem; /* área cómoda para tocar en el celular */
+  padding: 0 0.85rem;
+  font: 500 0.9rem var(--fuente-texto);
   color: var(--color-texto-sec);
+  background: transparent;
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.me-gusta:hover:not(:disabled) {
+  color: var(--color-menta);
+  border-color: var(--color-menta);
+}
+
+/* Ya le di "Me gusta": corazón relleno y en menta */
+.me-gusta.activo {
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-color: transparent;
+}
+
+.me-gusta.activo .icono {
+  fill: currentColor;
+}
+
+.me-gusta:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
