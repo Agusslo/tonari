@@ -46,12 +46,12 @@
 - [ ] Los usuarios pueden hacer publicaciones, reaccionar y comentarlas
 - [ ] Cada usuario puede ver y editar su perfil
 - [ ] Solo se accede a la aplicación estando registrado o logueado
-- [ ] Diseño trabajado, no HTML plano
+- [x] Diseño trabajado, no HTML plano
 - [x] No usar `alert()`: usar modales
 - [ ] Login y registro contra el servidor Nest propio, con JWT
-- [ ] Status correctos en la API (400, 401, 201, etc.). Nunca 200 en errores ni 400 en respuestas correctas
+- [x] Status correctos en la API (400, 401, 201, etc.). Nunca 200 en errores ni 400 en respuestas correctas
 - [ ] Publicaciones con título, mensaje e imagen opcional
-- [ ] Publicaciones con "Me gusta"
+- [x] Publicaciones con "Me gusta"
 - [ ] Publicaciones con comentarios
 - [ ] UX: diseño trabajado y uniforme en toda la aplicación
 - [x] UX: navegación entre pantallas
@@ -104,11 +104,11 @@
   - [x] Cambiar el ordenamiento a cantidad de "Me gusta"
   - [x] Cantidad limitada de publicaciones, con paginación
   - [x] Cada publicación es un componente
-  - [ ] Dar y quitar "Me gusta" cuando corresponda
+  - [x] Dar y quitar "Me gusta" cuando corresponda
   - [x] Eliminar mis propias publicaciones
 - **Mi Perfil**
-  - [] Todos los datos del usuario y su foto de perfil
-  - [] Mis últimas 3 publicaciones y sus comentarios
+  - [x] Todos los datos del usuario y su foto de perfil
+  - [ ] Mis últimas 3 publicaciones y sus comentarios
 
 ### Back
 - **Publicaciones controller**
@@ -116,9 +116,9 @@
   - [x] POST: guarda una publicación relacionada a un usuario (título, descripción, URL de la imagen si tiene). La imagen se guarda
   - [x] DELETE: baja lógica, solo por el usuario que la creó o un administrador
   - [x] GET: listar las últimas publicaciones
-  - [ ] GET: parámetro para ordenar por fecha / por cantidad de "Me gusta"
-  - [ ] GET: filtrar las publicaciones de un usuario particular
-  - [ ] GET: parámetros `offset` y `limit` para paginar
+  - [x] GET: parámetro para ordenar por fecha / por cantidad de "Me gusta"
+  - [x] GET: filtrar las publicaciones de un usuario particular
+  - [x] GET: parámetros `offset` y `limit` para paginar
   - [x] POST: dar "Me gusta" (un solo "Me gusta" por usuario por publicación)
   - [x] DELETE: quitar "Me gusta", solo si el usuario lo había dado
 
