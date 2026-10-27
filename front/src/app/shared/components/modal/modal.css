@@ -3,10 +3,21 @@
   padding: 2rem;
   color: var(--color-hueso);
   text-align: center;
-  background: var(--color-panel);
+  /* Un brillo arriba, del color del tipo de modal (menta o rojo suave) */
+  background:
+    radial-gradient(18rem 9rem at 50% 0%, rgb(185 243 228 / 0.08), transparent 70%),
+    var(--color-panel);
   border: 1px solid var(--linea-suave);
   border-radius: var(--radio-panel);
-  box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.7);
+  box-shadow:
+    var(--brillo-borde),
+    0 30px 80px -20px rgb(0 0 0 / 0.7);
+}
+
+.modal-error {
+  background:
+    radial-gradient(18rem 9rem at 50% 0%, rgb(255 155 143 / 0.08), transparent 70%),
+    var(--color-panel);
 }
 
 /* El fondo que oscurece y desenfoca la página detrás del modal */
