@@ -145,6 +145,64 @@
   font-weight: 700;
 }
 
+/* Lista de mis últimas publicaciones */
+.mis-publicaciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mi-publicacion {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--color-campo);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-campo);
+}
+
+.miniatura {
+  flex: none;
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: cover;
+  border-radius: var(--radio-campo);
+}
+
+.mi-publicacion-texto {
+  min-width: 0; /* para que el texto largo se corte con "…" */
+}
+
+.mi-publicacion h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.mi-publicacion p {
+  margin: 0;
+}
+
+/* La descripción en una sola línea, con "…" si es larga */
+.mi-publicacion-texto > .texto-secundario:not(.detalle) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mi-publicacion .detalle {
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+}
+
+/* El estado vacío ya está adentro de la lista: sin margen extra arriba */
+.mis-publicaciones .vacio {
+  margin-top: 0;
+}
+
 /* ---------- Sin sesión ---------- */
 .sin-sesion {
   max-width: 32rem;
