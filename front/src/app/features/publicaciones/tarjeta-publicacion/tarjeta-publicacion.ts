@@ -1,4 +1,4 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import IPublicacion from '../../../core/interfaces/publicacion';
 import IUsuario from '../../../core/interfaces/usuario';
@@ -35,4 +35,15 @@ export class TarjetaPublicacion {
     if (!usuario) return false;
     return usuario._id === this.publicacion().usuario._id || usuario.perfil === 'administrador';
   });
+
+  // Iniciales del autor: se muestran si su foto no carga.
+  protected readonly iniciales = computed(() => {
+    const { nombre, apellido } = this.publicacion().usuario;
+    return `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
+  });
+
+  // Si una imagen falla (por ejemplo, el archivo ya no existe), se oculta
+  // en vez de mostrar el ícono de imagen rota.
+  protected readonly fotoRota = signal(false);
+  protected readonly imagenRota = signal(false);
 }

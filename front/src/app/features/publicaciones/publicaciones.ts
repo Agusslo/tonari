@@ -5,8 +5,8 @@ import { Auth } from '../../core/services/auth';
 import { PublicacionesApi } from '../../core/services/publicaciones-api';
 import IPublicacion from '../../core/interfaces/publicacion';
 import { TarjetaPublicacion } from './tarjeta-publicacion/tarjeta-publicacion';
-import { mensajeDeError } from '../../shared/utils/errores-http';
 import { Modal } from '../../shared/components/modal/modal';
+import { mensajeDeError } from '../../shared/utils/errores-http';
 
 @Component({
   selector: 'app-publicaciones',
@@ -40,6 +40,7 @@ export class Publicaciones implements OnInit {
 
   // Acciones sobre una publicación
   protected readonly ocupada = signal<string | null>(null); // _id de la que se está procesando
+  protected readonly aEliminar = signal<IPublicacion | null>(null); // abre el modal de confirmación
   protected readonly errorAccion = signal<string | null>(null); // abre el modal de error
 
   // ngOnInit: Angular lo llama una vez, cuando el componente ya está listo.
@@ -102,6 +103,30 @@ export class Publicaciones implements OnInit {
           lista.map((p) => (p._id === actualizada._id ? actualizada : p)),
         );
         this.ocupada.set(null);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.errorAccion.set(mensajeDeError(error));
+        this.ocupada.set(null);
+      },
+    });
+  }
+
+  // Se confirma en el modal (nada de confirm() del navegador).
+  confirmarEliminar() {
+    const publicacion = this.aEliminar();
+    const usuario = this.usuario();
+    if (!publicacion || !usuario) return;
+
+    this.aEliminar.set(null);
+    this.ocupada.set(publicacion._id);
+    this.api.eliminar(publicacion._id, usuario._id).subscribe({
+      next: () => {
+        this.ocupada.set(null);
+        // Si era la única de la última página, volvemos una página atrás.
+        if (this.publicaciones().length === 1 && this.pagina() > 1) {
+          this.pagina.update((pagina) => pagina - 1);
+        }
+        this.cargar(); // recargamos para que la paginación quede bien
       },
       error: (error: HttpErrorResponse) => {
         this.errorAccion.set(mensajeDeError(error));

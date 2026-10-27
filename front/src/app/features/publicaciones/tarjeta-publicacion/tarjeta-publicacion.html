@@ -3,7 +3,19 @@
     <article class="panel tarjeta" [attr.aria-labelledby]="'titulo-' + pub._id">
     <!-- Autor y fecha -->
     <header class="autor">
-        <img [src]="pub.usuario.imagenPerfil" alt="" class="autor-foto" width="44" height="44" />
+        @if (pub.usuario.imagenPerfil && !fotoRota()) {
+        <img
+            [src]="pub.usuario.imagenPerfil"
+            alt=""
+            class="autor-foto"
+            width="44"
+            height="44"
+            (error)="fotoRota.set(true)"
+        />
+        } @else {
+        <!-- Sin foto: las iniciales en un círculo menta -->
+        <span class="autor-foto autor-iniciales" aria-hidden="true">{{ iniciales() }}</span>
+        }
         <div class="autor-datos">
         <p class="autor-nombre">{{ pub.usuario.nombre }} {{ pub.usuario.apellido }}</p>
         <p class="texto-secundario autor-detalle">
@@ -19,8 +31,14 @@
     <h2 class="titulo" [id]="'titulo-' + pub._id">{{ pub.titulo }}</h2>
     <p class="descripcion">{{ pub.descripcion }}</p>
 
-    @if (pub.imagen) {
-        <img [src]="pub.imagen" [alt]="'Imagen de la publicación: ' + pub.titulo" class="imagen" loading="lazy" />
+    @if (pub.imagen && !imagenRota()) {
+        <img
+        [src]="pub.imagen"
+        [alt]="'Imagen de la publicación: ' + pub.titulo"
+        class="imagen"
+        loading="lazy"
+        (error)="imagenRota.set(true)"
+        />
     }
 
     <footer class="pie">

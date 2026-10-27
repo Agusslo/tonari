@@ -12,21 +12,51 @@
       </p>
     </header>
 
-    <!-- Orden: dos botones tipo "pestaña"; aria-pressed indica cuál está activo -->
-    <div class="orden" role="group" aria-label="Ordenar publicaciones">
-      <button type="button" [attr.aria-pressed]="orden() === 'fecha'" (click)="cambiarOrden('fecha')">
-        Más recientes
-      </button>
-      <button type="button" [attr.aria-pressed]="orden() === 'meGusta'" (click)="cambiarOrden('meGusta')">
-        Más "Me gusta"
-      </button>
+    <!-- Barra: el orden a la izquierda y cuántas publicaciones hay a la derecha -->
+    <div class="barra">
+      <!-- Orden: dos botones tipo "pestaña"; aria-pressed indica cuál está activo -->
+      <div class="orden" role="group" aria-label="Ordenar publicaciones">
+        <button type="button" [attr.aria-pressed]="orden() === 'fecha'" (click)="cambiarOrden('fecha')">
+          <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <circle cx="12" cy="12" r="8" />
+            <path d="M12 8v4l2.5 2.5" />
+          </svg>
+          Más recientes
+        </button>
+        <button type="button" [attr.aria-pressed]="orden() === 'meGusta'" (click)="cambiarOrden('meGusta')">
+          <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />
+          </svg>
+          Más "Me gusta"
+        </button>
+      </div>
+
+      @if (!cargando() && !error()) {
+        <p class="contador texto-secundario">
+          {{ total() }} {{ total() === 1 ? 'publicación' : 'publicaciones' }}
+        </p>
+      }
     </div>
 
     @if (cargando()) {
-      <!-- Cargando: aria-live avisa al lector de pantalla -->
-      <div class="panel estado" role="status" aria-live="polite">
-        <span class="spinner" aria-hidden="true"></span>
-        <p class="texto-secundario">Cargando publicaciones…</p>
+      <!-- Cargando: tarjetas "fantasma" con la forma de las de verdad.
+           aria-live avisa al lector de pantalla. -->
+      <div class="lista" role="status" aria-live="polite">
+        <span class="solo-lector">Cargando publicaciones…</span>
+        @for (n of [1, 2, 3]; track n) {
+          <div class="panel esqueleto" aria-hidden="true">
+            <div class="esqueleto-autor">
+              <span class="esqueleto-circulo"></span>
+              <div>
+                <span class="esqueleto-linea" style="width: 8rem"></span>
+                <span class="esqueleto-linea esqueleto-chica" style="width: 11rem"></span>
+              </div>
+            </div>
+            <span class="esqueleto-linea esqueleto-titulo"></span>
+            <span class="esqueleto-linea" style="width: 85%"></span>
+            <span class="esqueleto-linea" style="width: 60%"></span>
+          </div>
+        }
       </div>
     } @else if (error(); as mensaje) {
       <!-- Error: se explica qué pasó y se puede reintentar -->
@@ -44,6 +74,7 @@
             [usuario]="usuario()"
             [ocupada]="ocupada() === publicacion._id"
             (alternarMeGusta)="alternarMeGusta($event)"
+                        (eliminar)="aEliminar.set($event)"
           />
         } @empty {
           <!-- Estado vacío: @empty se muestra si la lista no tiene nada -->
@@ -65,12 +96,20 @@
       <!-- Paginación: solo si hay más de una página -->
       @if (totalPaginas() > 1) {
         <nav class="paginacion" aria-label="Páginas de publicaciones">
-          <button type="button" class="boton boton-secundario" [disabled]="pagina() === 1" (click)="irAPagina(pagina() - 1)">
+          <button type="button" class="paginacion-boton" [disabled]="pagina() === 1" (click)="irAPagina(pagina() - 1)">
+            <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M15 6l-6 6 6 6" />
+            </svg>
             Anterior
           </button>
-          <span class="texto-secundario" aria-live="polite">Página {{ pagina() }} de {{ totalPaginas() }}</span>
-          <button type="button" class="boton boton-secundario" [disabled]="pagina() === totalPaginas()" (click)="irAPagina(pagina() + 1)">
+          <span class="paginacion-estado" aria-live="polite">
+            Página <strong>{{ pagina() }}</strong> de {{ totalPaginas() }}
+          </span>
+          <button type="button" class="paginacion-boton" [disabled]="pagina() === totalPaginas()" (click)="irAPagina(pagina() + 1)">
             Siguiente
+            <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M9 6l6 6-6 6" />
+            </svg>
           </button>
         </nav>
       }
@@ -79,8 +118,10 @@
 
   <!-- Columna lateral: quién ingresó, con acceso a su perfil -->
   <aside class="lateral" aria-label="Tu cuenta">
+    <!-- Las dos tarjetas llevan arriba una franja con trama de manga -->
     @if (usuario(); as usuario) {
       <div class="panel tarjeta">
+        <div class="tarjeta-franja" aria-hidden="true"></div>
         <div class="tarjeta-usuario">
           <img [src]="usuario.imagenPerfil" alt="" class="avatar" width="56" height="56" />
           <div>
@@ -92,13 +133,34 @@
       </div>
     } @else {
       <div class="panel tarjeta">
+        <div class="tarjeta-franja" aria-hidden="true">
+          <img src="logo.svg" alt="" class="tarjeta-logo" width="48" height="48" />
+        </div>
         <p class="tarjeta-nombre">¿Querés sumarte?</p>
         <p class="texto-secundario">Ingresá para publicar, dar "Me gusta" y comentar.</p>
         <a routerLink="/login" class="boton boton-ancho">Ingresar</a>
+        <p class="tarjeta-pie texto-secundario">
+          ¿No tenés cuenta? <a routerLink="/registro">Creá una</a>
+        </p>
       </div>
     }
   </aside>
 </div>
+
+<!-- Confirmación antes de eliminar (nada de confirm() del navegador) -->
+<app-modal
+  [abierto]="aEliminar() !== null"
+  titulo="¿Eliminar publicación?"
+  tipo="error"
+  (cerrar)="aEliminar.set(null)"
+>
+  <p>"{{ aEliminar()?.titulo }}" va a dejar de verse en TONARI.</p>
+  <div acciones>
+    <button type="button" class="boton boton-secundario" (click)="aEliminar.set(null)">Cancelar</button>
+    <button type="button" class="boton boton-peligro" (click)="confirmarEliminar()">Eliminar</button>
+  </div>
+</app-modal>
+
 
 <!-- Error de una acción (Me gusta o eliminar) -->
 <app-modal
