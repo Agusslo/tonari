@@ -6,10 +6,11 @@ import { Auth } from '../../core/services/auth';
 import { PublicacionesApi } from '../../core/services/publicaciones-api';
 import IPublicacion from '../../core/interfaces/publicacion';
 import { mensajeDeError } from '../../shared/utils/errores-http';
+import { Avatar } from '../../shared/components/avatar/avatar';
 
 @Component({
   selector: 'app-perfil',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, Avatar],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })

@@ -1,0 +1,5 @@
+@if (fuente() !== 'iniciales') {
+  <img [src]="url()" alt="" (error)="siguienteRespaldo()" />
+} @else {
+  <span aria-hidden="true">{{ iniciales() }}</span>
+}

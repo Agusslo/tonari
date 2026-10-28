@@ -2,13 +2,8 @@
   <div class="perfil">
     <!-- Cabecera del perfil: foto grande, nombre y @usuario -->
     <section class="panel portada-perfil" aria-labelledby="nombre-perfil">
-      <img
-        [src]="usuario.imagenPerfil"
-        [alt]="'Foto de perfil de ' + usuario.nombre"
-        class="foto"
-        width="128"
-        height="128"
-      />
+      <!-- Si la foto no carga, el avatar muestra las iniciales -->
+      <app-avatar [usuario]="usuario" class="foto" />
       <div class="identidad">
         <p class="kicker" lang="ja" aria-hidden="true">プロフィール</p>
         <h1 id="nombre-perfil">{{ usuario.nombre }} {{ usuario.apellido }}</h1>

@@ -9,11 +9,24 @@
     <a routerLink="/publicaciones" routerLinkActive="activo" ariaCurrentWhenActive="page">
       Publicaciones
     </a>
-    <a routerLink="/mi-perfil" routerLinkActive="activo" ariaCurrentWhenActive="page">Mi perfil</a>
-    <a routerLink="/login" routerLinkActive="activo" ariaCurrentWhenActive="page">Ingresar</a>
-    <a routerLink="/registro" routerLinkActive="activo" ariaCurrentWhenActive="page">
-      Crear cuenta
-    </a>
+    <!-- Con sesión: acceso al perfil con tu foto. Sin sesión: ingresar o crear cuenta -->
+    @if (usuario(); as usuario) {
+      <a routerLink="/mi-perfil" routerLinkActive="activo" ariaCurrentWhenActive="page" class="nav-perfil">
+        <app-avatar [usuario]="usuario" />
+        Mi perfil
+      </a>
+      <button type="button" class="nav-salir" (click)="salir()">
+        <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11" />
+        </svg>
+        Salir
+      </button>
+    } @else {
+      <a routerLink="/login" routerLinkActive="activo" ariaCurrentWhenActive="page">Ingresar</a>
+      <a routerLink="/registro" routerLinkActive="activo" ariaCurrentWhenActive="page">
+        Crear cuenta
+      </a>
+    }
   </nav>
 </header>
 

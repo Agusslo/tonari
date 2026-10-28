@@ -1,0 +1,28 @@
+/* "Salir": igual que los links del menú, pero es un botón (hace una acción, no navega) */
+.nav-salir {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  font: 500 0.95rem var(--fuente-texto);
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.nav-salir:hover {
+  color: var(--color-error);
+  background: rgb(255 155 143 / 0.08);
+}
+
+@media (max-width: 480px) {
+  .nav-salir {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.875rem;
+  }
+}

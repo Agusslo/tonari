@@ -3,19 +3,8 @@
     <article class="panel tarjeta" [attr.aria-labelledby]="'titulo-' + pub._id">
     <!-- Autor y fecha -->
     <header class="autor">
-        @if (pub.usuario.imagenPerfil && !fotoRota()) {
-        <img
-            [src]="pub.usuario.imagenPerfil"
-            alt=""
-            class="autor-foto"
-            width="44"
-            height="44"
-            (error)="fotoRota.set(true)"
-        />
-        } @else {
-        <!-- Sin foto: las iniciales en un círculo menta -->
-        <span class="autor-foto autor-iniciales" aria-hidden="true">{{ iniciales() }}</span>
-        }
+        <!-- Sin foto (o si no carga): blobatar y, si tampoco, las iniciales -->
+        <app-avatar [usuario]="pub.usuario" />
         <div class="autor-datos">
         <p class="autor-nombre">{{ pub.usuario.nombre }} {{ pub.usuario.apellido }}</p>
         <p class="texto-secundario autor-detalle">

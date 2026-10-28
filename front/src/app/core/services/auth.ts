@@ -46,4 +46,10 @@
         .post<IUsuario>(`${this.url}/login`, { usuario, contraseña })
         .pipe(tap((usuarioLogueado) => this.usuario.set(usuarioLogueado)));
     }
+
+    // Cerrar sesión: se olvida quién estaba logueado.
+    // (En el Sprint 3 también se va a borrar el token guardado.)
+    cerrarSesion() {
+        this.usuario.set(null);
+    }
     }

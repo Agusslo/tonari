@@ -2,12 +2,13 @@ import { Component, computed, input, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import IPublicacion from '../../../core/interfaces/publicacion';
 import IUsuario from '../../../core/interfaces/usuario';
+import { Avatar } from '../../../shared/components/avatar/avatar';
 
 // Una publicación del muro. La pantalla Publicaciones repite este componente
 // una vez por cada publicación (consigna: "cada publicación es un componente").
 @Component({
   selector: 'app-tarjeta-publicacion',
-  imports: [DatePipe],
+  imports: [DatePipe, Avatar],
   templateUrl: './tarjeta-publicacion.html',
   styleUrl: './tarjeta-publicacion.css',
 })
@@ -36,14 +37,8 @@ export class TarjetaPublicacion {
     return usuario._id === this.publicacion().usuario._id || usuario.perfil === 'administrador';
   });
 
-  // Iniciales del autor: se muestran si su foto no carga.
-  protected readonly iniciales = computed(() => {
-    const { nombre, apellido } = this.publicacion().usuario;
-    return `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
-  });
-
-  // Si una imagen falla (por ejemplo, el archivo ya no existe), se oculta
-  // en vez de mostrar el ícono de imagen rota.
-  protected readonly fotoRota = signal(false);
+  // Si la imagen de la publicación falla (por ejemplo, el archivo ya no existe),
+  // se oculta en vez de mostrar el ícono de imagen rota. La foto del autor
+  // la resuelve <app-avatar> (blobatar o iniciales).
   protected readonly imagenRota = signal(false);
 }

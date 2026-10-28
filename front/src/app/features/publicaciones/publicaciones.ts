@@ -1,4 +1,13 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  afterRenderEffect,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  viewChildren,
+} from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { Auth } from '../../core/services/auth';
@@ -6,11 +15,14 @@ import { PublicacionesApi } from '../../core/services/publicaciones-api';
 import IPublicacion from '../../core/interfaces/publicacion';
 import { TarjetaPublicacion } from './tarjeta-publicacion/tarjeta-publicacion';
 import { Modal } from '../../shared/components/modal/modal';
+import { CrearPublicacion } from './crear-publicacion/crear-publicacion';
+import { Avatar } from '../../shared/components/avatar/avatar';
+import { entrarEnCascada } from '../../shared/utils/animaciones';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 
 @Component({
   selector: 'app-publicaciones',
-  imports: [RouterLink, TarjetaPublicacion, Modal],
+  imports: [RouterLink, TarjetaPublicacion, Modal, CrearPublicacion, Avatar],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
 })
@@ -43,6 +55,16 @@ export class Publicaciones implements OnInit {
   protected readonly aEliminar = signal<IPublicacion | null>(null); // abre el modal de confirmación
   protected readonly errorAccion = signal<string | null>(null); // abre el modal de error
 
+  // Las tarjetas que hay en pantalla (como elementos del DOM, para animarlas).
+  private readonly tarjetas = viewChildren(TarjetaPublicacion, { read: ElementRef });
+
+  constructor() {
+    // Después de dibujar la lista, las tarjetas nuevas entran en cascada (GSAP).
+    afterRenderEffect(() => {
+      entrarEnCascada(this.tarjetas().map((tarjeta) => tarjeta.nativeElement));
+    });
+  }
+
   // ngOnInit: Angular lo llama una vez, cuando el componente ya está listo.
   // Es el lugar para pedir los datos iniciales.
   ngOnInit() {
@@ -70,6 +92,13 @@ export class Publicaciones implements OnInit {
           this.cargando.set(false);
         },
       });
+  }
+
+  // Recién publicada: volvemos a "Más recientes", página 1, para que se vea arriba.
+  alCrear() {
+    this.orden.set('fecha');
+    this.pagina.set(1);
+    this.cargar();
   }
 
   // Al cambiar el orden se vuelve a la primera página.

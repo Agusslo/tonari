@@ -12,6 +12,11 @@
       </p>
     </header>
 
+    <!-- Formulario para publicar (solo con sesión iniciada) -->
+    @if (usuario(); as usuario) {
+      <app-crear-publicacion [usuario]="usuario" (creada)="alCrear()" />
+    }
+
     <!-- Barra: el orden a la izquierda y cuántas publicaciones hay a la derecha -->
     <div class="barra">
       <!-- Orden: dos botones tipo "pestaña"; aria-pressed indica cuál está activo -->
@@ -120,15 +125,17 @@
   <aside class="lateral" aria-label="Tu cuenta">
     <!-- Las dos tarjetas llevan arriba una franja con trama de manga -->
     @if (usuario(); as usuario) {
-      <div class="panel tarjeta">
+      <!-- Tarjeta de perfil: portada con trama, la foto montada encima y los datos centrados -->
+      <div class="panel tarjeta tarjeta-perfil">
         <div class="tarjeta-franja" aria-hidden="true"></div>
-        <div class="tarjeta-usuario">
-          <img [src]="usuario.imagenPerfil" alt="" class="avatar" width="56" height="56" />
-          <div>
-            <p class="tarjeta-nombre">{{ usuario.nombre }} {{ usuario.apellido }}</p>
-            <p class="texto-secundario tarjeta-alias">&#64;{{ usuario.nombreUsuario }}</p>
-          </div>
+        <app-avatar [usuario]="usuario" />
+        <div>
+          <p class="tarjeta-nombre">{{ usuario.nombre }} {{ usuario.apellido }}</p>
+          <p class="texto-secundario tarjeta-alias">&#64;{{ usuario.nombreUsuario }}</p>
         </div>
+        @if (usuario.descripcion) {
+          <p class="tarjeta-bio">{{ usuario.descripcion }}</p>
+        }
         <a routerLink="/mi-perfil" class="boton boton-secundario boton-ancho">Ver mi perfil</a>
       </div>
     } @else {
@@ -144,6 +151,18 @@
         </p>
       </div>
     }
+
+    <!-- Los temas de los que se habla en TONARI (los mismos de la portada) -->
+    <div class="panel tarjeta temas">
+      <p class="kicker" lang="ja" aria-hidden="true">話題</p>
+      <p class="tarjeta-nombre">Temas de la comunidad</p>
+      <ul class="etiquetas" aria-label="Temas de la comunidad">
+        <li>#anime</li>
+        <li>#manga</li>
+        <li>#fanart</li>
+        <li>#cosplay</li>
+      </ul>
+    </div>
   </aside>
 </div>
 

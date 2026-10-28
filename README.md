@@ -50,7 +50,7 @@
 - [x] No usar `alert()`: usar modales
 - [ ] Login y registro contra el servidor Nest propio, con JWT
 - [x] Status correctos en la API (400, 401, 201, etc.). Nunca 200 en errores ni 400 en respuestas correctas
-- [ ] Publicaciones con título, mensaje e imagen opcional
+- [x] Publicaciones con título, mensaje e imagen opcional
 - [x] Publicaciones con "Me gusta"
 - [ ] Publicaciones con comentarios
 - [ ] UX: diseño trabajado y uniforme en toda la aplicación
@@ -108,7 +108,7 @@
   - [x] Eliminar mis propias publicaciones
 - **Mi Perfil**
   - [x] Todos los datos del usuario y su foto de perfil
-  - [x] Mis últimas 3 publicaciones y sus comentarios
+  - [ ] Mis últimas 3 publicaciones y sus comentarios
 
 ### Back
 - **Publicaciones controller**

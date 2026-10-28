@@ -1,0 +1,239 @@
+:host {
+  display: block;
+  margin-bottom: 1.75rem; /* espacio con la barra de orden de abajo */
+}
+
+.crear {
+  padding: 1.25rem 1.25rem 0.85rem;
+  animation: aparecer 0.45s ease-out both;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Mientras escribís, el panel se "enciende" con el borde menta */
+.crear:focus-within {
+  border-color: rgb(185 243 228 / 0.35);
+  box-shadow:
+    var(--brillo-borde),
+    0 0 0 4px rgb(185 243 228 / 0.06),
+    var(--sombra-panel);
+}
+
+/* ---------- Foto + campos ---------- */
+.redactar {
+  display: flex;
+  gap: 0.9rem;
+}
+
+.redactar app-avatar {
+  --tam: 2.9rem;
+}
+
+.redactar-campos {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Campos sin caja: se escribe directo sobre el panel, como en una red social */
+.entrada-titulo,
+.entrada-mensaje {
+  width: 100%;
+  padding: 0;
+  font: inherit;
+  color: var(--color-hueso);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.entrada-titulo {
+  min-height: 2.9rem; /* alineado con el centro del avatar */
+  font: 400 1.2rem var(--fuente-titulo);
+}
+
+.entrada-mensaje {
+  min-height: 3.2rem;
+  max-height: 22rem;
+  line-height: 1.55;
+  resize: none;
+  field-sizing: content; /* crece con el texto (Chrome/Edge); si no, queda fijo */
+}
+
+.entrada-titulo::placeholder,
+.entrada-mensaje::placeholder {
+  color: var(--color-texto-sec);
+  opacity: 0.75;
+}
+
+.entrada-titulo::placeholder {
+  opacity: 0.9;
+}
+
+/* Error: una rayita roja abajo del campo */
+[aria-invalid='true'] {
+  box-shadow: inset 0 -1px 0 var(--color-error);
+}
+
+.mensaje-error {
+  margin: 0.35rem 0 0.5rem;
+}
+
+/* ---------- Vista previa de la imagen ---------- */
+.vista-previa {
+  position: relative;
+  margin: 0.5rem 0 0.25rem;
+  animation: aparecer 0.3s ease-out both;
+}
+
+.vista-previa img {
+  display: block;
+  width: 100%;
+  max-height: 20rem;
+  object-fit: cover;
+  border: 1px solid var(--linea-suave);
+  border-radius: 16px;
+}
+
+.quitar {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--color-hueso);
+  background: rgb(17 17 22 / 0.7);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--linea-suave);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.quitar:hover {
+  background: rgb(17 17 22 / 0.95);
+}
+
+/* ---------- Barra de herramientas ---------- */
+.herramientas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  /* arranca después del avatar, alineada con el texto */
+  margin-left: 3.8rem;
+  border-top: 1px solid var(--linea-suave);
+}
+
+.adjuntar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.5rem;
+  padding: 0 0.9rem 0 0.7rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-menta);
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.adjuntar:hover,
+.adjuntar.activo {
+  background: var(--velo-menta);
+}
+
+/* Como el input está oculto, el foco del teclado se muestra en el label */
+.adjuntar:has(+ input:focus-visible) {
+  outline: 2px solid var(--color-menta);
+  outline-offset: 3px;
+}
+
+.enviar {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-left: auto;
+}
+
+.publicado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-menta);
+  animation: aparecer 0.3s ease-out both;
+}
+
+/* Contador circular de caracteres */
+.contador {
+  position: relative;
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-texto-sec);
+}
+
+.contador svg {
+  transform: rotate(-90deg); /* que empiece a llenarse desde arriba */
+}
+
+.contador > span[aria-hidden] {
+  position: absolute;
+}
+
+.contador circle {
+  fill: none;
+  stroke-width: 2.5;
+}
+
+.contador-fondo {
+  stroke: var(--linea-suave);
+}
+
+.contador-avance {
+  stroke: var(--color-menta);
+  stroke-dasharray: 56.55; /* 2 · π · 9: el largo del círculo */
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.2s ease;
+}
+
+.contador.cerca .contador-avance {
+  stroke: var(--color-lila);
+}
+
+.contador.lleno {
+  color: var(--color-error);
+}
+
+.contador.lleno .contador-avance {
+  stroke: var(--color-error);
+}
+
+.boton-publicar {
+  min-height: 2.6rem;
+  padding: 0 1.3rem;
+  font-size: 0.95rem;
+}
+
+/* En el celular la barra ocupa todo el ancho */
+@media (max-width: 520px) {
+  .herramientas {
+    margin-left: 0;
+  }
+
+  .adjuntar span {
+    display: none;
+  }
+}
