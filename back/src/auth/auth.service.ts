@@ -10,7 +10,7 @@ import bcrypt from 'bcryptjs';
 import { Usuario } from '../usuarios/entities/usuario.entity.js';
 import { RegistroDto } from './dto/registro.dto.js';
 import { LoginDto } from './dto/login.dto.js';
-import { guardarImagen } from '../common/imagenes.js';
+import { guardarImagen, urlBlobatar } from '../common/imagenes.js';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +18,7 @@ export class AuthService {
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
   ) {}
 
-  async registro(registroDto: RegistroDto, imagen: Express.Multer.File) {
+  async registro(registroDto: RegistroDto, imagen: Express.Multer.File | undefined) {
     // 1. Revisar que el usuario no exista (correo y nombre de usuario son únicos).
     const existente = await this.usuarioModel.findOne({
       $or: [
@@ -37,8 +37,11 @@ export class AuthService {
     // 2. Hashear la contraseña. El 10 es el "costo": cuántas vueltas hace el algoritmo.
     const hash = await bcrypt.hash(registroDto.contraseña, 10);
 
-    // 3. Guardar la imagen de perfil y obtener su URL.
-    const urlImagen = await guardarImagen(imagen, 'perfiles');
+    // 3. Guardar la imagen de perfil y obtener su URL. Si no subió ninguna,
+    //    se le asigna su blobatar: así todos tienen una "identidad".
+    const urlImagen = imagen
+      ? await guardarImagen(imagen, 'perfiles')
+      : urlBlobatar(registroDto.nombreUsuario);
 
     // 4. Guardar el usuario con el hash en lugar de la contraseña.
     const usuario = await this.usuarioModel.create({

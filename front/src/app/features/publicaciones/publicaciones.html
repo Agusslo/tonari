@@ -123,34 +123,8 @@
 
   <!-- Columna lateral: quién ingresó, con acceso a su perfil -->
   <aside class="lateral" aria-label="Tu cuenta">
-    <!-- Las dos tarjetas llevan arriba una franja con trama de manga -->
-    @if (usuario(); as usuario) {
-      <!-- Tarjeta de perfil: portada con trama, la foto montada encima y los datos centrados -->
-      <div class="panel tarjeta tarjeta-perfil">
-        <div class="tarjeta-franja" aria-hidden="true"></div>
-        <app-avatar [usuario]="usuario" />
-        <div>
-          <p class="tarjeta-nombre">{{ usuario.nombre }} {{ usuario.apellido }}</p>
-          <p class="texto-secundario tarjeta-alias">&#64;{{ usuario.nombreUsuario }}</p>
-        </div>
-        @if (usuario.descripcion) {
-          <p class="tarjeta-bio">{{ usuario.descripcion }}</p>
-        }
-        <a routerLink="/mi-perfil" class="boton boton-secundario boton-ancho">Ver mi perfil</a>
-      </div>
-    } @else {
-      <div class="panel tarjeta">
-        <div class="tarjeta-franja" aria-hidden="true">
-          <img src="logo.svg" alt="" class="tarjeta-logo" width="48" height="48" />
-        </div>
-        <p class="tarjeta-nombre">¿Querés sumarte?</p>
-        <p class="texto-secundario">Ingresá para publicar, dar "Me gusta" y comentar.</p>
-        <a routerLink="/login" class="boton boton-ancho">Ingresar</a>
-        <p class="tarjeta-pie texto-secundario">
-          ¿No tenés cuenta? <a routerLink="/registro">Creá una</a>
-        </p>
-      </div>
-    }
+    <!-- Tu perfil resumido (o la invitación a sumarte si no hay sesión) -->
+    <app-tarjeta-perfil [usuario]="usuario()" [totalPublicaciones]="misPublicaciones()" />
 
     <!-- Los temas de los que se habla en TONARI (los mismos de la portada) -->
     <div class="panel tarjeta temas">

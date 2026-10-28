@@ -803,6 +803,34 @@ app-root {
   box-shadow: 0 0 0 8px rgb(185 243 228 / 0.04);
 }
 
+/* Transición entre pantallas (View Transitions): la vieja baja y se desvanece,
+   la nueva sube y aparece. La cabecera queda quieta: tiene su propio nombre. */
+.cabecera {
+  view-transition-name: cabecera;
+}
+
+::view-transition-old(root) {
+  animation: 0.18s ease-in both salir-pantalla;
+}
+
+::view-transition-new(root) {
+  animation: 0.32s 0.06s ease-out both entrar-pantalla;
+}
+
+@keyframes salir-pantalla {
+  to {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes entrar-pantalla {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
 /* Barra de scroll fina y oscura (Chrome, Edge, Safari) */
 ::-webkit-scrollbar {
   width: 10px;
@@ -827,7 +855,9 @@ app-root {
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
-  *::after {
+  *::after,
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
     transition: none !important;
     animation: none !important;
   }

@@ -1,0 +1,51 @@
+@if (usuario(); as usuario) {
+  <article class="panel tarjeta" aria-labelledby="tarjeta-perfil-nombre">
+    <!-- Banner: degradé de la marca a sangre, que se funde con el panel -->
+    <div class="banner" aria-hidden="true"></div>
+
+    <div class="cuerpo">
+      <app-avatar [usuario]="usuario" />
+
+      <div class="identidad">
+        <p id="tarjeta-perfil-nombre" class="nombre">{{ usuario.nombre }} {{ usuario.apellido }}</p>
+        <p class="alias">&#64;{{ usuario.nombreUsuario }}</p>
+      </div>
+
+      @if (usuario.descripcion) {
+        <p class="bio">{{ usuario.descripcion }}</p>
+      }
+
+      <!-- Números: el valor grande arriba y la etiqueta abajo -->
+      <dl class="numeros">
+        <div>
+          <dt>Publicaciones</dt>
+          <dd>{{ totalPublicaciones() === null ? '–' : publicacionesMostradas() }}</dd>
+        </div>
+        <div>
+          <dt>Miembro desde</dt>
+          <dd>{{ miembroDesde() }}</dd>
+        </div>
+      </dl>
+
+      <a routerLink="/mi-perfil" class="boton boton-secundario boton-ancho ver-perfil">
+        Ver mi perfil
+        <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </a>
+    </div>
+  </article>
+} @else {
+  <article class="panel tarjeta" aria-labelledby="tarjeta-sumate">
+    <div class="banner" aria-hidden="true">
+      <img src="logo.svg" alt="" class="logo" width="48" height="48" />
+    </div>
+
+    <div class="cuerpo">
+      <p id="tarjeta-sumate" class="nombre">¿Querés sumarte?</p>
+      <p class="bio">Ingresá para publicar, dar "Me gusta" y comentar.</p>
+      <a routerLink="/login" class="boton boton-ancho ver-perfil">Ingresar</a>
+      <p class="pie">¿No tenés cuenta? <a routerLink="/registro">Creá una</a></p>
+    </div>
+  </article>
+}

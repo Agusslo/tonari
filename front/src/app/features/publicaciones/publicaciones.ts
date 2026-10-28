@@ -9,20 +9,19 @@ import {
   viewChildren,
 } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
 import { Auth } from '../../core/services/auth';
 import { PublicacionesApi } from '../../core/services/publicaciones-api';
 import IPublicacion from '../../core/interfaces/publicacion';
 import { TarjetaPublicacion } from './tarjeta-publicacion/tarjeta-publicacion';
 import { Modal } from '../../shared/components/modal/modal';
 import { CrearPublicacion } from './crear-publicacion/crear-publicacion';
-import { Avatar } from '../../shared/components/avatar/avatar';
+import { TarjetaPerfil } from './tarjeta-perfil/tarjeta-perfil';
 import { entrarEnCascada } from '../../shared/utils/animaciones';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 
 @Component({
   selector: 'app-publicaciones',
-  imports: [RouterLink, TarjetaPublicacion, Modal, CrearPublicacion, Avatar],
+  imports: [TarjetaPublicacion, Modal, CrearPublicacion, TarjetaPerfil],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
 })
@@ -55,6 +54,9 @@ export class Publicaciones implements OnInit {
   protected readonly aEliminar = signal<IPublicacion | null>(null); // abre el modal de confirmación
   protected readonly errorAccion = signal<string | null>(null); // abre el modal de error
 
+  // Cuántas publicaciones tiene el usuario logueado (para su tarjeta lateral).
+  protected readonly misPublicaciones = signal<number | null>(null);
+
   // Las tarjetas que hay en pantalla (como elementos del DOM, para animarlas).
   private readonly tarjetas = viewChildren(TarjetaPublicacion, { read: ElementRef });
 
@@ -69,6 +71,17 @@ export class Publicaciones implements OnInit {
   // Es el lugar para pedir los datos iniciales.
   ngOnInit() {
     this.cargar();
+    this.contarMisPublicaciones();
+  }
+
+  // Pide solo 1 publicación del usuario: lo que importa es el "total" que viene en la respuesta.
+  contarMisPublicaciones() {
+    const usuario = this.usuario();
+    if (!usuario) return;
+    this.api.listar({ usuario: usuario._id, limit: 1 }).subscribe({
+      next: (pagina) => this.misPublicaciones.set(pagina.total),
+      error: () => this.misPublicaciones.set(null), // no es grave: la tarjeta muestra "–"
+    });
   }
 
   cargar() {
@@ -99,6 +112,7 @@ export class Publicaciones implements OnInit {
     this.orden.set('fecha');
     this.pagina.set(1);
     this.cargar();
+    this.contarMisPublicaciones();
   }
 
   // Al cambiar el orden se vuelve a la primera página.
@@ -156,6 +170,7 @@ export class Publicaciones implements OnInit {
           this.pagina.update((pagina) => pagina - 1);
         }
         this.cargar(); // recargamos para que la paginación quede bien
+        this.contarMisPublicaciones();
       },
       error: (error: HttpErrorResponse) => {
         this.errorAccion.set(mensajeDeError(error));

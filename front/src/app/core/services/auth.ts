@@ -28,14 +28,15 @@
     private readonly usuario = signal<IUsuario | null>(null);
     readonly usuarioActual = this.usuario.asReadonly();
 
-    // POST /auth/registro. Va como FormData (multipart/form-data) porque lleva
-    // un archivo: con JSON no se puede mandar una imagen.
-    registro(datos: DatosRegistro, imagenPerfil: File) {
+    // POST /auth/registro. Va como FormData (multipart/form-data) porque puede
+    // llevar un archivo: con JSON no se puede mandar una imagen.
+    // La foto es opcional: sin foto, el back le asigna un blobatar.
+    registro(datos: DatosRegistro, imagenPerfil: File | null) {
         const formData = new FormData();
         for (const [campo, valor] of Object.entries(datos)) {
         formData.append(campo, valor);
         }
-        formData.append('imagenPerfil', imagenPerfil);
+        if (imagenPerfil) formData.append('imagenPerfil', imagenPerfil);
 
         return this.http.post<IUsuario>(`${this.url}/registro`, formData);
     }

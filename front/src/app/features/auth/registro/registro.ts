@@ -1,11 +1,15 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
 import { Modal } from '../../../shared/components/modal/modal';
 import { Portada } from '../../../shared/components/portada/portada';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
+import { urlBlobatar } from '../../../shared/utils/blobatar';
+import { celebrar } from '../../../shared/utils/animaciones';
 import {
   camposIguales,
   contraseñaSegura,
@@ -62,6 +66,17 @@ export class Registro {
   protected readonly errorImagen = signal<string | null>(null);
   protected readonly intentoEnviar = signal(false);
 
+  // Sin foto elegida, el círculo muestra el blobatar que le va a tocar.
+  // debounceTime: se actualiza cuando deja de escribir, no en cada tecla.
+  private readonly nombreUsuario = toSignal(
+    this.formulario.controls.nombreUsuario.valueChanges.pipe(debounceTime(400)),
+    { initialValue: '' },
+  );
+  protected readonly blobatar = computed(() => {
+    const nombre = this.nombreUsuario().trim();
+    return PATRON_USUARIO.test(nombre) ? urlBlobatar(nombre) : null;
+  });
+
   // Mientras se espera la respuesta del back: botón deshabilitado y "Creando cuenta…"
   protected readonly enviando = signal(false);
   // Lo que muestra el modal (null = modal cerrado)
@@ -81,8 +96,9 @@ export class Registro {
     this.vistaPrevia.set(null);
     this.imagen.set(null);
 
+    // Es opcional: si no elige nada, se queda con su blobatar.
     if (!archivo) {
-      this.errorImagen.set('La imagen de perfil es obligatoria');
+      this.errorImagen.set(null);
       return;
     }
     if (!TIPOS_IMAGEN.includes(archivo.type)) {
@@ -133,12 +149,10 @@ export class Registro {
   enviar() {
     this.intentoEnviar.set(true);
     this.formulario.markAllAsTouched(); // muestra todos los errores de una
-    if (!this.imagen()) {
-      this.errorImagen.set(this.errorImagen() ?? 'La imagen de perfil es obligatoria');
-    }
 
+    // La imagen es opcional (null = el back le asigna un blobatar).
     const imagen = this.imagen();
-    if (this.formulario.invalid || !imagen || this.enviando()) return;
+    if (this.formulario.invalid || this.errorImagen() || this.enviando()) return;
 
     // "repetirContraseña" solo sirve en el front: al back no se manda.
     const { repetirContraseña: _repetida, ...datos } = this.formulario.getRawValue();
@@ -147,6 +161,7 @@ export class Registro {
     this.auth.registro(datos, imagen).subscribe({
       next: (usuario) => {
         this.enviando.set(false);
+        celebrar(); // confeti de bienvenida
         this.resultado.set({
           tipo: 'exito',
           titulo: `¡Bienvenido, ${usuario.nombre}!`,

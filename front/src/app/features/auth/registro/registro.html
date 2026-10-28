@@ -178,12 +178,17 @@
         <legend><span class="grupo-numero" aria-hidden="true">03</span> Tu perfil</legend>
 
         <div class="campo">
-          <label for="imagenPerfil">Imagen de perfil</label>
+          <label for="imagenPerfil">
+            Imagen de perfil <span class="texto-secundario">(opcional)</span>
+          </label>
           <div class="imagen">
-            <!-- Círculo con la vista previa; mientras no hay foto, una silueta -->
-            <div class="avatar">
+            <!-- Círculo con la vista previa: tu foto, o si no elegiste ninguna,
+                 el blobatar que te va a tocar (o una silueta si todavía no hay usuario) -->
+            <div class="avatar" [class.con-blobatar]="!vistaPrevia() && blobatar()">
               @if (vistaPrevia(); as url) {
                 <img [src]="url" alt="Vista previa de tu imagen de perfil" class="vista-previa" />
+              } @else if (blobatar(); as url) {
+                <img [src]="url" alt="Vista previa de tu blobatar" class="blobatar" />
               } @else {
                 <svg class="icono" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
                   <circle cx="12" cy="8" r="4" />
@@ -201,6 +206,20 @@
             />
           </div>
           <p id="ayuda-imagen" class="ayuda texto-secundario">JPG, PNG o WEBP, hasta 2 MB.</p>
+          @if (!imagen()) {
+            <!-- Aviso: sin foto, igual tiene una "identidad" en TONARI -->
+            <p class="aviso-blobatar">
+              <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z" />
+              </svg>
+              <span>
+                ¿Sin foto? No pasa nada: te asignamos automáticamente un
+                <a href="https://blobatar.dev" target="_blank" rel="noopener">blobatar</a>,
+                un avatar único creado a partir de tu nombre de usuario, para que tengas tu propia
+                identidad en TONARI.
+              </span>
+            </p>
+          }
           @if (errorImagen()) {
             <p id="error-imagen" class="mensaje-error">{{ errorImagen() }}</p>
           }

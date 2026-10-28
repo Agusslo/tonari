@@ -34,6 +34,13 @@
     });
     }
 
+    // Foto de perfil por defecto: un blobatar (https://blobatar.dev), un avatar
+    // generado a partir del nombre de usuario. Como el nombre de usuario es único,
+    // cada cuenta recibe su propio blobatar, y siempre el mismo.
+    export function urlBlobatar(nombreUsuario: string) {
+    return `https://blobatar.dev/avatar/${encodeURIComponent(nombreUsuario)}`;
+    }
+
     // Guarda la imagen en back/uploads/<carpeta>/ con un nombre único
     // y devuelve la URL pública para guardarla en la base de datos.
     export async function guardarImagen(imagen: Express.Multer.File, carpeta: string) {

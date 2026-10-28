@@ -1,5 +1,6 @@
 import { Component, computed, input, linkedSignal } from '@angular/core';
 import IUsuario from '../../../core/interfaces/usuario';
+import { urlBlobatar } from '../../utils/blobatar';
 
 // Foto de perfil redonda, con dos respaldos si la foto no está o no carga:
 //   1. la foto que subió el usuario
@@ -24,7 +25,7 @@ export class Avatar {
   protected readonly url = computed(() =>
     this.fuente() === 'foto'
       ? this.usuario().imagenPerfil
-      : `https://blobatar.dev/avatar/${encodeURIComponent(this.usuario().nombreUsuario)}`,
+      : urlBlobatar(this.usuario().nombreUsuario),
   );
 
   protected readonly iniciales = computed(() => {
