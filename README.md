@@ -67,7 +67,7 @@
 - [ ] Solo se accede a la aplicación estando registrado o logueado
 - [x] Diseño trabajado, no HTML plano
 - [x] No usar `alert()`: usar modales
-- [ ] Login y registro contra el servidor Nest propio, con JWT
+- [x] Login y registro contra el servidor Nest propio, con JWT
 - [x] Status correctos en la API (400, 401, 201, etc.). Nunca 200 en errores ni 400 en respuestas correctas
 - [x] Publicaciones con título, mensaje e imagen opcional
 - [x] Publicaciones con "Me gusta"
@@ -153,7 +153,7 @@
   - [ ] Primera carga limitada + botón "cargar más" que suma comentarios sin perder los anteriores
   - [ ] El autor puede editar su comentario; un comentario editado lo anuncia
 - **Login y Registro**
-  - [ ] Guardar localmente el token que devuelve la petición (o usar cookies)
+  - [x] Guardar localmente el token que devuelve la petición (o usar cookies)
 - **Página Cargando**
   - [ ] Al iniciar la aplicación: pantalla de cargando con spinner
   - [ ] Validar el token contra la ruta autorizar: si es válido → Publicaciones; si no → Login
@@ -170,11 +170,11 @@
   - [ ] PUT: modifica el mensaje y agrega `modificado: true`
   - [ ] GET: comentarios de una publicación, paginados, los más recientes primero
 - **Módulo Autenticación**
-  - [ ] Login y registro generan un JWT con quién es el usuario (uuid/correo/nombre de usuario) y su rol (usuario o administrador)
-  - [ ] Token devuelto en la respuesta o por cookies
-  - [ ] Token vence a los 15 minutos
-  - [ ] POST autorizar: valida que el token sea válido y no esté vencido. 401 si hay error; si es válido, devuelve los datos del usuario
-  - [ ] POST refrescar: valida el token y devuelve uno nuevo con la misma payload y 15 minutos de vencimiento
+  - [x] Login y registro generan un JWT con quién es el usuario (uuid/correo/nombre de usuario) y su rol (usuario o administrador)
+  - [x] Token devuelto en la respuesta o por cookies
+  - [x] Token vence a los 15 minutos
+  - [x] POST autorizar: valida que el token sea válido y no esté vencido. 401 si hay error; si es válido, devuelve los datos del usuario
+  - [x] POST refrescar: valida el token y devuelve uno nuevo con la misma payload y 15 minutos de vencimiento
 
 ---
 
