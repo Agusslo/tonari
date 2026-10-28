@@ -1,0 +1,120 @@
+<form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate class="editar">
+  <!-- Foto: la actual (o la nueva elegida) y el botón para cambiarla -->
+  <div class="campo">
+    <span class="etiqueta">Foto de perfil</span>
+    <div class="foto-fila">
+      <div class="foto-previa">
+        @if (vistaPrevia(); as url) {
+          <img [src]="url" alt="Vista previa de tu nueva foto" />
+        } @else {
+          <!-- La actual, con el mismo avatar de toda la app (si no carga, blobatar o iniciales) -->
+          <app-avatar [usuario]="usuario()" />
+        }
+      </div>
+      <label class="cambiar-foto" for="editar-imagen">
+        {{ imagen() ? 'Elegir otra' : 'Cambiar foto' }}
+      </label>
+      <input
+        #entradaImagen
+        id="editar-imagen"
+        type="file"
+        class="solo-lector"
+        accept="image/jpeg,image/png,image/webp"
+        (change)="elegirImagen($event)"
+      />
+      @if (imagen()) {
+        <button type="button" class="deshacer" (click)="quitarImagen(); entradaImagen.value = ''">
+          Dejar la actual
+        </button>
+      }
+    </div>
+    @if (errorImagen()) {
+      <p class="mensaje-error">{{ errorImagen() }}</p>
+    }
+  </div>
+
+  <div class="fila">
+    <div class="campo">
+      <label for="editar-nombre">Nombre</label>
+      <input
+        id="editar-nombre"
+        type="text"
+        formControlName="nombre"
+        autocomplete="given-name"
+        [attr.aria-invalid]="mostrarError('nombre')"
+        aria-describedby="error-editar-nombre"
+      />
+      @if (mostrarError('nombre')) {
+        <p id="error-editar-nombre" class="mensaje-error">{{ mensajeError('nombre') }}</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="editar-apellido">Apellido</label>
+      <input
+        id="editar-apellido"
+        type="text"
+        formControlName="apellido"
+        autocomplete="family-name"
+        [attr.aria-invalid]="mostrarError('apellido')"
+        aria-describedby="error-editar-apellido"
+      />
+      @if (mostrarError('apellido')) {
+        <p id="error-editar-apellido" class="mensaje-error">{{ mensajeError('apellido') }}</p>
+      }
+    </div>
+  </div>
+
+  <div class="campo">
+    <label for="editar-fecha">Fecha de nacimiento</label>
+    <input
+      id="editar-fecha"
+      type="date"
+      formControlName="fechaNacimiento"
+      [max]="hoy"
+      [attr.aria-invalid]="mostrarError('fechaNacimiento')"
+      aria-describedby="error-editar-fecha"
+    />
+    @if (mostrarError('fechaNacimiento')) {
+      <p id="error-editar-fecha" class="mensaje-error">{{ mensajeError('fechaNacimiento') }}</p>
+    }
+  </div>
+
+  <div class="campo">
+    <label for="editar-descripcion">Descripción breve</label>
+    <textarea
+      id="editar-descripcion"
+      formControlName="descripcion"
+      rows="3"
+      maxlength="200"
+      [attr.aria-invalid]="mostrarError('descripcion')"
+      aria-describedby="contador-editar error-editar-descripcion"
+    ></textarea>
+    <p id="contador-editar" class="ayuda texto-secundario contador">
+      {{ formulario.controls.descripcion.value.length }}/200
+    </p>
+    @if (mostrarError('descripcion')) {
+      <p id="error-editar-descripcion" class="mensaje-error">{{ mensajeError('descripcion') }}</p>
+    }
+  </div>
+
+  <p class="ayuda texto-secundario">
+    El correo y el nombre de usuario no se pueden cambiar: son los datos con los que ingresás.
+  </p>
+
+  @if (error(); as mensaje) {
+    <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+  }
+
+  <div class="botones">
+    <button type="button" class="boton boton-secundario" (click)="cancelar.emit()">Cancelar</button>
+    <button type="submit" class="boton" [attr.aria-disabled]="enviando()" [attr.aria-busy]="enviando()">
+      @if (enviando()) {
+        <span class="spinner" aria-hidden="true"></span>
+        Guardando…
+      } @else {
+        Guardar cambios
+      }
+    </button>
+  </div>
+</form>

@@ -7,10 +7,11 @@ import { PublicacionesApi } from '../../core/services/publicaciones-api';
 import IPublicacion from '../../core/interfaces/publicacion';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 import { Avatar } from '../../shared/components/avatar/avatar';
+import { EditarPerfil } from './editar-perfil/editar-perfil';
 
 @Component({
   selector: 'app-perfil',
-  imports: [DatePipe, RouterLink, Avatar],
+  imports: [DatePipe, RouterLink, Avatar, EditarPerfil],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
@@ -24,6 +25,10 @@ export class Perfil implements OnInit {
   protected readonly misPublicaciones = signal<IPublicacion[]>([]);
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
+
+  // ¿Está abierto el formulario de "Editar perfil"? Y el aviso de "guardado".
+  protected readonly editando = signal(false);
+  protected readonly guardadoOk = signal(false);
 
   ngOnInit() {
     const usuario = this.usuario();
@@ -40,5 +45,11 @@ export class Perfil implements OnInit {
         this.cargando.set(false);
       },
     });
+  }
+
+  alGuardar() {
+    this.editando.set(false);
+    this.guardadoOk.set(true);
+    setTimeout(() => this.guardadoOk.set(false), 4000); // el aviso se va solo
   }
 }

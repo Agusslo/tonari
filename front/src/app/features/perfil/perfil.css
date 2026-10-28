@@ -124,6 +124,46 @@
   overflow-wrap: anywhere; /* para correos largos */
 }
 
+/* Título "Mis datos" + botón "Editar" en la misma línea */
+.datos-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.datos-encabezado h2 {
+  margin: 0;
+}
+
+.boton-editar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.25rem;
+  padding: 0 0.9rem;
+  font: 500 0.9rem var(--fuente-texto);
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border: 0;
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+}
+
+.boton-editar:hover {
+  background: rgb(185 243 228 / 0.18);
+}
+
+/* Aviso verde de "perfil actualizado" */
+.aviso-ok {
+  margin: 1rem 0 0;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.9rem;
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-radius: var(--radio-campo);
+}
+
 /* ---------- Mis últimas publicaciones ---------- */
 .publicaciones {
   animation: aparecer 0.5s 0.16s ease-out both;

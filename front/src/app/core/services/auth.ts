@@ -15,6 +15,14 @@
     descripcion: string;
     }
 
+    // Lo que se puede cambiar al editar el perfil (la foto va aparte).
+    export interface DatosPerfil {
+    nombre: string;
+    apellido: string;
+    fechaNacimiento: string; // 'YYYY-MM-DD'
+    descripcion: string;
+    }
+
     // Todo lo que habla con /auth del back pasa por acá:
     // los componentes nunca llaman al back directo.
     @Service()
@@ -52,5 +60,20 @@
     // (En el Sprint 3 también se va a borrar el token guardado.)
     cerrarSesion() {
         this.usuario.set(null);
+    }
+
+    // PATCH /usuarios/:id: editar mi perfil (multipart por si trae foto nueva).
+    // Con la respuesta actualizamos el usuario guardado: así el menú, Mi Perfil
+    // y las publicaciones muestran los datos nuevos al instante.
+    actualizarPerfil(id: string, datos: DatosPerfil, imagenPerfil: File | null) {
+        const formData = new FormData();
+        for (const [campo, valor] of Object.entries(datos)) {
+        formData.append(campo, valor);
+        }
+        if (imagenPerfil) formData.append('imagenPerfil', imagenPerfil);
+
+        return this.http
+        .patch<IUsuario>(`${environment.apiUrl}/usuarios/${id}`, formData)
+        .pipe(tap((usuarioActualizado) => this.usuario.set(usuarioActualizado)));
     }
     }

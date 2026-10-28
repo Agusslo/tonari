@@ -44,7 +44,7 @@
 - [x] Colaborador `ndiez-utn` agregado
 - [x] Idea original (no copiar el diseño de una red social existente)
 - [ ] Los usuarios pueden hacer publicaciones, reaccionar y comentarlas
-- [ ] Cada usuario puede ver y editar su perfil
+- [x] Cada usuario puede ver y editar su perfil
 - [ ] Solo se accede a la aplicación estando registrado o logueado
 - [x] Diseño trabajado, no HTML plano
 - [x] No usar `alert()`: usar modales
