@@ -4,18 +4,22 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { Usuario } from '../usuarios/entities/usuario.entity.js';
 import { RegistroDto } from './dto/registro.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { guardarImagen, urlBlobatar } from '../common/imagenes.js';
+import { PayloadToken } from './token/token.guard.js';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
+    private readonly config: ConfigService,
   ) {}
 
   async registro(registroDto: RegistroDto, imagen: Express.Multer.File | undefined) {
@@ -55,8 +59,8 @@ export class AuthService {
       imagenPerfil: urlImagen,
     });
 
-    // 5. Devolver los datos SIN la contraseña.
-    return this.sinContraseña(usuario);
+    // 5. Devolver los datos (SIN la contraseña) y el token: queda logueado.
+    return this.respuestaConToken(usuario);
   }
 
   async login(loginDto: LoginDto) {
@@ -91,13 +95,54 @@ export class AuthService {
       ); // 403
     }
 
-    // 4. Devolver todos los datos del usuario, menos la contraseña.
+    // 4. Devolver los datos del usuario (menos la contraseña) y el token.
+    return this.respuestaConToken(usuario);
+  }
+
+  // POST /auth/autorizar. El guard ya validó el token (firma y vencimiento).
+  // Acá buscamos al usuario para devolver sus datos actualizados: el token
+  // solo tiene id, nombre de usuario y perfil.
+  async autorizar(payload: PayloadToken) {
+    const usuario = await this.usuarioModel.findById(payload.id);
+
+    // Puede pasar que lo hayan deshabilitado (o borrado) después de loguearse.
+    if (!usuario || !usuario.habilitado) {
+      throw new UnauthorizedException('Tu sesión ya no es válida'); // 401
+    }
+
     return this.sinContraseña(usuario);
+  }
+
+  // POST /auth/refrescar. Mismo payload, 15 minutos nuevos.
+  refrescar(payload: PayloadToken) {
+    return { token: this.generarToken(payload) };
+  }
+
+  // Firma el token con el secreto del server. Vence a los 15 minutos (consigna).
+  // Armamos el objeto de nuevo a propósito: el payload que viene del guard
+  // trae iat y exp viejos, y jsonwebtoken no deja firmar con exp y expiresIn juntos.
+  private generarToken({ id, nombreUsuario, perfil }: PayloadToken) {
+    return jwt.sign(
+      { id, nombreUsuario, perfil },
+      this.config.getOrThrow<string>('CONTRASENA_DEL_SERVER'),
+      { expiresIn: '15m' },
+    );
+  }
+
+  // Lo que devuelven login y registro: { usuario, token }.
+  private respuestaConToken(usuario: { toObject(): Usuario & { _id: unknown } }) {
+    const datos = this.sinContraseña(usuario);
+    const token = this.generarToken({
+      id: String(datos._id),
+      nombreUsuario: datos.nombreUsuario,
+      perfil: datos.perfil,
+    });
+    return { usuario: datos, token };
   }
 
   // select:false solo aplica a las búsquedas: un documento recién creado,
   // o uno pedido con '+contraseña', la trae. Acá se la sacamos antes de responder.
-  private sinContraseña(usuario: { toObject(): Usuario }) {
+  private sinContraseña<T extends { contraseña: string }>(usuario: { toObject(): T }) {
     const { contraseña: _contraseña, ...datos } = usuario.toObject();
     return datos;
   }

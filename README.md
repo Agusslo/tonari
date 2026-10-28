@@ -37,6 +37,25 @@
 
 ---
 
+## ▶️ Cómo correrlo en local
+
+**Back** (`back/`):
+
+1. `npm install`
+2. Copiar `.env.example` como `.env` y completar:
+   - `MONGO_URI`: connection string de MongoDB Atlas (con la base `tonari`)
+   - `URL_PUBLICA`: URL del back (`http://localhost:3000`)
+   - `URL_FRONT`: URL del front (`http://localhost:4200`)
+   - `CONTRASENA_DEL_SERVER`: secreto con el que se firman los JWT (cualquier texto largo y difícil de adivinar)
+3. `npm run start:dev` → queda en `http://localhost:3000`
+
+**Front** (`front/`):
+
+1. `npm install`
+2. `ng serve` → queda en `http://localhost:4200`
+
+---
+
 ## 🧩 Requisitos generales (aplican a todo el TP)
 
 - [x] Repositorio privado con el nombre `NOMBRE-APELLIDO-TP2-PROG4-2026-C2`
