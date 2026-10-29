@@ -1,5 +1,5 @@
     import { HttpClient } from '@angular/common/http';
-    import { inject, Service, signal } from '@angular/core';
+    import { computed, inject, Service, signal } from '@angular/core';
     import { map, tap } from 'rxjs';
     import { environment } from '../../../environments/environment';
     import IUsuario from '../interfaces/usuario';
@@ -50,6 +50,11 @@
     // Lo lee el interceptor para mandarlo en cada pedido al back.
     private readonly tokenGuardado = signal<string | null>(leerToken());
     readonly token = this.tokenGuardado.asReadonly();
+
+    // Cuándo vence el token, en milisegundos (null = no hay token).
+    // Se lee del "exp" que viene adentro del token. computed: se recalcula solo
+    // cada vez que cambia el token (login, refrescar, salir).
+    readonly vencimiento = computed(() => leerVencimiento(this.tokenGuardado()));
 
     // POST /auth/registro. Va como FormData (multipart/form-data) porque puede
     // llevar un archivo: con JSON no se puede mandar una imagen.
@@ -144,5 +149,19 @@
         return localStorage.getItem(CLAVE_TOKEN);
     } catch {
         return null;
+    }
+    }
+
+    // El payload es la parte del medio del token (encabezado.PAYLOAD.firma), en base64url.
+    // No está encriptado: cualquiera lo puede leer (lo que no se puede es cambiarlo).
+    // atob decodifica base64; antes cambiamos - y _ por + y /, que es la diferencia con base64.
+    // exp viene en SEGUNDOS (estándar JWT) y Date.now() usa milisegundos: por eso * 1000.
+    function leerVencimiento(token: string | null): number | null {
+    if (!token) return null;
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+        return typeof payload.exp === 'number' ? payload.exp * 1000 : null;
+    } catch {
+        return null; // token con formato raro: lo tratamos como si no hubiera
     }
     }

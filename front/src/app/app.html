@@ -41,3 +41,43 @@
   </p>
   <p>Un mundo más cerca.</p>
 </footer>
+
+
+
+<!-- Sesión por vencer (consigna: a los 10 minutos, avisar que quedan 5 y ofrecer extenderla) -->
+<app-modal
+  [abierto]="avisoSesion()"
+  titulo="Tu sesión está por vencer"
+  tipo="error"
+  (cerrar)="avisoSesion.set(false)"
+>
+  <p>
+    Te quedan <strong>{{ tiempoRestante() }}</strong> minutos. ¿Querés extender la sesión
+    15 minutos más?
+  </p>
+  @if (errorExtender(); as mensaje) {
+    <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+  }
+  <button acciones type="button" class="boton boton-secundario" (click)="avisoSesion.set(false)">
+    No, gracias
+  </button>
+  <button acciones type="button" class="boton" [disabled]="extendiendo()" (click)="extenderSesion()">
+    @if (extendiendo()) {
+      <span class="spinner" aria-hidden="true"></span>
+    }
+    Extender sesión
+  </button>
+</app-modal>
+
+<!-- Se terminaron los 15 minutos sin extender -->
+<app-modal
+  [abierto]="sesionTerminada()"
+  titulo="Tu sesión terminó"
+  tipo="error"
+  (cerrar)="sesionTerminada.set(false)"
+>
+  <p>Por seguridad, la sesión dura 15 minutos. Ingresá de nuevo para seguir.</p>
+  <button acciones type="button" class="boton" (click)="sesionTerminada.set(false)">
+    Entendido
+  </button>
+</app-modal>
