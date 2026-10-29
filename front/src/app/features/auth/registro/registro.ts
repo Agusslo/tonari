@@ -166,7 +166,7 @@ export class Registro {
           tipo: 'exito',
           titulo: `¡Bienvenido, ${usuario.nombre}!`,
           mensaje:
-            'Tu cuenta quedó creada. Ya podés ingresar con tu correo o tu nombre de usuario.',
+            'Tu cuenta quedó creada y ya iniciaste sesión. ¡Vamos a ver qué se comparte!',
         });
       },
       error: (error: HttpErrorResponse) => {
@@ -184,7 +184,7 @@ export class Registro {
   cerrarResultado() {
     const fueExito = this.resultado()?.tipo === 'exito';
     this.resultado.set(null);
-    if (fueExito) this.router.navigate(['/login']);
+    if (fueExito) this.router.navigate(['/publicaciones']);
   }
 }
 
