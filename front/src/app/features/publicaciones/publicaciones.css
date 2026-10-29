@@ -205,17 +205,112 @@
   white-space: nowrap;
 }
 
-/* Temas de la comunidad: kicker, título y etiquetas */
-.temas {
+/* Ranking "Lo más querido": puesto grande, avatar, título y corazones */
+.ranking {
   gap: 0.5rem;
 }
 
-.temas .kicker {
+.ranking .kicker {
   margin: 0;
 }
 
-.temas .etiquetas {
-  margin-top: 0.5rem;
+.ranking h2 {
+  margin: 0;
+}
+
+.ranking-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: var(--radio-campo);
+  transition: background-color 0.15s ease;
+}
+
+.ranking-item:hover {
+  background: var(--velo-hueso);
+}
+
+/* El primero se destaca: fondo menta suave y el número con el degradé de la marca */
+.ranking-primero {
+  background: var(--velo-menta);
+  border-color: rgb(185 243 228 / 0.2);
+}
+
+.ranking-puesto {
+  flex: none;
+  width: 1.4rem;
+  font-family: var(--fuente-titulo);
+  font-size: 1.6rem;
+  line-height: 1;
+  text-align: center;
+  /* Los demás puestos van "huecos": solo el contorno del número */
+  color: transparent;
+  -webkit-text-stroke: 1px var(--color-texto-sec);
+}
+
+.ranking-primero .ranking-puesto {
+  background: var(--degrade-marca);
+  background-clip: text;
+  -webkit-text-stroke: 0;
+}
+
+.ranking-item app-avatar {
+  --tam: 2.1rem;
+}
+
+.ranking-texto {
+  min-width: 0; /* deja que el título se corte con "…" */
+  flex: 1;
+}
+
+.ranking-titulo {
+  font-weight: 700;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranking-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-texto-sec);
+}
+
+.ranking-autor {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranking-likes {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--color-menta);
+  font-weight: 700;
+}
+
+.ranking-likes .icono {
+  fill: currentColor;
+}
+
+.ranking-vacio {
+  font-size: 0.85rem;
 }
 
 /* En pantallas chicas: una sola columna (la tarjeta baja al final) */

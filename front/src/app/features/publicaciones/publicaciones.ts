@@ -16,12 +16,13 @@ import { TarjetaPublicacion } from './tarjeta-publicacion/tarjeta-publicacion';
 import { Modal } from '../../shared/components/modal/modal';
 import { CrearPublicacion } from './crear-publicacion/crear-publicacion';
 import { TarjetaPerfil } from './tarjeta-perfil/tarjeta-perfil';
+import { Avatar } from '../../shared/components/avatar/avatar';
 import { entrarEnCascada } from '../../shared/utils/animaciones';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 
 @Component({
   selector: 'app-publicaciones',
-  imports: [TarjetaPublicacion, Modal, CrearPublicacion, TarjetaPerfil],
+  imports: [TarjetaPublicacion, Modal, CrearPublicacion, TarjetaPerfil, Avatar],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
 })
@@ -57,6 +58,9 @@ export class Publicaciones implements OnInit {
   // Cuántas publicaciones tiene el usuario logueado (para su tarjeta lateral).
   protected readonly misPublicaciones = signal<number | null>(null);
 
+  // Ranking lateral: las 3 con más "Me gusta" (null = todavía cargando).
+  protected readonly destacadas = signal<IPublicacion[] | null>(null);
+
   // Las tarjetas que hay en pantalla (como elementos del DOM, para animarlas).
   private readonly tarjetas = viewChildren(TarjetaPublicacion, { read: ElementRef });
 
@@ -72,6 +76,16 @@ export class Publicaciones implements OnInit {
   ngOnInit() {
     this.cargar();
     this.contarMisPublicaciones();
+    this.cargarDestacadas();
+  }
+
+  // Las que tienen 0 "Me gusta" no entran: un ranking de ceros no dice nada.
+  cargarDestacadas() {
+    this.api.listar({ orden: 'meGusta', limit: 3 }).subscribe({
+      next: (pagina) =>
+        this.destacadas.set(pagina.publicaciones.filter((p) => p.cantidadMeGusta > 0)),
+      error: () => this.destacadas.set([]), // no es grave: se muestra el mensaje de vacío
+    });
   }
 
   // Pide solo 1 publicación del usuario: lo que importa es el "total" que viene en la respuesta.
@@ -146,6 +160,7 @@ export class Publicaciones implements OnInit {
           lista.map((p) => (p._id === actualizada._id ? actualizada : p)),
         );
         this.ocupada.set(null);
+        this.cargarDestacadas(); // un "Me gusta" puede cambiar el ranking
       },
       error: (error: HttpErrorResponse) => {
         this.errorAccion.set(mensajeDeError(error));
@@ -171,6 +186,7 @@ export class Publicaciones implements OnInit {
         }
         this.cargar(); // recargamos para que la paginación quede bien
         this.contarMisPublicaciones();
+        this.cargarDestacadas(); // si estaba en el ranking, tiene que salir
       },
       error: (error: HttpErrorResponse) => {
         this.errorAccion.set(mensajeDeError(error));

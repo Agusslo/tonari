@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="TONARI — Un mundo más cerca." />
     <meta name="theme-color" content="#111116" />
-    <!-- Favicon propio: SVG para navegadores modernos, .ico como respaldo -->
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="16x16 32x32 48x48" />
+    <!-- Favicon propio, transparente. Los navegadores sin soporte de SVG
+         buscan solos /favicon.ico como respaldo. "?v=2" evita que quede el viejo en caché. -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2" sizes="any" />
 
     <!-- Tipografías de Google Fonts. Si no cargan, se usan las de respaldo del CSS. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

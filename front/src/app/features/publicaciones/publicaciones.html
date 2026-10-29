@@ -126,17 +126,43 @@
     <!-- Tu perfil resumido (o la invitación a sumarte si no hay sesión) -->
     <app-tarjeta-perfil [usuario]="usuario()" [totalPublicaciones]="misPublicaciones()" />
 
-    <!-- Los temas de los que se habla en TONARI (los mismos de la portada) -->
-    <div class="panel tarjeta temas">
-      <p class="kicker" lang="ja" aria-hidden="true">話題</p>
-      <p class="tarjeta-nombre">Temas de la comunidad</p>
-      <ul class="etiquetas" aria-label="Temas de la comunidad">
-        <li>#anime</li>
-        <li>#manga</li>
-        <li>#fanart</li>
-        <li>#cosplay</li>
-      </ul>
-    </div>
+    <!-- Ranking: las 3 publicaciones con más "Me gusta" de toda la comunidad -->
+    <section class="panel tarjeta ranking" aria-labelledby="titulo-ranking">
+      <p class="kicker" lang="ja" aria-hidden="true">人気ランキング</p>
+      <h2 id="titulo-ranking" class="tarjeta-nombre">Lo más querido</h2>
+
+      @if (destacadas(); as destacadas) {
+        @if (destacadas.length) {
+          <ol class="ranking-lista">
+            @for (publicacion of destacadas; track publicacion._id; let i = $index) {
+              <li class="ranking-item" [class.ranking-primero]="i === 0">
+                <span class="ranking-puesto" aria-hidden="true">{{ i + 1 }}</span>
+                <app-avatar [usuario]="publicacion.usuario" />
+                <div class="ranking-texto">
+                  <p class="ranking-titulo">{{ publicacion.titulo }}</p>
+                  <p class="ranking-meta">
+                    <span class="ranking-autor">&#64;{{ publicacion.usuario.nombreUsuario }}</span>
+                    <span class="ranking-likes">
+                      <svg class="icono" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
+                        <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />
+                      </svg>
+                      {{ publicacion.cantidadMeGusta }}
+                      <span class="solo-lector">Me gusta</span>
+                    </span>
+                  </p>
+                </div>
+              </li>
+            }
+          </ol>
+        } @else {
+          <p class="texto-secundario ranking-vacio">
+            Nadie dio "Me gusta" todavía. ¡El primer corazón puede ser tuyo!
+          </p>
+        }
+      } @else {
+        <p class="texto-secundario ranking-vacio" role="status">Armando el ranking…</p>
+      }
+    </section>
   </aside>
 </div>
 
