@@ -24,10 +24,15 @@ export class PublicacionesService {
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
   ) {}
 
-  // imagen es opcional: llega undefined si la publicación no tiene.
-  async crear(crearPublicacionDto: CrearPublicacionDto, imagen?: Express.Multer.File) {
+  // usuarioId: quién publica (viene del token). imagen es opcional:
+  // llega undefined si la publicación no tiene.
+  async crear(
+    crearPublicacionDto: CrearPublicacionDto,
+    usuarioId: string,
+    imagen?: Express.Multer.File,
+  ) {
     // 1. El autor tiene que existir y estar habilitado (si no, 404).
-    await this.buscarUsuario(crearPublicacionDto.usuario);
+    await this.buscarUsuario(usuarioId);
 
     // 2. Si mandaron imagen, guardarla y quedarse con su URL.
     const urlImagen = imagen ? await guardarImagen(imagen, 'publicaciones') : undefined;
@@ -37,7 +42,7 @@ export class PublicacionesService {
     const publicacion = await this.publicacionModel.create({
       titulo: crearPublicacionDto.titulo,
       descripcion: crearPublicacionDto.descripcion,
-      usuario: crearPublicacionDto.usuario,
+      usuario: usuarioId,
       imagen: urlImagen,
     });
 
