@@ -64,7 +64,7 @@
 - [x] Idea original (no copiar el diseño de una red social existente)
 - [ ] Los usuarios pueden hacer publicaciones, reaccionar y comentarlas
 - [x] Cada usuario puede ver y editar su perfil
-- [ ] Solo se accede a la aplicación estando registrado o logueado
+- [x] Solo se accede a la aplicación estando registrado o logueado
 - [x] Diseño trabajado, no HTML plano
 - [x] No usar `alert()`: usar modales
 - [x] Login y registro contra el servidor Nest propio, con JWT
@@ -155,13 +155,13 @@
 - **Login y Registro**
   - [x] Guardar localmente el token que devuelve la petición (o usar cookies)
 - **Página Cargando**
-  - [ ] Al iniciar la aplicación: pantalla de cargando con spinner
-  - [ ] Validar el token contra la ruta autorizar: si es válido → Publicaciones; si no → Login
+  - [x] Al iniciar la aplicación: pantalla de cargando con spinner
+  - [x] Validar el token contra la ruta autorizar: si es válido → Publicaciones; si no → Login
 - **A nivel aplicación**
   - [ ] Al iniciar sesión, contador de 10 minutos
   - [ ] Al terminar: modal avisando que quedan 5 minutos y preguntando si extender la sesión
   - [ ] Si acepta: refrescar el token
-  - [ ] Si una petición devuelve 401: redirigir al login
+  - [x] Si una petición devuelve 401: redirigir al login
 
 ### Back
 - **Comentarios controller**
