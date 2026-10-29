@@ -175,10 +175,9 @@
   margin: 0;
 }
 
-/* La tarjeta queda fija al bajar (debajo de la cabecera) */
+/* La columna acompaña al scroll de la página (no es sticky): con dos tarjetas
+   es más alta que la pantalla, y fija escondía la de abajo hasta el final del muro. */
 .lateral {
-  position: sticky;
-  top: 6rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -205,121 +204,86 @@
   white-space: nowrap;
 }
 
-/* Ranking "Lo más querido": puesto grande, avatar, título y corazones */
-.ranking {
+/* Tu actividad: kicker, dos números, tu publicación más querida y el botón */
+.resumen {
+  gap: 0.75rem;
+}
+
+.resumen .kicker,
+.resumen h2 {
+  margin: 0;
+}
+
+.resumen-numeros {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
-}
-
-.ranking .kicker {
   margin: 0;
 }
 
-.ranking h2 {
-  margin: 0;
-}
-
-.ranking-lista {
+/* En el HTML va primero la etiqueta (dt); acá se dibuja el número arriba */
+.resumen-numeros div {
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin: 0.5rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ranking-item {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  padding: 0.6rem 0.7rem;
-  border: 1px solid transparent;
-  border-radius: var(--radio-campo);
-  transition: background-color 0.15s ease;
-}
-
-.ranking-item:hover {
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 0.2rem;
+  padding: 0.75rem;
   background: var(--velo-hueso);
+  border-radius: var(--radio-campo);
 }
 
-/* El primero se destaca: fondo menta suave y el número con el degradé de la marca */
-.ranking-primero {
-  background: var(--velo-menta);
-  border-color: rgb(185 243 228 / 0.2);
-}
-
-.ranking-puesto {
-  flex: none;
-  width: 1.4rem;
-  font-family: var(--fuente-titulo);
-  font-size: 1.6rem;
-  line-height: 1;
-  text-align: center;
-  /* Los demás puestos van "huecos": solo el contorno del número */
-  color: transparent;
-  -webkit-text-stroke: 1px var(--color-texto-sec);
-}
-
-.ranking-primero .ranking-puesto {
-  background: var(--degrade-marca);
-  background-clip: text;
-  -webkit-text-stroke: 0;
-}
-
-.ranking-item app-avatar {
-  --tam: 2.1rem;
-}
-
-.ranking-texto {
-  min-width: 0; /* deja que el título se corte con "…" */
-  flex: 1;
-}
-
-.ranking-titulo {
-  font-weight: 700;
-  font-size: 0.9rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.ranking-meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  font-size: 0.75rem;
+.resumen-numeros dt {
+  font-size: 0.72rem;
+  line-height: 1.3;
   color: var(--color-texto-sec);
 }
 
-.ranking-autor {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.ranking-likes {
-  flex: none;
-  display: inline-flex;
+.resumen-numeros dd {
+  display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.3rem;
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: 1.5rem;
+  line-height: 1;
   color: var(--color-menta);
-  font-weight: 700;
 }
 
-.ranking-likes .icono {
+.resumen-numeros .icono {
   fill: currentColor;
 }
 
-.ranking-vacio {
-  font-size: 0.85rem;
+/* Tu más querida: una cita con el filo menta a la izquierda */
+.resumen-destacada {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--color-menta);
+}
+
+.resumen-etiqueta {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-texto-sec);
+}
+
+.resumen-titulo {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.resumen-likes,
+.resumen-vacio {
+  font-size: 0.8rem;
+  color: var(--color-texto-sec);
 }
 
 /* En pantallas chicas: una sola columna (la tarjeta baja al final) */
 @media (max-width: 860px) {
   .muro {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .lateral {
-    position: static;
   }
 }

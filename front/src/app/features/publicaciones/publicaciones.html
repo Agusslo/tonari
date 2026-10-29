@@ -126,43 +126,52 @@
     <!-- Tu perfil resumido (o la invitación a sumarte si no hay sesión) -->
     <app-tarjeta-perfil [usuario]="usuario()" [totalPublicaciones]="misPublicaciones()" />
 
-    <!-- Ranking: las 3 publicaciones con más "Me gusta" de toda la comunidad -->
-    <section class="panel tarjeta ranking" aria-labelledby="titulo-ranking">
-      <p class="kicker" lang="ja" aria-hidden="true">人気ランキング</p>
-      <h2 id="titulo-ranking" class="tarjeta-nombre">Lo más querido</h2>
+    <!-- Tu resumen: cómo le va a lo que compartís (solo con sesión) -->
+    @if (usuario()) {
+      <section class="panel tarjeta resumen" aria-labelledby="titulo-resumen">
+        <p class="kicker" lang="ja" aria-hidden="true">あなた</p>
+        <h2 id="titulo-resumen" class="tarjeta-nombre">Tu actividad</h2>
 
-      @if (destacadas(); as destacadas) {
-        @if (destacadas.length) {
-          <ol class="ranking-lista">
-            @for (publicacion of destacadas; track publicacion._id; let i = $index) {
-              <li class="ranking-item" [class.ranking-primero]="i === 0">
-                <span class="ranking-puesto" aria-hidden="true">{{ i + 1 }}</span>
-                <app-avatar [usuario]="publicacion.usuario" />
-                <div class="ranking-texto">
-                  <p class="ranking-titulo">{{ publicacion.titulo }}</p>
-                  <p class="ranking-meta">
-                    <span class="ranking-autor">&#64;{{ publicacion.usuario.nombreUsuario }}</span>
-                    <span class="ranking-likes">
-                      <svg class="icono" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
-                        <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />
-                      </svg>
-                      {{ publicacion.cantidadMeGusta }}
-                      <span class="solo-lector">Me gusta</span>
-                    </span>
-                  </p>
-                </div>
-              </li>
-            }
-          </ol>
-        } @else {
-          <p class="texto-secundario ranking-vacio">
-            Nadie dio "Me gusta" todavía. ¡El primer corazón puede ser tuyo!
-          </p>
+        <!-- Números: el valor grande arriba y la etiqueta abajo -->
+        <dl class="resumen-numeros">
+          <div>
+            <dt>"Me gusta" recibidos</dt>
+            <dd>
+              <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />
+              </svg>
+              {{ meGustaRecibidos() ?? '–' }}
+            </dd>
+          </div>
+          <div>
+            <dt>Promedio por publicación</dt>
+            <dd>{{ promedioMeGusta() ?? '–' }}</dd>
+          </div>
+        </dl>
+
+        @if (miMasQuerida(); as publicacion) {
+          <div class="resumen-destacada">
+            <p class="resumen-etiqueta">Tu más querida</p>
+            <p class="resumen-titulo">{{ publicacion.titulo }}</p>
+            <p class="resumen-likes">
+              <span aria-hidden="true">♥</span> {{ publicacion.cantidadMeGusta }}
+              {{ publicacion.cantidadMeGusta === 1 ? 'persona le dio' : 'personas le dieron' }} "Me gusta"
+            </p>
+          </div>
+        } @else if (misPublicaciones() === 0) {
+          <p class="texto-secundario resumen-vacio">Todavía no publicaste nada. ¡Estrená tu muro!</p>
+        } @else if (misPublicaciones()) {
+          <p class="texto-secundario resumen-vacio">Tus publicaciones todavía esperan su primer corazón.</p>
         }
-      } @else {
-        <p class="texto-secundario ranking-vacio" role="status">Armando el ranking…</p>
-      }
-    </section>
+
+        <button type="button" class="boton boton-ancho" (click)="irACrear()">
+          <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          Publicar algo
+        </button>
+      </section>
+    }
   </aside>
 </div>
 

@@ -16,13 +16,12 @@ import { TarjetaPublicacion } from './tarjeta-publicacion/tarjeta-publicacion';
 import { Modal } from '../../shared/components/modal/modal';
 import { CrearPublicacion } from './crear-publicacion/crear-publicacion';
 import { TarjetaPerfil } from './tarjeta-perfil/tarjeta-perfil';
-import { Avatar } from '../../shared/components/avatar/avatar';
 import { entrarEnCascada } from '../../shared/utils/animaciones';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 
 @Component({
   selector: 'app-publicaciones',
-  imports: [TarjetaPublicacion, Modal, CrearPublicacion, TarjetaPerfil, Avatar],
+  imports: [TarjetaPublicacion, Modal, CrearPublicacion, TarjetaPerfil],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
 })
@@ -58,8 +57,19 @@ export class Publicaciones implements OnInit {
   // Cuántas publicaciones tiene el usuario logueado (para su tarjeta lateral).
   protected readonly misPublicaciones = signal<number | null>(null);
 
-  // Ranking lateral: las 3 con más "Me gusta" (null = todavía cargando).
-  protected readonly destacadas = signal<IPublicacion[] | null>(null);
+  // "Tu resumen": los "Me gusta" que recibió en total y su publicación más querida
+  // (null = todavía no llegó o falló el pedido).
+  protected readonly meGustaRecibidos = signal<number | null>(null);
+  protected readonly miMasQuerida = signal<IPublicacion | null>(null);
+
+  // Promedio de "Me gusta" por publicación, con un decimal (2,5, no 2,4999…).
+  // toLocaleString('es-AR') formatea el número como se usa acá: con coma decimal.
+  protected readonly promedioMeGusta = computed(() => {
+    const recibidos = this.meGustaRecibidos();
+    const publicaciones = this.misPublicaciones();
+    if (recibidos === null || !publicaciones) return null;
+    return (Math.round((recibidos / publicaciones) * 10) / 10).toLocaleString('es-AR');
+  });
 
   // Las tarjetas que hay en pantalla (como elementos del DOM, para animarlas).
   private readonly tarjetas = viewChildren(TarjetaPublicacion, { read: ElementRef });
@@ -75,27 +85,39 @@ export class Publicaciones implements OnInit {
   // Es el lugar para pedir los datos iniciales.
   ngOnInit() {
     this.cargar();
-    this.contarMisPublicaciones();
-    this.cargarDestacadas();
+    this.cargarMiResumen();
   }
 
-  // Las que tienen 0 "Me gusta" no entran: un ranking de ceros no dice nada.
-  cargarDestacadas() {
-    this.api.listar({ orden: 'meGusta', limit: 3 }).subscribe({
-      next: (pagina) =>
-        this.destacadas.set(pagina.publicaciones.filter((p) => p.cantidadMeGusta > 0)),
-      error: () => this.destacadas.set([]), // no es grave: se muestra el mensaje de vacío
-    });
-  }
-
-  // Pide solo 1 publicación del usuario: lo que importa es el "total" que viene en la respuesta.
-  contarMisPublicaciones() {
+  // Un solo pedido para las dos tarjetas laterales: las publicaciones del usuario
+  // ordenadas por "Me gusta". De ahí sale el total (tarjeta de perfil), la suma de
+  // corazones y la más querida (la primera). 50 es el máximo que acepta el back:
+  // con más publicaciones, la suma cuenta solo las 50 más queridas.
+  cargarMiResumen() {
     const usuario = this.usuario();
     if (!usuario) return;
-    this.api.listar({ usuario: usuario._id, limit: 1 }).subscribe({
-      next: (pagina) => this.misPublicaciones.set(pagina.total),
-      error: () => this.misPublicaciones.set(null), // no es grave: la tarjeta muestra "–"
+    this.api.listar({ usuario: usuario._id, orden: 'meGusta', limit: 50 }).subscribe({
+      next: (pagina) => {
+        const lista = pagina.publicaciones;
+        this.misPublicaciones.set(pagina.total);
+        this.meGustaRecibidos.set(lista.reduce((suma, p) => suma + p.cantidadMeGusta, 0));
+        // Una "más querida" con 0 corazones no tiene sentido mostrarla
+        this.miMasQuerida.set(lista[0]?.cantidadMeGusta ? lista[0] : null);
+      },
+      error: () => {
+        // No es grave: las tarjetas muestran "–"
+        this.misPublicaciones.set(null);
+        this.meGustaRecibidos.set(null);
+        this.miMasQuerida.set(null);
+      },
     });
+  }
+
+  // "Publicar algo" de la tarjeta lateral: lleva al formulario de arriba
+  // y deja el cursor en el título, listo para escribir.
+  irACrear() {
+    const titulo = document.getElementById('titulo');
+    titulo?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    titulo?.focus({ preventScroll: true });
   }
 
   cargar() {
@@ -126,7 +148,7 @@ export class Publicaciones implements OnInit {
     this.orden.set('fecha');
     this.pagina.set(1);
     this.cargar();
-    this.contarMisPublicaciones();
+    this.cargarMiResumen();
   }
 
   // Al cambiar el orden se vuelve a la primera página.
@@ -160,7 +182,7 @@ export class Publicaciones implements OnInit {
           lista.map((p) => (p._id === actualizada._id ? actualizada : p)),
         );
         this.ocupada.set(null);
-        this.cargarDestacadas(); // un "Me gusta" puede cambiar el ranking
+        this.cargarMiResumen(); // si era tuya, cambian tus corazones
       },
       error: (error: HttpErrorResponse) => {
         this.errorAccion.set(mensajeDeError(error));
@@ -185,8 +207,7 @@ export class Publicaciones implements OnInit {
           this.pagina.update((pagina) => pagina - 1);
         }
         this.cargar(); // recargamos para que la paginación quede bien
-        this.contarMisPublicaciones();
-        this.cargarDestacadas(); // si estaba en el ranking, tiene que salir
+        this.cargarMiResumen();
       },
       error: (error: HttpErrorResponse) => {
         this.errorAccion.set(mensajeDeError(error));
