@@ -158,9 +158,9 @@
   - [x] Al iniciar la aplicación: pantalla de cargando con spinner
   - [x] Validar el token contra la ruta autorizar: si es válido → Publicaciones; si no → Login
 - **A nivel aplicación**
-  - [ ] Al iniciar sesión, contador de 10 minutos
-  - [ ] Al terminar: modal avisando que quedan 5 minutos y preguntando si extender la sesión
-  - [ ] Si acepta: refrescar el token
+  - [x] Al iniciar sesión, contador de 10 minutos
+  - [x] Al terminar: modal avisando que quedan 5 minutos y preguntando si extender la sesión
+  - [x] Si acepta: refrescar el token
   - [x] Si una petición devuelve 401: redirigir al login
 
 ### Back
