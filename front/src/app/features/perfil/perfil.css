@@ -258,6 +258,29 @@
   font-size: 0.85rem;
 }
 
+/* Esqueleto de "Mis últimas publicaciones": misma caja que .mi-publicacion.
+   Las líneas con brillo (.esqueleto-linea, .esqueleto-titulo...) están en styles.css */
+.esqueleto-mi-publicacion,
+.esqueleto-mi-publicacion:hover {
+  border-color: var(--linea-suave);
+  transform: none; /* no se mueve al pasar el mouse: todavía no es clickeable */
+}
+
+.esqueleto-miniatura {
+  flex: none;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: var(--radio-campo);
+}
+
+.esqueleto-textos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.55rem;
+}
+
 /* El estado vacío ya está adentro de la lista: sin margen extra arriba */
 .mis-publicaciones .vacio {
   margin-top: 0;

@@ -76,7 +76,22 @@
       <h2 id="titulo-mis-publicaciones">Mis últimas publicaciones</h2>
 
       @if (cargando()) {
-        <p class="texto-secundario" role="status">Cargando tus publicaciones…</p>
+        <!-- Esqueleto: 3 bloques con la misma forma que las publicaciones de abajo,
+             así la pantalla no "salta" cuando llegan los datos -->
+        <ul class="mis-publicaciones" aria-hidden="true">
+          @for (n of [1, 2, 3]; track n) {
+            <li class="mi-publicacion esqueleto-mi-publicacion">
+              <span class="esqueleto-linea esqueleto-miniatura"></span>
+              <div class="esqueleto-textos">
+                <span class="esqueleto-linea esqueleto-titulo"></span>
+                <span class="esqueleto-linea" style="width: 85%"></span>
+                <span class="esqueleto-linea esqueleto-chica" style="width: 40%"></span>
+              </div>
+            </li>
+          }
+        </ul>
+        <!-- El esqueleto es solo visual: al lector de pantalla le avisamos con texto -->
+        <p class="solo-lector" role="status">Cargando tus publicaciones…</p>
       } @else if (error(); as mensaje) {
         <p class="mensaje-error" role="alert">{{ mensaje }}</p>
       } @else {

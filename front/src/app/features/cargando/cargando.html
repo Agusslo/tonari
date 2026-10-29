@@ -1,0 +1,19 @@
+<!-- Tapa toda la pantalla (también la cabecera) mientras se valida la sesión -->
+<section class="cargando" aria-labelledby="titulo-cargando">
+  <img src="logo.svg" alt="" class="cargando-logo" width="88" height="88" />
+
+  @if (sinConexion()) {
+    <h1 id="titulo-cargando" class="cargando-titulo">No pudimos conectarnos</h1>
+    <p class="cargando-texto" role="alert">
+      El servidor no responde. Revisá tu conexión e intentá de nuevo.
+    </p>
+    <button type="button" class="boton" (click)="validarSesion()">Reintentar</button>
+  } @else {
+    <!-- role="status": los lectores de pantalla anuncian el texto sin interrumpir -->
+    <div class="cargando-estado" role="status">
+      <span class="spinner cargando-spinner" aria-hidden="true"></span>
+      <h1 id="titulo-cargando" class="cargando-titulo">Entrando a TONARI…</h1>
+    </div>
+    <p class="cargando-texto">Estamos revisando tu sesión.</p>
+  }
+</section>
