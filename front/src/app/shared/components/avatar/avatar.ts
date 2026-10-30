@@ -1,6 +1,7 @@
 import { Component, computed, input, linkedSignal } from '@angular/core';
 import IUsuario from '../../../core/interfaces/usuario';
 import { urlBlobatar } from '../../utils/blobatar';
+import { urlCuadrada } from '../../utils/cloudinary';
 
 // Foto de perfil redonda, con dos respaldos si la foto no está o no carga:
 //   1. la foto que subió el usuario
@@ -22,9 +23,10 @@ export class Avatar {
     this.usuario().imagenPerfil ? 'foto' : 'blobatar',
   );
 
+  // 256px alcanza para el avatar más grande (8rem = 128px) en pantallas 2x.
   protected readonly url = computed(() =>
     this.fuente() === 'foto'
-      ? this.usuario().imagenPerfil
+      ? urlCuadrada(this.usuario().imagenPerfil, 256)
       : urlBlobatar(this.usuario().nombreUsuario),
   );
 

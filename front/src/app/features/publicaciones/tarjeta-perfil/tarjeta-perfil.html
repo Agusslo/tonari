@@ -4,12 +4,15 @@
     <div class="banner" aria-hidden="true"></div>
 
     <div class="cuerpo">
-      <app-avatar [usuario]="usuario" />
+      <!-- Foto y nombre llevan a tu perfil (es lo que la gente espera tocar) -->
+      <a routerLink="/mi-perfil" class="enlace-perfil" title="Ver mi perfil">
+        <app-avatar [usuario]="usuario" />
 
-      <div class="identidad">
-        <p id="tarjeta-perfil-nombre" class="nombre">{{ usuario.nombre }} {{ usuario.apellido }}</p>
-        <p class="alias">&#64;{{ usuario.nombreUsuario }}</p>
-      </div>
+        <span class="identidad">
+          <span id="tarjeta-perfil-nombre" class="nombre">{{ usuario.nombre }} {{ usuario.apellido }}</span>
+          <span class="alias">&#64;{{ usuario.nombreUsuario }}</span>
+        </span>
+      </a>
 
       @if (usuario.descripcion) {
         <p class="bio">{{ usuario.descripcion }}</p>
