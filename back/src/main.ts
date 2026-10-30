@@ -1,19 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'node:path';
 import dns from 'node:dns';
 import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   // Algunos routers/proveedores responden mal las consultas DNS de tipo SRV
-  // que usa "mongodb+srv://". Usamos DNS públicos (Google y Cloudflare).
-  dns.setServers(['8.8.8.8', '1.1.1.1']);
+  // que usa "mongodb+srv://". En tu PC usamos DNS públicos (Google y Cloudflare).
+  // En Vercel (process.env.VERCEL existe) no hace falta: su DNS anda bien.
+  if (!process.env.VERCEL) {
+    dns.setServers(['8.8.8.8', '1.1.1.1']);
+  }
 
-  // NestExpressApplication: le dice a TypeScript que usamos Express,
-  // así tenemos disponible useStaticAssets.
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
 
   // CORS: el front corre en otro origen (otro puerto en tu PC, otro dominio en
@@ -28,10 +27,6 @@ async function bootstrap() {
   // transform: entrega al controller el DTO ya convertido (por ejemplo, "10" -> 10)
   // y con sus valores por defecto.
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-
-  // Sirve los archivos de la carpeta "uploads" como públicos:
-  // back/uploads/perfiles/foto.png -> http://localhost:3000/uploads/perfiles/foto.png
-  app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads/' });
 
   await app.listen(process.env.PORT ?? 3000);
 }
