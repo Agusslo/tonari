@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module.js';
 import { PublicacionesModule } from './publicaciones/publicaciones.module.js';
 import { ComentariosModule } from './comentarios/comentarios.module.js';
 import { BibliotecaModule } from './biblioteca/biblioteca.module.js';
+import { CatalogoModule } from './catalogo/catalogo.module.js';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { BibliotecaModule } from './biblioteca/biblioteca.module.js';
     PublicacionesModule,
     ComentariosModule,
     BibliotecaModule,
+    CatalogoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

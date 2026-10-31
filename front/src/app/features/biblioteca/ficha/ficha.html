@@ -83,6 +83,8 @@
           <span>
             @if (total(); as t) {
               {{ t }} {{ unidad() }}s
+            } @else if (capitulosManga()?.ultimo; as ultimo) {
+              {{ ultimo }} capítulos en MangaDex
             } @else if (f?.emitidos; as emitidos) {
               {{ emitidos }} {{ unidad() }}s emitidos
             } @else {
@@ -131,6 +133,8 @@
             <span class="de-total">
               @if (total(); as t) {
                 / {{ t }}
+              } @else if (capitulosManga()?.ultimo; as ultimo) {
+                / {{ ultimo }} en MangaDex
               } @else if (f?.emitidos; as emitidos) {
                 / {{ emitidos }} emitidos
               } @else {
@@ -153,7 +157,8 @@
           }
           <p class="ayuda">
             @if (e.total === null) {
-              Todavía {{ e.tipo === 'anime' ? 'se está emitiendo' : 'se está publicando' }}: no hay un total, anotá por dónde vas.
+              Todavía {{ e.tipo === 'anime' ? 'se está emitiendo' : 'se está publicando' }}: no hay un total, anotá por dónde vas
+              (o marcalo en la lista de abajo).
             } @else {
               Escribí el número y apretá Enter. Al llegar al último queda como Completado.
             }
@@ -230,6 +235,43 @@
       }
     </section>
   </div>
+
+  <!-- ---------- Capítulos / episodios con el ojito (estilo MangaDex) ---------- -->
+  <section class="panel capitulos-obra" aria-labelledby="titulo-capitulos">
+    <div class="titulo-seccion">
+      <h2 id="titulo-capitulos">{{ e.tipo === 'anime' ? 'Episodios' : 'Capítulos' }}</h2>
+      @if (capitulosManga()?.urlMangadex; as url) {
+        <a [href]="url" target="_blank" rel="noopener">Ver en MangaDex ↗</a>
+      }
+    </div>
+
+    @if (cargandoCapitulos()) {
+      <span class="esqueleto-linea"></span>
+      <span class="esqueleto-linea"></span>
+      <span class="esqueleto-linea" style="width: 70%"></span>
+      <p class="solo-lector" role="status">Buscando los capítulos…</p>
+    } @else if (cantidadLista() > 0) {
+      <app-lista-capitulos
+        [tipo]="e.tipo"
+        [progreso]="e.progreso"
+        [cantidad]="cantidadLista()"
+        [tomos]="capitulosManga()?.tomos ?? null"
+        [editable]="esMia()"
+        [ocupada]="guardando()"
+        (marcar)="marcarHasta($event)"
+      />
+    } @else {
+      <p class="texto-secundario">
+        Todavía no sabemos cuántos {{ unidad() }}s tiene. Anotá por dónde vas con el contador de arriba
+        y la lista se arma sola.
+      </p>
+    }
+    @if (errorCapitulos()) {
+      <p class="ayuda">MangaDex no respondió: la lista está armada con lo que sabemos.</p>
+    } @else if (capitulosManga() && !capitulosManga()!.encontrado) {
+      <p class="ayuda">Este manga no está en MangaDex: la lista está armada con lo que sabemos.</p>
+    }
+  </section>
 
   <app-modal [abierto]="confirmarQuitar()" titulo="¿Quitar de tu biblioteca?" tipo="error" (cerrar)="confirmarQuitar.set(false)">
     <p>Se va a borrar "{{ e.titulo }}" con tu progreso y tu nota.</p>

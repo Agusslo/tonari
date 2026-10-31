@@ -1,0 +1,266 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.barra-lista {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.orden {
+  display: inline-flex;
+  white-space: nowrap;
+  align-items: center;
+  gap: 0.45rem;
+  height: 2.2rem;
+  padding: 0 0.85rem;
+  font: 600 0.82rem var(--fuente-texto);
+  color: var(--color-hueso);
+  background: var(--color-campo);
+  border: 1px solid var(--linea-suave);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.orden:hover {
+  border-color: var(--linea-campo);
+}
+
+.orden .icono,
+.chevron,
+.ojo svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.grupos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: opacity 0.15s ease;
+}
+
+.grupos.ocupada {
+  opacity: 0.7;
+}
+
+/* ---------- Cabecera de cada tomo / bloque ---------- */
+.grupo {
+  overflow: hidden;
+  background: var(--color-campo);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-campo);
+}
+
+.cabecera-grupo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.alternar {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 0.8rem 0.9rem;
+  font: 700 0.92rem var(--fuente-texto);
+  text-align: left;
+  color: var(--color-hueso);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--color-texto-sec);
+  transition: transform 0.15s ease;
+}
+
+.alternar[aria-expanded='true'] .chevron {
+  transform: rotate(90deg);
+}
+
+.nombre-grupo,
+.rango,
+.numero-capitulo {
+  white-space: nowrap;
+}
+
+.rango {
+  font-weight: 500;
+  color: var(--color-texto-sec);
+  font-variant-numeric: tabular-nums;
+}
+
+.cuenta-leidos {
+  margin-left: auto;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-texto-sec);
+  background: var(--velo-hueso);
+  border-radius: var(--radio-pildora);
+  font-variant-numeric: tabular-nums;
+}
+
+.cuenta-leidos.completo {
+  color: var(--color-tinta);
+  background: var(--color-menta);
+}
+
+.marcar-grupo {
+  flex-shrink: 0;
+  height: 1.9rem;
+  padding: 0 0.7rem;
+  font: 600 0.75rem var(--fuente-texto);
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border: 0;
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+}
+
+.marcar-grupo:hover:not(:disabled) {
+  background: rgb(185 243 228 / 0.2);
+}
+
+.alternar:focus-visible,
+.marcar-grupo:focus-visible,
+.orden:focus-visible,
+.ojo:focus-visible {
+  outline: none;
+  box-shadow: var(--halo-menta);
+}
+
+/* ---------- Capítulos ---------- */
+.capitulos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0 0.5rem 0.6rem;
+  list-style: none;
+}
+
+.capitulos li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.5rem 0.3rem 0.3rem;
+  font-size: 0.88rem;
+  color: var(--color-texto-sec);
+  background: var(--color-panel);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.capitulos li.visto {
+  color: var(--color-hueso);
+}
+
+/* El próximo que te toca, resaltado */
+.capitulos li.siguiente {
+  border-color: rgb(185 243 228 / 0.4);
+}
+
+.ojo {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.ojo:hover:not(:disabled) {
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  opacity: 1;
+}
+
+.ojo[aria-pressed='true'] {
+  color: var(--color-menta);
+  opacity: 1;
+}
+
+.ojo:disabled {
+  cursor: default;
+}
+
+.etiqueta-siguiente {
+  margin-left: auto;
+  padding: 0.05rem 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-radius: var(--radio-pildora);
+}
+
+.unidad-corta {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .alternar {
+    gap: 0.45rem;
+    padding: 0.75rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .capitulos {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cabecera-grupo {
+    gap: 0.35rem;
+    padding-right: 0.4rem;
+  }
+
+  .marcar-grupo {
+    padding: 0 0.55rem;
+  }
+
+  /* En el celu el próximo se marca solo con el borde (la etiqueta no entra) */
+  .etiqueta-siguiente {
+    display: none;
+  }
+
+  /* "Ep. 1101" en vez de "Episodio 1101" (el lector de pantalla sigue leyendo la palabra completa) */
+  .unidad-larga {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .unidad-corta {
+    display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron,
+  .grupos {
+    transition: none;
+  }
+}

@@ -278,6 +278,7 @@
 
 .fila-contador {
   display: flex;
+  flex-wrap: wrap; /* si no entra todo en una línea, el botón baja */
   align-items: center;
   gap: 0.6rem;
 }
@@ -471,6 +472,41 @@
   text-align: center;
 }
 
+/* ---------- Capítulos / episodios ---------- */
+.capitulos-obra {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.titulo-seccion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.titulo-seccion h2 {
+  margin: 0;
+}
+
+.titulo-seccion a {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-menta);
+  text-decoration: none;
+}
+
+.titulo-seccion a:hover {
+  text-decoration: underline;
+}
+
+.capitulos-obra .esqueleto-linea {
+  display: block;
+  height: 2.8rem;
+}
+
 /* ---------- Celular: todo en una columna, el seguimiento primero ---------- */
 @media (max-width: 860px) {
   .columnas {
@@ -486,10 +522,6 @@
     grid-template-columns: 7rem minmax(0, 1fr);
     gap: 1rem;
     padding: 1.5rem 1rem 1.25rem;
-  }
-
-  .fila-contador {
-    flex-wrap: wrap;
   }
 }
 

@@ -5,24 +5,28 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import IEntrada, { ESTADOS, EstadoEntrada, IFicha, nombreEstado } from '../../../core/interfaces/biblioteca';
 import { BibliotecaApi, CambiosEntrada } from '../../../core/services/biblioteca-api';
 import { Anilist } from '../../../core/services/anilist';
+import { CapitulosManga, CatalogoApi } from '../../../core/services/catalogo-api';
 import { Auth } from '../../../core/services/auth';
 import { Modal } from '../../../shared/components/modal/modal';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
+import { ListaCapitulos } from './lista-capitulos/lista-capitulos';
 
 // Ficha de una obra de la biblioteca (estilo MangaDex): /biblioteca/:id
 // Junta dos fuentes:
 //  - NUESTRO back: tu seguimiento (estado, por qué capítulo vas, tu nota).
 //  - AniList: la info de la obra (sinopsis, géneros, banner). Si AniList no responde,
 //    la ficha igual funciona con lo que tenemos guardado (título, tapa, total).
+//  - MangaDex (a través de nuestro back, solo manga): los capítulos que hay y en qué tomo.
 @Component({
   selector: 'app-ficha',
-  imports: [RouterLink, Modal],
+  imports: [RouterLink, Modal, ListaCapitulos],
   templateUrl: './ficha.html',
   styleUrl: './ficha.css',
 })
 export class Ficha implements OnInit {
   private readonly api = inject(BibliotecaApi);
   private readonly anilist = inject(Anilist);
+  private readonly catalogo = inject(CatalogoApi);
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
   private readonly titulo = inject(Title);
@@ -35,6 +39,11 @@ export class Ficha implements OnInit {
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly errorAnilist = signal(false);
+
+  // Capítulos del manga según MangaDex (null = todavía no llegaron o es anime).
+  protected readonly capitulosManga = signal<CapitulosManga | null>(null);
+  protected readonly cargandoCapitulos = signal(false);
+  protected readonly errorCapitulos = signal(false);
 
   protected readonly guardando = signal(false);
   protected readonly errorGuardar = signal<string | null>(null);
@@ -55,6 +64,19 @@ export class Ficha implements OnInit {
 
   // El total: el guardado, o el de AniList si cuando la agregaste todavía no se sabía.
   protected readonly total = computed(() => this.entrada()?.total ?? this.ficha()?.total ?? null);
+
+  // Hasta dónde se sabe que llega la obra: el total si terminó; si sigue saliendo,
+  // el último capítulo de MangaDex (manga) o el último episodio emitido (anime).
+  protected readonly ultimoConocido = computed(
+    () => this.total() ?? this.capitulosManga()?.ultimo ?? this.ficha()?.emitidos ?? null,
+  );
+
+  // Cuántos muestra la lista de capítulos/episodios (nunca menos de los que ya marcaste).
+  protected readonly cantidadLista = computed(() => {
+    const total = this.total();
+    if (total !== null) return total;
+    return Math.max(this.ultimoConocido() ?? 0, this.entrada()?.progreso ?? 0);
+  });
 
   protected readonly porcentaje = computed(() => {
     const total = this.total();
@@ -95,9 +117,35 @@ export class Ficha implements OnInit {
   private cargarFicha(entrada: IEntrada) {
     this.errorAnilist.set(false);
     this.anilist.detalle(entrada.idAnilist, entrada.tipo).subscribe({
-      next: (ficha) => this.ficha.set(ficha),
-      error: () => this.errorAnilist.set(true),
+      next: (ficha) => {
+        this.ficha.set(ficha);
+        this.cargarCapitulos(entrada, ficha);
+      },
+      error: () => {
+        this.errorAnilist.set(true);
+        this.cargarCapitulos(entrada, null); // igual probamos con el título guardado
+      },
     });
+  }
+
+  // Solo manga: le pedimos a NUESTRO back los capítulos (él los busca en MangaDex).
+  // Se manda también el título en inglés y el id de MyAnimeList para encontrarlo mejor.
+  private cargarCapitulos(entrada: IEntrada, ficha: IFicha | null) {
+    if (entrada.tipo !== 'manga') return;
+    this.cargandoCapitulos.set(true);
+    this.errorCapitulos.set(false);
+    this.catalogo
+      .capitulosManga(entrada.idAnilist, entrada.titulo, ficha?.tituloIngles, ficha?.idMal)
+      .subscribe({
+        next: (capitulos) => {
+          this.capitulosManga.set(capitulos);
+          this.cargandoCapitulos.set(false);
+        },
+        error: () => {
+          this.errorCapitulos.set(true); // la lista se arma igual, con lo que sabemos
+          this.cargandoCapitulos.set(false);
+        },
+      });
   }
 
   private mostrar(entrada: IEntrada) {
@@ -125,6 +173,11 @@ export class Ficha implements OnInit {
     }
     if (!this.hayCambio()) return;
     this.guardar({ progreso: numero });
+  }
+
+  // Desde la lista de capítulos (el ojito o "Marcar todo"): el nuevo progreso.
+  protected marcarHasta(numero: number) {
+    if (numero !== this.entrada()?.progreso) this.guardar({ progreso: Math.max(0, numero) });
   }
 
   // +1 rápido (para cuando terminás el capítulo de la semana).
