@@ -72,9 +72,9 @@
 - [x] Publicaciones con título, mensaje e imagen opcional
 - [x] Publicaciones con "Me gusta"
 - [x] Publicaciones con comentarios
-- [ ] UX: diseño trabajado y uniforme en toda la aplicación
+- [x] UX: diseño trabajado y uniforme en toda la aplicación
 - [x] UX: navegación entre pantallas
-- [ ] UX: información clara y completa al mostrar mensajes o realizar acciones
+- [x] UX: información clara y completa al mostrar mensajes o realizar acciones
 
 ---
 
@@ -88,7 +88,7 @@
 - **Perfil de otros usuarios** (`/usuarios/beto`): además de sus datos públicos y sus últimas publicaciones, muestra su biblioteca. Si entrás a tu propio nombre, te lleva a Mi Perfil.
 - **Respuestas a comentarios** (un nivel, como Instagram).
 - **Imágenes en Cloudinary** con recorte automático para los avatares.
-- **Avatar de respaldo** ([blobatar](https://blobatar.dev)) si la foto de perfil no carga; si tampoco carga, iniciales.
+- **Avatar generado** ([blobatar](https://blobatar.dev)) cuando el usuario no sube foto; si no carga, iniciales.
 - **Tarjeta "Tu actividad"** en el muro: "Me gusta" recibidos, promedio y tu publicación más querida.
 - **UX**: esqueletos de carga, View Transitions entre pantallas, animaciones con GSAP, confeti al registrarse, cuenta regresiva en el aviso de sesión.
 
