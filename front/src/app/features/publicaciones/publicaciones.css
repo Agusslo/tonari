@@ -316,4 +316,11 @@
   .muro {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  /* En una sola columna el lateral quedaría abajo del todo, detrás del scroll
+     infinito: no se llegaría nunca. Tu perfil ya está en el menú y "Publicar"
+     arriba del muro, así que en el celular no hace falta. */
+  .lateral {
+    display: none;
+  }
 }
