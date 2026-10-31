@@ -15,7 +15,7 @@
     async perfilPublico(nombreUsuario: string) {
         const usuario = await this.usuarioModel
         .findOne({ nombreUsuario, habilitado: true })
-        .select('nombre apellido nombreUsuario imagenPerfil descripcion perfil createdAt');
+        .select('nombre apellido nombreUsuario imagenPerfil banner descripcion perfil createdAt');
         if (!usuario) {
         throw new NotFoundException('Ese usuario no existe'); // 404
         }
@@ -24,7 +24,12 @@
 
     // Editar mi perfil: cambia solo los campos que vinieron y, si mandaron
     // una foto nueva, la guarda y reemplaza la URL.
-    async actualizar(id: string, datos: ActualizarUsuarioDto, imagen?: Express.Multer.File) {
+    async actualizar(
+        id: string,
+        datos: ActualizarUsuarioDto,
+        imagen?: Express.Multer.File,
+        banner?: Express.Multer.File,
+    ) {
         if (!isValidObjectId(id)) {
         throw new BadRequestException('El id del usuario no es válido'); // 400
         }
@@ -41,6 +46,10 @@
         usuario.fechaNacimiento = new Date(datos.fechaNacimiento);
         }
         if (imagen) usuario.imagenPerfil = await guardarImagen(imagen, 'perfiles');
+        // Banner nuevo -> a Cloudinary (carpeta tonari/banners). Si no mandan uno
+        // pero piden quitarlo, se borra el campo (undefined = Mongo lo saca del documento).
+        if (banner) usuario.banner = await guardarImagen(banner, 'banners');
+        else if (datos.quitarBanner) usuario.banner = undefined;
 
         await usuario.save();
 

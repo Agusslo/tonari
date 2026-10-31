@@ -22,7 +22,11 @@
 } @else if (perfil(); as perfil) {
   <div class="perfil">
     <!-- Cabecera: la misma que Mi Perfil -->
-    <section class="panel portada-perfil" aria-labelledby="nombre-perfil">
+    <section class="panel portada-perfil" [class.con-banner]="perfil.banner" aria-labelledby="nombre-perfil">
+      <!-- Banner (extra): si hay, va arriba a lo ancho y la foto queda montada encima -->
+      @if (perfil.banner) {
+        <img class="banner-perfil" [src]="urlBanner(perfil.banner, 1500)" alt="" />
+      }
       <app-avatar [usuario]="perfil" class="foto" />
       <div class="identidad">
         <p class="kicker" lang="ja" aria-hidden="true">プロフィール</p>

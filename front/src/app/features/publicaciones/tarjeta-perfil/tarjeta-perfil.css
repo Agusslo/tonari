@@ -44,6 +44,15 @@
   background: linear-gradient(transparent 45%, var(--color-panel));
 }
 
+/* Tu banner (extra): ocupa toda la franja; el fundido (::after) queda por encima */
+.banner-imagen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .logo {
   position: relative;
   z-index: 1;

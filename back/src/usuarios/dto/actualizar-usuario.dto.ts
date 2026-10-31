@@ -1,4 +1,5 @@
-    import { IsDateString, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+    import { Transform } from 'class-transformer';
+    import { IsBoolean, IsDateString, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
     // Lo que se puede cambiar al editar el perfil. Todo es opcional (se manda solo
     // lo que cambia), pero si un campo viene, tiene que ser válido.
@@ -26,4 +27,11 @@
     @IsNotEmpty({ message: 'La descripción no puede quedar vacía' })
     @MaxLength(200, { message: 'La descripción puede tener hasta 200 caracteres' })
     descripcion?: string;
+    
+    // "quitarBanner=true": borrar el banner (y que quede el fondo por defecto).
+    // Llega como texto en el multipart: @Transform lo pasa a booleano.
+    @IsOptional()
+    @Transform(({ value }) => value === true || value === 'true')
+    @IsBoolean()
+    quitarBanner?: boolean;
     }

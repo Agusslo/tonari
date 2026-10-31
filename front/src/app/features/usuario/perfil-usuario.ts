@@ -15,6 +15,7 @@ import { Avatar } from '../../shared/components/avatar/avatar';
 import { ModalPersonas } from '../../shared/components/modal-personas/modal-personas';
 import { Modal } from '../../shared/components/modal/modal';
 import { mensajeDeError } from '../../shared/utils/errores-http';
+import { urlBanner } from '../../shared/utils/cloudinary';
 
 // Perfil de OTRO usuario: /usuarios/beto (consigna, Sprint 5: "clic en el nombre o la
 // foto de otro usuario para ver su perfil: datos y últimas 3 publicaciones").
@@ -51,6 +52,7 @@ export class PerfilUsuario {
   // Su biblioteca (null = todavía no llegó; si falla, queda vacía).
   protected readonly biblioteca = signal<IEntrada[] | null>(null);
   protected readonly nombreEstado = nombreEstado;
+  protected readonly urlBanner = urlBanner;
 
   protected readonly resumenBiblioteca = computed(() => {
     const lista = this.biblioteca() ?? [];

@@ -110,12 +110,21 @@
     // PATCH /usuarios/:id: editar mi perfil (multipart por si trae foto nueva).
     // Con la respuesta actualizamos el usuario guardado: así el menú, Mi Perfil
     // y las publicaciones muestran los datos nuevos al instante.
-    actualizarPerfil(id: string, datos: DatosPerfil, imagenPerfil: File | null) {
+    // banner (extra): una imagen nueva para el banner, o quitarBanner=true para borrarlo.
+    actualizarPerfil(
+        id: string,
+        datos: DatosPerfil,
+        imagenPerfil: File | null,
+        banner: File | null = null,
+        quitarBanner = false,
+    ) {
         const formData = new FormData();
         for (const [campo, valor] of Object.entries(datos)) {
         formData.append(campo, valor);
         }
         if (imagenPerfil) formData.append('imagenPerfil', imagenPerfil);
+        if (banner) formData.append('banner', banner);
+        else if (quitarBanner) formData.append('quitarBanner', 'true');
 
         return this.http
         .patch<IUsuario>(`${environment.apiUrl}/usuarios/${id}`, formData)

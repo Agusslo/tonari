@@ -31,6 +31,11 @@ export class Usuario {
   @Prop({ required: true })
   imagenPerfil: string;
 
+  // Banner (extra, como en Twitter): la imagen ancha de arriba del perfil.
+  // Opcional: se agrega desde "Editar perfil" una vez creada la cuenta.
+  @Prop()
+  banner?: string;
+
   @Prop({
     required: true,
     enum: ['usuario', 'administrador'],

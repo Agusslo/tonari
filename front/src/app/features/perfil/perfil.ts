@@ -12,6 +12,7 @@ import { BibliotecaApi } from '../../core/services/biblioteca-api';
 import IEntrada, { nombreEstado } from '../../core/interfaces/biblioteca';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 import { rutaFicha } from '../../shared/utils/rutas';
+import { urlBanner } from '../../shared/utils/cloudinary';
 import { Avatar } from '../../shared/components/avatar/avatar';
 import { ModalPersonas } from '../../shared/components/modal-personas/modal-personas';
 import { UsuariosApi } from '../../core/services/usuarios-api';
@@ -50,6 +51,7 @@ export class Perfil implements OnInit {
   protected readonly biblioteca = signal<IEntrada[] | null>(null);
   protected readonly nombreEstado = nombreEstado;
   protected readonly rutaFicha = rutaFicha;
+  protected readonly urlBanner = urlBanner;
   // Cuántas hay en cada estado (anime y manga juntos).
   protected readonly resumenBiblioteca = computed(() => {
     const lista = this.biblioteca() ?? [];

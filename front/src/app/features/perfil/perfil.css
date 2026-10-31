@@ -89,6 +89,44 @@
   margin: 1rem 0 0;
 }
 
+/* ---------- Banner (extra): imagen ancha arriba y la foto "montada" encima ---------- */
+/* El panel tiene padding: el banner lo "cancela" con márgenes negativos para ir de
+   borde a borde, y overflow: hidden (de .portada-perfil) le recorta las esquinas. */
+.portada-perfil.con-banner {
+  --relleno: clamp(1.5rem, 3vw, 2.5rem); /* el mismo padding que .panel */
+  flex-wrap: wrap;
+  align-items: flex-start;
+  row-gap: 0;
+  padding-top: 0;
+}
+
+.banner-perfil {
+  flex: 0 0 calc(100% + 2 * var(--relleno));
+  width: calc(100% + 2 * var(--relleno));
+  max-width: none;
+  aspect-ratio: 3 / 1;
+  max-height: 17rem;
+  margin: 0 calc(-1 * var(--relleno)) 0;
+  object-fit: cover;
+  background: var(--color-campo);
+}
+
+/* La foto sube la mitad de su tamaño sobre el banner */
+.con-banner .foto {
+  position: relative;
+  z-index: 1;
+  margin-top: calc(var(--tam) / -2);
+}
+
+.con-banner .identidad {
+  padding-top: 1.25rem;
+}
+
+/* Con banner, la trama de puntos y el brillo quedan solo abajo */
+.con-banner::after {
+  background: radial-gradient(22rem 16rem at 10% 80%, rgb(185 243 228 / 0.09), transparent 70%);
+}
+
 /* Seguidores / siguiendo (extra): debajo de la descripción, en los dos perfiles */
 .fila-seguir {
   display: flex;
@@ -554,6 +592,21 @@
   .portada-perfil {
     flex-direction: column;
     text-align: center;
+  }
+
+  /* En columna, flex-basis mediría el alto: se apaga (flex: none) y el ancho
+     sigue siendo el de arriba (todo el panel). La foto se centra. */
+  .banner-perfil {
+    flex: none;
+  }
+
+  .con-banner .foto {
+    align-self: center;
+  }
+
+  .con-banner .identidad {
+    align-self: stretch;
+    padding-top: 1rem;
   }
 
   .alias {

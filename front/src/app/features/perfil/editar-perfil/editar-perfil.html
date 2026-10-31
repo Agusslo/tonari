@@ -1,4 +1,45 @@
 <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate class="editar">
+  <!-- Banner (extra): la imagen ancha de arriba del perfil, como en Twitter -->
+  <div class="campo">
+    <span class="etiqueta">Banner</span>
+    <div class="banner-previo" [class.sin-banner]="!bannerVisible()">
+      @if (bannerVisible(); as url) {
+        <img [src]="url" alt="Vista previa de tu banner" />
+      } @else {
+        <span class="texto-secundario">Sin banner: se ve el fondo de TONARI</span>
+      }
+      @if (procesandoBanner()) {
+        <span class="spinner" aria-hidden="true"></span>
+      }
+    </div>
+    <div class="foto-fila">
+      <label class="cambiar-foto" for="editar-banner">
+        {{ banner() ? 'Elegir otro' : bannerVisible() ? 'Cambiar banner' : 'Agregar banner' }}
+      </label>
+      <input
+        #entradaBanner
+        id="editar-banner"
+        type="file"
+        class="solo-lector"
+        accept="image/jpeg,image/png,image/webp"
+        (change)="elegirBanner($event)"
+      />
+      @if (banner()) {
+        <button type="button" class="deshacer" (click)="descartarBanner(); entradaBanner.value = ''">
+          Dejar el actual
+        </button>
+      } @else if (quitarBanner()) {
+        <button type="button" class="deshacer" (click)="quitarBanner.set(false)">No quitarlo</button>
+      } @else if (usuario().banner) {
+        <button type="button" class="deshacer" (click)="quitarBanner.set(true)">Quitar banner</button>
+      }
+    </div>
+    <p class="ayuda texto-secundario">Se recorta en formato ancho (3 a 1). Usá una imagen horizontal.</p>
+    @if (errorBanner()) {
+      <p class="mensaje-error">{{ errorBanner() }}</p>
+    }
+  </div>
+
   <!-- Foto: la actual (o la nueva elegida) y el botón para cambiarla -->
   <div class="campo">
     <span class="etiqueta">Foto de perfil</span>

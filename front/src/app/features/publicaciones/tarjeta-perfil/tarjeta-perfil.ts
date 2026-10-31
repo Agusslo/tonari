@@ -13,6 +13,7 @@ import { RouterLink } from '@angular/router';
 import IUsuario from '../../../core/interfaces/usuario';
 import { Avatar } from '../../../shared/components/avatar/avatar';
 import { aparecerConRebote, contarHasta } from '../../../shared/utils/animaciones';
+import { urlBanner } from '../../../shared/utils/cloudinary';
 
 // Tarjeta de la columna lateral del muro: tu perfil resumido (con sesión)
 // o la invitación a sumarte (sin sesión).
@@ -23,6 +24,8 @@ import { aparecerConRebote, contarHasta } from '../../../shared/utils/animacione
   styleUrl: './tarjeta-perfil.css',
 })
 export class TarjetaPerfil {
+  protected readonly urlBanner = urlBanner;
+
   readonly usuario = input<IUsuario | null>(null);
   // Cuántas publicaciones tiene (null = todavía no se sabe).
   readonly totalPublicaciones = input<number | null>(null);

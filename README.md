@@ -86,6 +86,7 @@
   - **Sinopsis en español**: el back la traduce una sola vez con [MyMemory](https://mymemory.translated.net) y la guarda en Mongo (caché); se puede ver el original en inglés.
   - El total de capítulos se actualiza solo cuando AniList lo conoce (por ejemplo, cuando un manga termina).
 - **Perfil de otros usuarios** (`/usuarios/beto`): además de sus datos públicos y sus últimas publicaciones, muestra su biblioteca. Si entrás a tu propio nombre, te lleva a Mi Perfil.
+- **Banner de perfil** (como en Twitter): imagen ancha arriba del perfil, con la foto montada encima; se agrega, cambia o quita desde "Editar perfil" (se guarda en Cloudinary y se recorta en 3:1). También se ve en la tarjeta del muro.
 - **Seguir usuarios**: botón Seguir / Dejar de seguir en el perfil, contadores de seguidores y seguidos con su lista, aviso de "Te sigue" y pestaña **Siguiendo** en el muro (solo las publicaciones de la gente que seguís).
 - **Respuestas a comentarios** (un nivel, como Instagram).
 - **Imágenes en Cloudinary** con recorte automático para los avatares.

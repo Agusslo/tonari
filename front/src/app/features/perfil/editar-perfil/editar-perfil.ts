@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, output, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Auth } from '../../../core/services/auth';
@@ -7,6 +7,7 @@ import { fechaLocalHoy, fechaNoFutura } from '../../../shared/validators/validad
 import { mensajeDeError } from '../../../shared/utils/errores-http';
 import { Avatar } from '../../../shared/components/avatar/avatar';
 import { achicarImagen, TIPOS_IMAGEN } from '../../../shared/utils/achicar-imagen';
+import { urlBanner } from '../../../shared/utils/cloudinary';
 
 // Formulario para editar mi perfil (consigna: "cada usuario debe poder ver y editar su perfil").
 @Component({
@@ -36,6 +37,20 @@ export class EditarPerfil implements OnInit {
   protected readonly vistaPrevia = signal<string | null>(null);
   protected readonly errorImagen = signal<string | null>(null);
   protected readonly procesandoImagen = signal(false); // mientras se achica una foto pesada
+
+  // Banner (extra): el archivo nuevo, su vista previa, si se pidió quitarlo, etc.
+  protected readonly banner = signal<File | null>(null);
+  protected readonly vistaBanner = signal<string | null>(null);
+  protected readonly errorBanner = signal<string | null>(null);
+  protected readonly procesandoBanner = signal(false);
+  protected readonly quitarBanner = signal(false);
+
+  // Lo que muestra la vista previa: el banner nuevo, o el actual (si no pediste
+  // quitarlo), o nada (se ve el fondo de TONARI).
+  protected readonly bannerVisible = computed(() => {
+    const actual = this.usuario().banner;
+    return this.vistaBanner() ?? (actual && !this.quitarBanner() ? urlBanner(actual, 900) : null);
+  });
 
   protected readonly enviando = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -78,6 +93,42 @@ export class EditarPerfil implements OnInit {
     }
   }
 
+  // Igual que la foto: se valida el tipo y, si pesa mucho, se achica en el navegador.
+  async elegirBanner(evento: Event) {
+    const entrada = evento.target as HTMLInputElement;
+    const archivo = entrada.files?.[0] ?? null;
+    this.descartarBanner();
+    if (!archivo) return;
+
+    if (!TIPOS_IMAGEN.includes(archivo.type)) {
+      this.errorBanner.set('El banner debe ser JPG, PNG o WEBP');
+      entrada.value = '';
+      return;
+    }
+
+    this.procesandoBanner.set(true);
+    try {
+      const liviano = await achicarImagen(archivo);
+      this.banner.set(liviano);
+      this.vistaBanner.set(URL.createObjectURL(liviano));
+      this.quitarBanner.set(false);
+    } catch {
+      this.errorBanner.set('No pudimos procesar esa imagen. Probá con otra');
+      entrada.value = '';
+    } finally {
+      this.procesandoBanner.set(false);
+    }
+  }
+
+  // Descarta el banner nuevo que elegiste (queda el que tenías).
+  descartarBanner() {
+    const anterior = this.vistaBanner();
+    if (anterior) URL.revokeObjectURL(anterior); // libera la memoria de la vista previa
+    this.banner.set(null);
+    this.vistaBanner.set(null);
+    this.errorBanner.set(null);
+  }
+
   quitarImagen() {
     const anterior = this.vistaPrevia();
     if (anterior) URL.revokeObjectURL(anterior);
@@ -102,7 +153,15 @@ export class EditarPerfil implements OnInit {
 
   guardar() {
     this.formulario.markAllAsTouched();
-    if (this.formulario.invalid || this.errorImagen() || this.procesandoImagen() || this.enviando()) return;
+    if (
+      this.formulario.invalid ||
+      this.errorImagen() ||
+      this.procesandoImagen() ||
+      this.errorBanner() ||
+      this.procesandoBanner() ||
+      this.enviando()
+    )
+      return;
 
     const datos = this.formulario.getRawValue();
     this.enviando.set(true);
@@ -118,11 +177,15 @@ export class EditarPerfil implements OnInit {
           descripcion: datos.descripcion.trim(),
         },
         this.imagen(),
+        this.banner(),
+        this.quitarBanner(),
       )
       .subscribe({
         next: () => {
           this.enviando.set(false);
           this.quitarImagen();
+          this.descartarBanner();
+          this.quitarBanner.set(false);
           this.guardado.emit();
         },
         error: (error: HttpErrorResponse) => {

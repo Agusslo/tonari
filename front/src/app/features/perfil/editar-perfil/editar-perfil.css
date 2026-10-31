@@ -9,6 +9,35 @@
   font-weight: 500;
 }
 
+/* Vista previa del banner: con la misma proporción (3:1) que en el perfil */
+.banner-previo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 1;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  background: var(--color-campo);
+  border-radius: var(--radio-campo);
+}
+
+.banner-previo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-previo.sin-banner {
+  padding: 1rem;
+  text-align: center;
+  border: 1px dashed var(--linea-campo);
+}
+
+.banner-previo .spinner {
+  position: absolute;
+  color: var(--color-menta);
+}
+
 /* Foto actual + botones, en una fila */
 .foto-fila {
   display: flex;

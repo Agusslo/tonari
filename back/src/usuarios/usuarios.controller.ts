@@ -8,11 +8,11 @@
     Patch,
     Post,
     Req,
-    UploadedFile,
+    UploadedFiles,
     UseGuards,
     UseInterceptors,
     } from '@nestjs/common';
-    import { FileInterceptor } from '@nestjs/platform-express';
+    import { FileFieldsInterceptor } from '@nestjs/platform-express';
     import { UsuariosService } from './usuarios.service.js';
     import { SeguimientosService } from './seguimientos.service.js';
     import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto.js';
@@ -65,21 +65,38 @@
 
     // PATCH /usuarios/:id -> 200 OK con el usuario actualizado.
     // PATCH (y no PUT) porque se cambia una PARTE del usuario, no el usuario entero.
-    // Llega como multipart/form-data por si trae una foto nueva ("imagenPerfil", opcional).
+    // Llega como multipart/form-data por si trae imágenes nuevas, las dos opcionales:
+    // "imagenPerfil" (la foto) y "banner" (la imagen ancha de arriba, extra).
+    // FileFieldsInterceptor (y no FileInterceptor) porque pueden venir DOS archivos,
+    // cada uno con su nombre de campo.
     @Patch(':id')
-    @UseInterceptors(FileInterceptor('imagenPerfil', { defParamCharset: 'utf8' }))
-    actualizar(
+    @UseInterceptors(
+        FileFieldsInterceptor(
+        [
+            { name: 'imagenPerfil', maxCount: 1 },
+            { name: 'banner', maxCount: 1 },
+        ],
+        { defParamCharset: 'utf8' },
+        ),
+    )
+    async actualizar(
         @Param('id') id: string,
         @Req() req: RequestConToken,
         @Body() actualizarUsuarioDto: ActualizarUsuarioDto,
-        @UploadedFile(validarImagen('La imagen de perfil', false))
-        imagenPerfil?: Express.Multer.File,
+        @UploadedFiles()
+        archivos: { imagenPerfil?: Express.Multer.File[]; banner?: Express.Multer.File[] } = {},
     ) {
         // El token dice quién sos: solo podés editar TU perfil.
         // 403 (y no 401): sabemos quién sos, pero esto no te corresponde.
         if (req.usuario.id !== id) {
         throw new ForbiddenException('Solo podés editar tu propio perfil');
         }
-        return this.usuariosService.actualizar(id, actualizarUsuarioDto, imagenPerfil);
+        // Cada archivo pasa por las mismas reglas de siempre (2 MB, JPG/PNG/WEBP).
+        // Con @UploadedFiles no se puede poner el pipe en el parámetro: se llama a mano.
+        const imagenPerfil = await validarImagen('La imagen de perfil', false).transform(
+        archivos.imagenPerfil?.[0],
+        );
+        const banner = await validarImagen('El banner', false).transform(archivos.banner?.[0]);
+        return this.usuariosService.actualizar(id, actualizarUsuarioDto, imagenPerfil, banner);
     }
     }

@@ -1,7 +1,12 @@
 @if (usuario(); as usuario) {
   <article class="panel tarjeta" aria-labelledby="tarjeta-perfil-nombre">
-    <!-- Banner: degradé de la marca a sangre, que se funde con el panel -->
-    <div class="banner" aria-hidden="true"></div>
+    <!-- Banner: degradé de la marca a sangre, que se funde con el panel.
+         Si subiste un banner (extra), se ve tu imagen (y el fundido sigue encima). -->
+    <div class="banner" aria-hidden="true">
+      @if (usuario.banner) {
+        <img class="banner-imagen" [src]="urlBanner(usuario.banner, 600)" alt="" />
+      }
+    </div>
 
     <div class="cuerpo">
       <!-- Foto y nombre llevan a tu perfil (es lo que la gente espera tocar) -->

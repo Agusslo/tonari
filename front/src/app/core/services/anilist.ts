@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { map, retry, throwError, timeout, timer } from 'rxjs';
+import { map, retry, shareReplay, throwError, timeout, timer } from 'rxjs';
 import { IFicha, IObra, TipoObra } from '../interfaces/biblioteca';
 
 // AniList (https://anilist.co) es una API pública y gratuita de anime y manga.
@@ -107,9 +107,39 @@ const ESTADOS_PUBLICACION: Record<string, [string, string]> = {
   HIATUS: ['En pausa', 'En pausa'],
 };
 
+// Las tapas de los animes en tendencia ahora mismo (para la portada del login y el registro).
+const CONSULTA_TENDENCIAS = `
+  query {
+    Page(perPage: 3) {
+      media(type: ANIME, sort: TRENDING_DESC, isAdult: false) {
+        coverImage { large }
+      }
+    }
+  }
+`;
+
 @Service()
 export class Anilist {
   private readonly http = inject(HttpClient);
+
+  // shareReplay: se piden una sola vez aunque pases del login al registro y vuelvas.
+  // (Si falla, shareReplay se "resetea" y la próxima vez lo vuelve a intentar.)
+  private readonly tendencias = this.http
+    .post<{ data: { Page: { media: { coverImage: { large: string | null } | null }[] } } }>(
+      URL_ANILIST,
+      { query: CONSULTA_TENDENCIAS },
+    )
+    .pipe(
+      timeout(8000),
+      map((respuesta) =>
+        respuesta.data.Page.media.map((m) => m.coverImage?.large).filter((url): url is string => !!url),
+      ),
+      shareReplay(1),
+    );
+
+  tapasEnTendencia() {
+    return this.tendencias;
+  }
 
   buscar(tipo: TipoObra, texto: string) {
     // Las "variables" completan los $busqueda y $tipo de la consulta.

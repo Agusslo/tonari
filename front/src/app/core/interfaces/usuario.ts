@@ -9,6 +9,7 @@
     fechaNacimiento: string; // fecha en formato ISO, ej. '2004-12-04T00:00:00.000Z'
     descripcion: string;
     imagenPerfil: string; // URL de la imagen
+    banner?: string; // imagen ancha de arriba del perfil (extra, opcional)
     perfil: 'usuario' | 'administrador';
     habilitado: boolean;
     createdAt: string;
@@ -22,6 +23,7 @@
     apellido: string;
     nombreUsuario: string;
     imagenPerfil: string;
+    banner?: string;
     descripcion: string;
     perfil: 'usuario' | 'administrador';
     createdAt: string;
