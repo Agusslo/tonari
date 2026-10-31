@@ -90,7 +90,7 @@
 - **Imágenes en Cloudinary** con recorte automático para los avatares.
 - **Avatar generado** ([blobatar](https://blobatar.dev)) cuando el usuario no sube foto; si no carga, iniciales.
 - **Tarjeta "Tu actividad"** en el muro: "Me gusta" recibidos, promedio y tu publicación más querida.
-- **UX**: esqueletos de carga, View Transitions entre pantallas, animaciones con GSAP, confeti al registrarse, cuenta regresiva en el aviso de sesión.
+- **UX**: esqueletos de carga, View Transitions entre pantallas, animaciones con GSAP, confeti al registrarse, cuenta regresiva en el aviso de sesión, scroll infinito y página 404 propia para las direcciones que no existen.
 
 ---
 

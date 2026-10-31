@@ -65,6 +65,11 @@ export const routes: Routes = [
     canActivate: [sesionGuard],
     loadComponent: () => import('./features/perfil/perfil').then((m) => m.Perfil),
   },
-  // Cualquier ruta que no exista va a Publicaciones (y el guard decide si podés entrar).
-  { path: '**', redirectTo: 'publicaciones' },
+  // Cualquier ruta que no exista: página 404 (sin guard: se ve con o sin sesión).
+  {
+    path: '**',
+    title: 'Página no encontrada · TONARI',
+    loadComponent: () =>
+      import('./features/no-encontrada/no-encontrada').then((m) => m.NoEncontrada),
+  },
 ];

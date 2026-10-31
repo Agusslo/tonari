@@ -1,0 +1,19 @@
+<section class="panel no-encontrada" aria-labelledby="titulo-404">
+  <!-- 迷子 (maigo) = "perdido" en japonés -->
+  <p class="kicker" lang="ja" aria-hidden="true">迷子</p>
+  <p class="numero" aria-hidden="true">404</p>
+  <h1 id="titulo-404">Esta página no existe</h1>
+  <p class="texto-secundario">
+    No encontramos nada en <code>{{ direccion || '/' }}</code>. Puede que la dirección esté mal escrita
+    o que lo que buscabas ya no esté.
+  </p>
+
+  <div class="acciones">
+    @if (conSesion) {
+      <a routerLink="/publicaciones" class="boton">Ir a las publicaciones</a>
+    } @else {
+      <a routerLink="/login" class="boton">Ingresar</a>
+    }
+    <button type="button" class="boton boton-secundario" (click)="volver()">Volver atrás</button>
+  </div>
+</section>
