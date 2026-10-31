@@ -1,0 +1,106 @@
+@let e = entrada();
+
+<article class="entrada" [class.ocupada]="guardando()" [attr.aria-label]="e.titulo">
+  <div class="tapa-entrada">
+    @if (e.imagen) {
+      <img [src]="e.imagen" alt="" loading="lazy" />
+    }
+    <!-- El estado, como etiqueta de color sobre la portada -->
+    <span class="estado-chip" [attr.data-estado]="e.estado">{{ nombreEstado(e.estado, e.tipo) }}</span>
+    @if (e.puntuacion) {
+      <span class="nota" [attr.aria-label]="'Tu puntuación: ' + e.puntuacion + ' de 10'">★ {{ e.puntuacion }}</span>
+    }
+  </div>
+
+  <div class="cuerpo">
+    <h3 class="titulo" [attr.title]="e.titulo">{{ e.titulo }}</h3>
+
+    <!-- Progreso: barra + contador "12 / 24 ep." -->
+    <div class="progreso">
+      @if (porcentaje() !== null) {
+        <div class="barra" aria-hidden="true"><span [style.width.%]="porcentaje()"></span></div>
+      }
+      <div class="contador">
+        @if (editable()) {
+          <button
+            type="button"
+            class="paso"
+            [disabled]="guardando() || e.progreso === 0"
+            (click)="mover(-1)"
+            [attr.aria-label]="'Restar un ' + (e.tipo === 'anime' ? 'episodio' : 'capítulo')"
+          >−</button>
+        }
+        <span class="numeros">
+          <strong>{{ e.progreso }}</strong> / {{ e.total ?? '?' }} {{ unidad() }}
+        </span>
+        @if (editable()) {
+          <button
+            type="button"
+            class="paso"
+            [disabled]="guardando() || !puedeSumar()"
+            (click)="mover(1)"
+            [attr.aria-label]="'Sumar un ' + (e.tipo === 'anime' ? 'episodio' : 'capítulo')"
+          >+</button>
+        }
+      </div>
+    </div>
+
+    @if (editable()) {
+      <div class="controles">
+        <label class="solo-lector" [for]="'estado-' + e._id">Estado de {{ e.titulo }}</label>
+        <select class="select-estado" [id]="'estado-' + e._id" [value]="e.estado" [disabled]="guardando()" (change)="cambiarEstado($event)">
+          @for (estado of estados; track estado) {
+            <option [value]="estado" [selected]="estado === e.estado">{{ nombreEstado(estado, e.tipo) }}</option>
+          }
+        </select>
+
+        <!-- Puntuación: botón que abre una grilla del 1 al 10 -->
+        <button
+          type="button"
+          class="nota-boton"
+          [class.con-nota]="e.puntuacion"
+          [disabled]="guardando()"
+          aria-haspopup="true"
+          [attr.aria-expanded]="notaAbierta()"
+          [attr.aria-label]="'Puntuación de ' + e.titulo + ': ' + (e.puntuacion ? e.puntuacion + ' de 10' : 'sin nota')"
+          (click)="notaAbierta.set(!notaAbierta())"
+        >
+          <span class="estrella" aria-hidden="true">{{ e.puntuacion ? '★' : '☆' }}</span>
+          {{ e.puntuacion ?? 'Sin nota' }}
+          <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+
+        @if (notaAbierta()) {
+          <div class="panel-nota" role="group" [attr.aria-label]="'Elegí una puntuación para ' + e.titulo">
+            <div class="grilla-nota">
+              @for (n of puntuaciones; track n) {
+                <button
+                  type="button"
+                  class="opcion-nota"
+                  [class.elegida]="n === e.puntuacion"
+                  [attr.aria-pressed]="n === e.puntuacion"
+                  (click)="elegirPuntuacion(n)"
+                >{{ n }}</button>
+              }
+            </div>
+            @if (e.puntuacion) {
+              <button type="button" class="sin-nota" (click)="elegirPuntuacion(null)">Quitar nota</button>
+            }
+          </div>
+        }
+
+        <button type="button" class="quitar" (click)="quitar.emit(e)" [attr.aria-label]="'Quitar ' + e.titulo + ' de la biblioteca'">
+          <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+          </svg>
+        </button>
+      </div>
+    }
+
+    @if (error(); as mensaje) {
+      <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+    }
+  </div>
+</article>

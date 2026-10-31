@@ -37,6 +37,13 @@ export const routes: Routes = [
     loadComponent: () => import('./features/publicacion/publicacion').then((m) => m.Publicacion),
   },
   {
+    // Mi Biblioteca (extra): mi lista de anime y manga.
+    path: 'biblioteca',
+    title: 'Mi Biblioteca · TONARI',
+    canActivate: [sesionGuard],
+    loadComponent: () => import('./features/biblioteca/biblioteca').then((m) => m.Biblioteca),
+  },
+  {
     path: 'mi-perfil',
     title: 'Mi perfil · TONARI',
     canActivate: [sesionGuard],

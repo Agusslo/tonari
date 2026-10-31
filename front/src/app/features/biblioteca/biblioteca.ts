@@ -1,0 +1,110 @@
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { BibliotecaApi } from '../../core/services/biblioteca-api';
+import IEntrada, { ESTADOS, EstadoEntrada, IObra, nombreEstado, TipoObra } from '../../core/interfaces/biblioteca';
+import { Entrada } from './entrada/entrada';
+import { Buscador } from './buscador/buscador';
+import { Modal } from '../../shared/components/modal/modal';
+import { mensajeDeError } from '../../shared/utils/errores-http';
+
+// Mi Biblioteca (extra, no lo pide la consigna): tu lista de anime y manga
+// con estado, progreso y puntuación. Las obras se buscan en AniList.
+@Component({
+  selector: 'app-biblioteca',
+  imports: [Entrada, Buscador, Modal],
+  templateUrl: './biblioteca.html',
+  styleUrl: './biblioteca.css',
+})
+export class Biblioteca implements OnInit {
+  private readonly api = inject(BibliotecaApi);
+
+  // Todas mis obras (anime y manga). Lo demás se calcula a partir de esta lista.
+  protected readonly entradas = signal<IEntrada[]>([]);
+  protected readonly cargando = signal(true);
+  protected readonly error = signal<string | null>(null);
+
+  // Lo que se está mirando: anime o manga, y un estado (null = todos).
+  protected readonly tipo = signal<TipoObra>('anime');
+  protected readonly filtro = signal<EstadoEntrada | null>(null);
+
+  protected readonly buscadorAbierto = signal(false);
+  protected readonly agregando = signal<number | null>(null); // idAnilist de la obra que se está agregando
+  protected readonly aQuitar = signal<IEntrada | null>(null); // abre el modal de confirmación
+  protected readonly errorAccion = signal<string | null>(null);
+
+  protected readonly estados = ESTADOS;
+  protected readonly nombreEstado = nombreEstado;
+
+  // computed: se recalculan solos cuando cambian entradas, tipo o filtro.
+  protected readonly delTipo = computed(() => this.entradas().filter((e) => e.tipo === this.tipo()));
+  protected readonly visibles = computed(() => {
+    const filtro = this.filtro();
+    return filtro ? this.delTipo().filter((e) => e.estado === filtro) : this.delTipo();
+  });
+  protected readonly cuantos = computed(() => {
+    const cuenta: Record<string, number> = {};
+    for (const e of this.delTipo()) cuenta[e.estado] = (cuenta[e.estado] ?? 0) + 1;
+    return cuenta;
+  });
+  protected readonly totalPorTipo = computed(() => ({
+    anime: this.entradas().filter((e) => e.tipo === 'anime').length,
+    manga: this.entradas().filter((e) => e.tipo === 'manga').length,
+  }));
+  // Los idAnilist que ya tengo de este tipo, para que el buscador marque "En tu biblioteca".
+  protected readonly yaAgregadas = computed(() => new Set(this.delTipo().map((e) => e.idAnilist)));
+
+  ngOnInit() {
+    this.cargar();
+  }
+
+  cargar() {
+    this.cargando.set(true);
+    this.error.set(null);
+    this.api.listar().subscribe({
+      next: (entradas) => {
+        this.entradas.set(entradas);
+        this.cargando.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.error.set(mensajeDeError(error));
+        this.cargando.set(false);
+      },
+    });
+  }
+
+  cambiarTipo(tipo: TipoObra) {
+    this.tipo.set(tipo);
+    this.filtro.set(null);
+  }
+
+  // Elegiste una obra en el buscador: se guarda como "Pendiente" y aparece primera.
+  agregar(obra: IObra) {
+    this.agregando.set(obra.idAnilist);
+    this.api.agregar(obra).subscribe({
+      next: (entrada) => {
+        this.entradas.update((lista) => [entrada, ...lista]);
+        this.agregando.set(null);
+        this.filtro.set(null); // que se vea, aunque hubiera un filtro puesto
+      },
+      error: (error: HttpErrorResponse) => {
+        this.errorAccion.set(mensajeDeError(error));
+        this.agregando.set(null);
+      },
+    });
+  }
+
+  // Una tarjeta avisó que cambió (estado, progreso o nota): la reemplazamos en la lista.
+  alActualizar(actualizada: IEntrada) {
+    this.entradas.update((lista) => lista.map((e) => (e._id === actualizada._id ? actualizada : e)));
+  }
+
+  confirmarQuitar() {
+    const entrada = this.aQuitar();
+    if (!entrada) return;
+    this.aQuitar.set(null);
+    this.api.eliminar(entrada._id).subscribe({
+      next: () => this.entradas.update((lista) => lista.filter((e) => e._id !== entrada._id)),
+      error: (error: HttpErrorResponse) => this.errorAccion.set(mensajeDeError(error)),
+    });
+  }
+}

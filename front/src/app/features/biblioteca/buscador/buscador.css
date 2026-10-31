@@ -1,0 +1,152 @@
+:host {
+  display: block;
+}
+
+.buscador {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  animation: aparecer 0.25s ease-out both;
+}
+
+.buscador-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.buscador h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.cerrar {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 1px solid var(--linea-suave);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.cerrar:hover {
+  color: var(--color-hueso);
+  background: var(--velo-hueso);
+}
+
+/* El campo con la lupa adentro (y el spinner a la derecha mientras busca) */
+.campo-busqueda {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.95rem;
+  min-height: 3.1rem;
+  color: var(--color-texto-sec);
+  background: var(--color-campo);
+  border: 1px solid var(--linea-campo);
+  border-radius: var(--radio-campo);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.campo-busqueda:focus-within {
+  border-color: var(--color-menta);
+  box-shadow: var(--halo-menta);
+}
+
+.campo-busqueda input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.7rem 0;
+  font: inherit;
+  color: var(--color-hueso);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.campo-busqueda input::placeholder {
+  color: var(--color-texto-sec);
+  opacity: 0.7;
+}
+
+.ayuda {
+  margin: -0.25rem 0 0;
+  font-size: 0.8rem;
+}
+
+.sin-resultados {
+  margin: 0.25rem 0;
+}
+
+/* ---------- Resultados ---------- */
+.resultados {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 26rem;
+  margin: 0;
+  padding: 0 0.25rem 0 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.resultado {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.55rem;
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-campo);
+  background: var(--color-campo);
+}
+
+.miniatura {
+  flex: none;
+  width: 2.9rem;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--velo-hueso);
+}
+
+.resultado-texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.resultado-texto p {
+  margin: 0;
+}
+
+.resultado-titulo {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resultado-detalle {
+  font-size: 0.8rem;
+}
+
+.boton-chico {
+  min-height: 2.3rem;
+  padding: 0 0.95rem;
+  font-size: 0.85rem;
+}
+
+.ya-esta {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-menta);
+}

@@ -361,6 +361,116 @@
   margin-top: 0;
 }
 
+/* ---------- Mi Biblioteca (extra): ocupa todo el ancho, abajo ---------- */
+.mi-biblioteca {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.biblioteca-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.biblioteca-encabezado h2 {
+  margin: 0;
+}
+
+.ver-biblioteca {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-menta);
+  text-decoration: none;
+}
+
+.ver-biblioteca:hover {
+  text-decoration: underline;
+}
+
+.biblioteca-numeros {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.biblioteca-numeros div {
+  display: flex;
+  flex-direction: column-reverse; /* el número arriba, la etiqueta abajo */
+  gap: 0.1rem;
+  padding: 0.7rem 0.8rem;
+  background: var(--color-campo);
+  border-radius: var(--radio-campo);
+}
+
+.biblioteca-numeros dt {
+  font-size: 0.75rem;
+  color: var(--color-texto-sec);
+}
+
+.biblioteca-numeros dd {
+  margin: 0;
+  font: 400 1.4rem var(--fuente-titulo);
+  color: var(--color-menta);
+}
+
+@media (max-width: 520px) {
+  .biblioteca-numeros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Las tapas en fila: 6 en escritorio, 3 en celulares */
+.tapas {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 640px) {
+  .tapas {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.tapa img {
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  background: var(--color-campo);
+  border-radius: var(--radio-campo);
+}
+
+.tapa p {
+  margin: 0;
+}
+
+.tapa .tapa-titulo {
+  margin-top: 0.35rem;
+  overflow: hidden;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tapa-detalle {
+  font-size: 0.75rem;
+  color: var(--color-texto-sec);
+}
+
+.biblioteca-vacia {
+  margin: 0;
+}
+
 /* ---------- Sin sesión ---------- */
 .sin-sesion {
   max-width: 32rem;

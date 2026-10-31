@@ -160,6 +160,44 @@
         </ul>
       }
     </section>
+
+    <!-- Mi Biblioteca (extra): resumen con lo que estás viendo o leyendo -->
+    @if (biblioteca(); as entradas) {
+      <section class="panel mi-biblioteca" aria-labelledby="titulo-mi-biblioteca">
+        <div class="biblioteca-encabezado">
+          <h2 id="titulo-mi-biblioteca">Mi Biblioteca</h2>
+          <a routerLink="/biblioteca" class="ver-biblioteca">
+            {{ entradas.length ? 'Ver toda' : 'Empezar' }} <span aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        @if (entradas.length) {
+          <dl class="biblioteca-numeros">
+            <div><dt>En curso</dt><dd>{{ resumenBiblioteca().enCurso }}</dd></div>
+            <div><dt>Completados</dt><dd>{{ resumenBiblioteca().completados }}</dd></div>
+            <div><dt>Pendientes</dt><dd>{{ resumenBiblioteca().pendientes }}</dd></div>
+            <div><dt>En total</dt><dd>{{ resumenBiblioteca().total }}</dd></div>
+          </dl>
+          <ul class="tapas">
+            @for (entrada of tapas(); track entrada._id) {
+              <li class="tapa">
+                @if (entrada.imagen) {
+                  <img [src]="entrada.imagen" alt="" loading="lazy" />
+                }
+                <p class="tapa-titulo">{{ entrada.titulo }}</p>
+                <p class="tapa-detalle">
+                  {{ nombreEstado(entrada.estado, entrada.tipo) }} · {{ entrada.progreso }}/{{ entrada.total ?? '?' }}
+                </p>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="texto-secundario biblioteca-vacia">
+            Armá tu lista de anime y manga: lo que estás viendo, lo que terminaste y lo que tenés pendiente.
+          </p>
+        }
+      </section>
+    }
   </div>
 } @else {
   <!-- Si no hay nadie logueado (por ejemplo, después de recargar la página) -->

@@ -78,6 +78,17 @@
 
 ---
 
+## ✨ Extras (no los pide la consigna)
+
+- **Mi Biblioteca**: lista personal de anime y manga con estado (viendo/leyendo, completado, pendiente, abandonado), progreso por episodio o capítulo y puntuación del 1 al 10. Las obras se buscan con la API pública de [AniList](https://anilist.co) (GraphQL, sin clave), con espera al escribir, límite de tiempo y un reintento si falla. Resumen en Mi Perfil.
+- **Respuestas a comentarios** (un nivel, como Instagram).
+- **Imágenes en Cloudinary** con recorte automático para los avatares.
+- **Avatar generado** ([blobatar](https://blobatar.dev)) cuando el usuario no sube foto; si no carga, iniciales.
+- **Tarjeta "Tu actividad"** en el muro: "Me gusta" recibidos, promedio y tu publicación más querida.
+- **UX**: esqueletos de carga, View Transitions entre pantallas, animaciones con GSAP, confeti al registrarse, cuenta regresiva en el aviso de sesión.
+
+---
+
 ## 🏃 Sprint 1 — 05/11
 
 ### Front

@@ -1,0 +1,83 @@
+<section class="panel buscador" aria-labelledby="titulo-buscador" (keydown.escape)="cerrar.emit()">
+  <div class="buscador-encabezado">
+    <h2 id="titulo-buscador">Agregar {{ tipo() === 'anime' ? 'un anime' : 'un manga' }}</h2>
+    <button type="button" class="cerrar" (click)="cerrar.emit()" aria-label="Cerrar el buscador">
+      <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+  </div>
+
+  <label for="buscar-obra" class="solo-lector">Buscar por título</label>
+  <div class="campo-busqueda">
+    <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <path d="M20 20l-3.5-3.5" />
+    </svg>
+    <input
+      #campo
+      id="buscar-obra"
+      type="search"
+      autocomplete="off"
+      [placeholder]="tipo() === 'anime' ? 'Ej.: Frieren, One Piece, Haikyuu…' : 'Ej.: Berserk, Chainsaw Man…'"
+      (input)="escribir($event)"
+    />
+    @if (buscando()) {
+      <span class="spinner" aria-hidden="true"></span>
+    }
+  </div>
+  <p class="ayuda texto-secundario">Datos de AniList. Escribí al menos 3 letras.</p>
+
+  <div aria-live="polite">
+    @if (error(); as mensaje) {
+      <p class="mensaje-error">{{ mensaje }}</p>
+    } @else if (sinResultados()) {
+      <p class="texto-secundario sin-resultados">No encontramos nada con "{{ texto().trim() }}".</p>
+    }
+  </div>
+
+  @if (resultados().length) {
+    <ul class="resultados">
+      @for (obra of resultados(); track obra.idAnilist) {
+        <li class="resultado">
+          @if (obra.imagen) {
+            <img [src]="obra.imagen" alt="" class="miniatura" loading="lazy" />
+          } @else {
+            <span class="miniatura sin-imagen" aria-hidden="true"></span>
+          }
+          <div class="resultado-texto">
+            <p class="resultado-titulo">{{ obra.titulo }}</p>
+            <p class="texto-secundario resultado-detalle">
+              {{ obra.formato ?? (tipo() === 'anime' ? 'Anime' : 'Manga') }}
+              @if (obra.anio) { · {{ obra.anio }} }
+              @if (obra.total) {
+                · {{ obra.total }} {{ tipo() === 'anime' ? 'episodio' : 'capítulo' }}{{ obra.total === 1 ? '' : 's' }}
+              }
+            </p>
+          </div>
+          @if (yaAgregadas().has(obra.idAnilist)) {
+            <span class="ya-esta">
+              <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path d="M5 12.5l4.5 4.5L19 7.5" />
+              </svg>
+              En tu biblioteca
+            </span>
+          } @else {
+            <button
+              type="button"
+              class="boton boton-chico"
+              [disabled]="agregando() !== null"
+              (click)="agregar.emit(obra)"
+              [attr.aria-label]="'Agregar ' + obra.titulo"
+            >
+              @if (agregando() === obra.idAnilist) {
+                <span class="spinner" aria-hidden="true"></span>
+              }
+              Agregar
+            </button>
+          }
+        </li>
+      }
+    </ul>
+  }
+</section>

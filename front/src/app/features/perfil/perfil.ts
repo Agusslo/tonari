@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
@@ -8,6 +8,8 @@ import { PublicacionesApi } from '../../core/services/publicaciones-api';
 import IPublicacion from '../../core/interfaces/publicacion';
 import { IPaginaComentarios } from '../../core/interfaces/comentario';
 import { ComentariosApi } from '../../core/services/comentarios-api';
+import { BibliotecaApi } from '../../core/services/biblioteca-api';
+import IEntrada, { nombreEstado } from '../../core/interfaces/biblioteca';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 import { Avatar } from '../../shared/components/avatar/avatar';
 import { EditarPerfil } from './editar-perfil/editar-perfil';
@@ -21,6 +23,7 @@ import { EditarPerfil } from './editar-perfil/editar-perfil';
 export class Perfil implements OnInit {
   private readonly api = inject(PublicacionesApi);
   private readonly comentariosApi = inject(ComentariosApi);
+  private readonly bibliotecaApi = inject(BibliotecaApi);
 
   // El usuario que ingresó (o null), el mismo que usa Publicaciones.
   protected readonly usuario = inject(Auth).usuarioActual;
@@ -34,13 +37,40 @@ export class Perfil implements OnInit {
   // "mis últimas 3 publicaciones y sus comentarios"). Se guardan por _id de publicación.
   protected readonly comentariosDe = signal<Record<string, IPaginaComentarios>>({});
 
-  // ¿Está abierto el formulario de "Editar perfil"? Y el aviso de "guardado".
+  // Mi Biblioteca (extra): un resumen en el perfil. null = todavía cargando.
+  protected readonly biblioteca = signal<IEntrada[] | null>(null);
+  protected readonly nombreEstado = nombreEstado;
+  // Cuántas hay en cada estado (anime y manga juntos).
+  protected readonly resumenBiblioteca = computed(() => {
+    const lista = this.biblioteca() ?? [];
+    const contar = (estado: string) => lista.filter((e) => e.estado === estado).length;
+    return {
+      total: lista.length,
+      enCurso: contar('en-curso'),
+      completados: contar('completado'),
+      pendientes: contar('pendiente'),
+    };
+  });
+  // Las tapas que se muestran: primero lo que estás viendo o leyendo (hasta 6).
+  protected readonly tapas = computed(() => {
+    const lista = this.biblioteca() ?? [];
+    const enCurso = lista.filter((e) => e.estado === 'en-curso');
+    return (enCurso.length ? enCurso : lista).slice(0, 6);
+  });
+
+    // ¿Está abierto el formulario de "Editar perfil"? Y el aviso de "guardado".
   protected readonly editando = signal(false);
   protected readonly guardadoOk = signal(false);
 
   ngOnInit() {
     const usuario = this.usuario();
     if (!usuario) return; // sin sesión no hay nada que pedir
+
+    // Mi Biblioteca: si falla, el resumen simplemente no se muestra.
+    this.bibliotecaApi.listar().subscribe({
+      next: (entradas) => this.biblioteca.set(entradas),
+      error: () => this.biblioteca.set([]),
+    });
 
     // El mismo GET del muro, pero filtrado por mí y con límite 3.
     this.api.listar({ usuario: usuario._id, limit: 3 }).subscribe({

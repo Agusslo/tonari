@@ -11,6 +11,7 @@
     </a>
     <!-- Con sesión: acceso al perfil con tu foto. Sin sesión: ingresar o crear cuenta -->
     @if (usuario(); as usuario) {
+      <a routerLink="/biblioteca" routerLinkActive="activo" ariaCurrentWhenActive="page">Biblioteca</a>
       <a routerLink="/mi-perfil" routerLinkActive="activo" ariaCurrentWhenActive="page" class="nav-perfil">
         <app-avatar [usuario]="usuario" />
         Mi perfil
