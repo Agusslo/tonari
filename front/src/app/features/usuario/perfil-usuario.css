@@ -22,3 +22,36 @@
 .sin-sesion h1 {
   overflow-wrap: anywhere;
 }
+
+/* ---------- Seguir (extra) ---------- */
+.insignia-te-sigue {
+  color: var(--color-lila);
+  background: rgb(199 184 255 / 0.12);
+  border-color: rgb(199 184 255 / 0.35);
+}
+
+/* .fila-seguir y .contador-seguir están en perfil.css (los usa también Mi Perfil) */
+
+.boton-seguir {
+  min-width: 8.5rem;
+}
+
+/* Siguiendo -> al pasar el mouse: "Dejar de seguir" en rojo suave */
+.texto-dejar {
+  display: none;
+}
+
+.boton-seguir[aria-pressed='true']:hover:not(:disabled) {
+  color: var(--color-error);
+  border-color: rgb(255 155 143 / 0.5);
+  background: rgb(255 155 143 / 0.08);
+}
+
+.boton-seguir[aria-pressed='true']:hover:not(:disabled) .texto-siguiendo {
+  display: none;
+}
+
+.boton-seguir[aria-pressed='true']:hover:not(:disabled) .texto-dejar {
+  display: inline;
+}
+

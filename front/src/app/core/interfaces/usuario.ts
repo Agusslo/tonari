@@ -25,4 +25,12 @@
     descripcion: string;
     perfil: 'usuario' | 'administrador';
     createdAt: string;
+    // "Seguir" (extra)
+    seguidores: number; // cuántos lo siguen
+    siguiendo: number; // a cuántos sigue
+    loSigo: boolean; // si YO (el que mira) lo sigo
+    meSigue: boolean; // si ÉL me sigue a mí ("Te sigue")
     }
+
+    // Lo que devuelven seguir / dejar de seguir: los números actualizados.
+    export type IResumenSeguir = Pick<IPerfilPublico, 'seguidores' | 'siguiendo' | 'loSigo' | 'meSigue'>;

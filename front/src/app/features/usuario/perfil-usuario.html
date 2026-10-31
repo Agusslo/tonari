@@ -32,10 +32,45 @@
           <span class="insignia">
             {{ perfil.perfil === 'administrador' ? 'Administrador' : 'Usuario' }}
           </span>
+          @if (perfil.meSigue) {
+            <span class="insignia insignia-te-sigue">Te sigue</span>
+          }
         </p>
         <p class="descripcion">{{ perfil.descripcion }}</p>
+
+        <!-- Seguidores / siguiendo (abren la lista) y el botón Seguir -->
+        <div class="fila-seguir">
+          <button type="button" class="contador-seguir" (click)="lista.set('seguidores')">
+            <strong>{{ perfil.seguidores }}</strong> {{ perfil.seguidores === 1 ? 'seguidor' : 'seguidores' }}
+          </button>
+          <button type="button" class="contador-seguir" (click)="lista.set('siguiendo')">
+            <strong>{{ perfil.siguiendo }}</strong> siguiendo
+          </button>
+          <!-- aria-pressed: el lector de pantalla anuncia si ya lo seguís.
+               Si ya lo seguís, al pasar el mouse dice "Dejar de seguir". -->
+          <button
+            type="button"
+            class="boton boton-seguir"
+            [class.boton-secundario]="perfil.loSigo"
+            [attr.aria-pressed]="perfil.loSigo"
+            [disabled]="ocupadoSeguir()"
+            (click)="alternarSeguir()"
+          >
+            @if (ocupadoSeguir()) {
+              <span class="spinner" aria-hidden="true"></span>
+            }
+            @if (perfil.loSigo) {
+              <span class="texto-siguiendo">Siguiendo</span>
+              <span class="texto-dejar" aria-hidden="true">Dejar de seguir</span>
+            } @else {
+              {{ perfil.meSigue ? 'Seguir también' : 'Seguir' }}
+            }
+          </button>
+        </div>
       </div>
     </section>
+
+    <app-modal-personas [nombreUsuario]="perfil.nombreUsuario" [cual]="lista()" (cerrar)="lista.set(null)" />
 
     <!-- Sus datos públicos (sin correo ni fecha de nacimiento: esos son privados) -->
     <section class="panel datos" aria-labelledby="titulo-datos">
@@ -173,3 +208,9 @@
     }
   </div>
 }
+
+<!-- Si seguir / dejar de seguir falla -->
+<app-modal [abierto]="errorSeguir() !== null" titulo="No se pudo completar la acción" tipo="error" (cerrar)="errorSeguir.set(null)">
+  <p>{{ errorSeguir() }}</p>
+  <button acciones type="button" class="boton" (click)="errorSeguir.set(null)">Entendido</button>
+</app-modal>

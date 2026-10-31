@@ -37,4 +37,5 @@
     usuario?: string;
     offset?: number;
     limit?: number;
+    siguiendo?: boolean; // solo las de la gente que sigo
     }

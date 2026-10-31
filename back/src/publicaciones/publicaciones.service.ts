@@ -9,6 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model, Types } from 'mongoose';
 import { Publicacion } from './entities/publicacion.entity.js';
 import { Usuario } from '../usuarios/entities/usuario.entity.js';
+import { SeguimientosService } from '../usuarios/seguimientos.service.js';
 import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
 import { ListarPublicacionesDto } from './dto/listar-publicaciones.dto.js';
 import { guardarImagen } from '../common/imagenes.js';
@@ -22,6 +23,7 @@ export class PublicacionesService {
   constructor(
     @InjectModel(Publicacion.name) private publicacionModel: Model<Publicacion>,
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
+    private readonly seguimientosService: SeguimientosService,
   ) {}
 
   // usuarioId: quién publica (viene del token). imagen es opcional:
@@ -51,9 +53,16 @@ export class PublicacionesService {
   }
 
   // GET con orden, filtro por usuario y paginación.
-  async listar({ orden, usuario, offset, limit }: ListarPublicacionesDto) {
-    // Qué publicaciones entran: solo las activas y, si piden, solo las de un usuario.
-    const filtro = usuario ? { activa: true, usuario } : { activa: true };
+  // quienPide: el usuario del token (para el filtro "Siguiendo").
+  async listar({ orden, usuario, offset, limit, siguiendo }: ListarPublicacionesDto, quienPide: string) {
+    // Qué publicaciones entran: solo las activas y, si piden, solo las de un usuario
+    // o solo las de la gente que sigo ($in = "el autor es alguno de esta lista").
+    let filtro: Record<string, unknown> = { activa: true };
+    if (siguiendo) {
+      filtro = { activa: true, usuario: { $in: await this.seguimientosService.idsQueSigo(quienPide) } };
+    } else if (usuario) {
+      filtro = { activa: true, usuario };
+    }
 
     // Por "Me gusta": las que más tienen primero (y a igual cantidad, la más nueva).
     // Por fecha: la más nueva primero. (-1 = de mayor a menor)

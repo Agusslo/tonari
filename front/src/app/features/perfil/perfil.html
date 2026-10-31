@@ -14,8 +14,22 @@
           </span>
         </p>
         <p class="descripcion">{{ usuario.descripcion }}</p>
+
+        <!-- Seguidores / siguiendo (extra): al tocarlos se abre la lista -->
+        @if (numerosSeguir(); as numeros) {
+          <div class="fila-seguir">
+            <button type="button" class="contador-seguir" (click)="lista.set('seguidores')">
+              <strong>{{ numeros.seguidores }}</strong> {{ numeros.seguidores === 1 ? 'seguidor' : 'seguidores' }}
+            </button>
+            <button type="button" class="contador-seguir" (click)="lista.set('siguiendo')">
+              <strong>{{ numeros.siguiendo }}</strong> siguiendo
+            </button>
+          </div>
+        }
       </div>
     </section>
+
+    <app-modal-personas [nombreUsuario]="usuario.nombreUsuario" [cual]="lista()" [propio]="true" (cerrar)="lista.set(null)" />
 
     <!-- Todos los datos del usuario (o el formulario para editarlos) -->
     <section class="panel datos" aria-labelledby="titulo-datos">

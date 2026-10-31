@@ -46,8 +46,8 @@ export class PublicacionesController {
   // Ejemplo: /publicaciones?orden=meGusta&offset=0&limit=10
   // @Query() junta todos los parámetros de después del "?" y los valida con el DTO.
   @Get()
-  listar(@Query() listarPublicacionesDto: ListarPublicacionesDto) {
-    return this.publicacionesService.listar(listarPublicacionesDto);
+  listar(@Query() listarPublicacionesDto: ListarPublicacionesDto, @Req() req: RequestConToken) {
+    return this.publicacionesService.listar(listarPublicacionesDto, req.usuario.id);
   }
 
   // GET /publicaciones/:id -> 200 con una publicación (para la página Publicación).

@@ -21,6 +21,52 @@
 }
 
 /* Barra arriba de la lista: orden a la izquierda, contador a la derecha */
+/* Pestañas "Para todos" / "Siguiendo": subrayadas, a lo ancho del muro */
+.vistas {
+  display: flex;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--linea-suave);
+}
+
+.vistas button {
+  flex: 1;
+  position: relative;
+  padding: 0.85rem 0.5rem;
+  font: 600 0.95rem var(--fuente-texto);
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.vistas button:hover {
+  color: var(--color-hueso);
+  background: var(--velo-hueso);
+}
+
+.vistas button[aria-pressed='true'] {
+  color: var(--color-hueso);
+}
+
+/* La rayita menta debajo de la pestaña activa */
+.vistas button[aria-pressed='true']::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  width: 3.5rem;
+  height: 3px;
+  background: var(--degrade-marca);
+  border-radius: var(--radio-pildora);
+  transform: translateX(-50%);
+}
+
+.vistas button:focus-visible {
+  outline: none;
+  box-shadow: inset var(--halo-menta);
+}
+
 .barra {
   display: flex;
   flex-wrap: wrap;
@@ -153,6 +199,10 @@
 .vacio p {
   max-width: 36ch;
   margin: 0;
+}
+
+.vacio .boton {
+  margin-top: 1.25rem;
 }
 
 /* La columna acompaña al scroll de la página (no es sticky): con dos tarjetas

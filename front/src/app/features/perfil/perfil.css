@@ -89,6 +89,39 @@
   margin: 1rem 0 0;
 }
 
+/* Seguidores / siguiendo (extra): debajo de la descripción, en los dos perfiles */
+.fila-seguir {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-top: 1rem;
+}
+
+/* "12 seguidores" / "3 siguiendo": parecen texto, pero son botones (abren la lista) */
+.contador-seguir {
+  padding: 0.25rem 0.1rem;
+  font: 400 0.95rem var(--fuente-texto);
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.contador-seguir strong {
+  color: var(--color-hueso);
+}
+
+.contador-seguir:hover {
+  color: var(--color-menta);
+}
+
+.contador-seguir:focus-visible {
+  outline: none;
+  box-shadow: var(--halo-menta);
+}
+
 /* ---------- Mis datos ---------- */
 .datos {
   animation: aparecer 0.5s 0.08s ease-out both;
@@ -512,6 +545,10 @@
 @media (max-width: 760px) {
   .perfil {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fila-seguir {
+    justify-content: center;
   }
 
   .portada-perfil {

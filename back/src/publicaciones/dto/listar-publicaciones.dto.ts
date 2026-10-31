@@ -1,5 +1,5 @@
-    import { Type } from 'class-transformer';
-    import { IsIn, IsInt, IsMongoId, IsOptional, Max, Min } from 'class-validator';
+    import { Transform, Type } from 'class-transformer';
+    import { IsBoolean, IsIn, IsInt, IsMongoId, IsOptional, Max, Min } from 'class-validator';
 
     // Los parámetros de búsqueda del GET (lo que va después del "?" en la URL):
     // /publicaciones?orden=meGusta&usuario=<id>&offset=0&limit=10
@@ -29,4 +29,11 @@
     @Min(1, { message: 'limit tiene que ser al menos 1' })
     @Max(50, { message: 'limit puede ser como máximo 50' })
     limit: number = 10;
+    
+    // "Siguiendo" (extra): solo las publicaciones de la gente que sigo.
+    // En la URL llega como texto ("true"): @Transform lo pasa a booleano.
+    @IsOptional()
+    @Transform(({ value }) => value === true || value === 'true')
+    @IsBoolean({ message: 'siguiendo debe ser true o false' })
+    siguiendo?: boolean;
     }

@@ -1,0 +1,48 @@
+<dialog #dialogo class="modal-personas" aria-labelledby="titulo-personas" (close)="cerrar.emit()">
+  <div class="encabezado">
+    <h2 id="titulo-personas">{{ cual() === 'seguidores' ? 'Seguidores' : 'Siguiendo' }}</h2>
+    <button type="button" class="cerrar" (click)="cerrar.emit()" aria-label="Cerrar">
+      <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+  </div>
+
+  @if (error()) {
+    <p class="mensaje-error" role="alert">No se pudo cargar la lista. Intentá de nuevo.</p>
+  } @else if (personas(); as lista) {
+    <ul class="personas">
+      @for (persona of lista; track persona._id) {
+        <li>
+          <!-- Al tocar a alguien se cierra la ventana y se va a su perfil -->
+          <a [routerLink]="['/usuarios', persona.nombreUsuario]" (click)="cerrar.emit()">
+            <app-avatar [usuario]="persona" />
+            <span class="datos">
+              <span class="nombre">{{ persona.nombre }} {{ persona.apellido }}</span>
+              <span class="texto-secundario">&#64;{{ persona.nombreUsuario }}</span>
+            </span>
+          </a>
+        </li>
+      } @empty {
+        <li class="vacio texto-secundario">
+          @if (propio()) {
+            {{ cual() === 'seguidores' ? 'Todavía no tenés seguidores.' : 'Todavía no seguís a nadie.' }}
+          } @else {
+            {{ cual() === 'seguidores' ? 'Todavía no tiene seguidores.' : 'Todavía no sigue a nadie.' }}
+          }
+        </li>
+      }
+    </ul>
+  } @else {
+    <!-- Esqueleto mientras carga -->
+    <ul class="personas" aria-hidden="true">
+      @for (n of [1, 2, 3]; track n) {
+        <li class="esqueleto-persona">
+          <span class="esqueleto-circulo"></span>
+          <span class="esqueleto-linea" style="width: 60%"></span>
+        </li>
+      }
+    </ul>
+    <p class="solo-lector" role="status">Cargando…</p>
+  }
+</dialog>

@@ -46,6 +46,8 @@ export class Publicaciones implements OnInit {
   // se piden las 10 siguientes y se AGREGAN abajo. Cada pedido sigue trayendo una
   // cantidad limitada (offset + limit), así que la paginación la sigue haciendo el back.
   protected readonly orden = signal<'fecha' | 'meGusta'>('fecha');
+  // "Siguiendo" (extra): todas las publicaciones o solo las de la gente que sigo.
+  protected readonly vista = signal<'todos' | 'siguiendo'>('todos');
   private readonly porPagina = 10;
   protected readonly cargandoMas = signal(false);
   protected readonly errorMas = signal<string | null>(null);
@@ -158,7 +160,7 @@ export class Publicaciones implements OnInit {
     this.error.set(null);
     this.errorMas.set(null);
 
-    this.api.listar({ orden: this.orden(), offset: 0, limit: this.porPagina }).subscribe({
+    this.api.listar({ ...this.filtros(), offset: 0, limit: this.porPagina }).subscribe({
       next: (pagina) => {
         this.publicaciones.set(pagina.publicaciones);
         this.total.set(pagina.total);
@@ -179,7 +181,7 @@ export class Publicaciones implements OnInit {
     this.cargandoMas.set(true);
 
     this.api
-      .listar({ orden: this.orden(), offset: this.publicaciones().length, limit: this.porPagina })
+      .listar({ ...this.filtros(), offset: this.publicaciones().length, limit: this.porPagina })
       .subscribe({
         next: (pagina) => {
           // Por si alguien publicó mientras tanto, no repetimos ninguna que ya esté.
@@ -200,6 +202,19 @@ export class Publicaciones implements OnInit {
       });
   }
 
+  // Lo que va en cada pedido: el orden y, en la pestaña "Siguiendo", siguiendo=true.
+  // (undefined no se manda: el servicio saca los parámetros vacíos.)
+  private filtros() {
+    return { orden: this.orden(), siguiendo: this.vista() === 'siguiendo' ? true : undefined };
+  }
+
+  // Pestañas "Para todos" / "Siguiendo": se arranca la lista de nuevo.
+  cambiarVista(vista: 'todos' | 'siguiendo') {
+    if (vista === this.vista()) return;
+    this.vista.set(vista);
+    this.cargar();
+  }
+
   reintentarMas() {
     this.errorMas.set(null);
     this.cargarMas();
@@ -208,6 +223,7 @@ export class Publicaciones implements OnInit {
   // Recién publicada: volvemos a "Más recientes" desde el principio, para que se vea arriba.
   alCrear() {
     this.orden.set('fecha');
+    this.vista.set('todos'); // en "Siguiendo" no aparecerían las tuyas
     this.cargar();
     this.cargarMiResumen();
   }

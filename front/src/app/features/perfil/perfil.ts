@@ -13,11 +13,14 @@ import IEntrada, { nombreEstado } from '../../core/interfaces/biblioteca';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 import { rutaFicha } from '../../shared/utils/rutas';
 import { Avatar } from '../../shared/components/avatar/avatar';
+import { ModalPersonas } from '../../shared/components/modal-personas/modal-personas';
+import { UsuariosApi } from '../../core/services/usuarios-api';
+import { IResumenSeguir } from '../../core/interfaces/usuario';
 import { EditarPerfil } from './editar-perfil/editar-perfil';
 
 @Component({
   selector: 'app-perfil',
-  imports: [DatePipe, RouterLink, Avatar, EditarPerfil],
+  imports: [DatePipe, RouterLink, Avatar, EditarPerfil, ModalPersonas],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
@@ -25,6 +28,7 @@ export class Perfil implements OnInit {
   private readonly api = inject(PublicacionesApi);
   private readonly comentariosApi = inject(ComentariosApi);
   private readonly bibliotecaApi = inject(BibliotecaApi);
+  private readonly usuariosApi = inject(UsuariosApi);
 
   // El usuario que ingresó (o null), el mismo que usa Publicaciones.
   protected readonly usuario = inject(Auth).usuarioActual;
@@ -37,6 +41,10 @@ export class Perfil implements OnInit {
   // Los últimos comentarios de cada una de esas publicaciones (consigna, Sprint 2:
   // "mis últimas 3 publicaciones y sus comentarios"). Se guardan por _id de publicación.
   protected readonly comentariosDe = signal<Record<string, IPaginaComentarios>>({});
+
+  // "Seguir" (extra): mis seguidores / a cuántos sigo, y qué lista está abierta.
+  protected readonly numerosSeguir = signal<IResumenSeguir | null>(null);
+  protected readonly lista = signal<'seguidores' | 'siguiendo' | null>(null);
 
   // Mi Biblioteca (extra): un resumen en el perfil. null = todavía cargando.
   protected readonly biblioteca = signal<IEntrada[] | null>(null);
@@ -67,6 +75,13 @@ export class Perfil implements OnInit {
   ngOnInit() {
     const usuario = this.usuario();
     if (!usuario) return; // sin sesión no hay nada que pedir
+
+    // Mis números de "seguir": salen de mi propio perfil público. Si falla, no se muestran.
+    this.usuariosApi.perfil(usuario.nombreUsuario).subscribe({
+      next: ({ seguidores, siguiendo, loSigo, meSigue }) =>
+        this.numerosSeguir.set({ seguidores, siguiendo, loSigo, meSigue }),
+      error: () => this.numerosSeguir.set(null),
+    });
 
     // Mi Biblioteca: si falla, el resumen simplemente no se muestra.
     this.bibliotecaApi.listar().subscribe({

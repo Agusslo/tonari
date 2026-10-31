@@ -17,6 +17,12 @@
       <app-crear-publicacion [usuario]="usuario" (creada)="alCrear()" />
     }
 
+    <!-- Pestañas (extra): todas las publicaciones o solo las de la gente que seguís -->
+    <div class="vistas" role="group" aria-label="Qué publicaciones ver">
+      <button type="button" [attr.aria-pressed]="vista() === 'todos'" (click)="cambiarVista('todos')">Para todos</button>
+      <button type="button" [attr.aria-pressed]="vista() === 'siguiendo'" (click)="cambiarVista('siguiendo')">Siguiendo</button>
+    </div>
+
     <!-- Barra: el orden a la izquierda y cuántas publicaciones hay a la derecha -->
     <div class="barra">
       <!-- Orden: dos botones tipo "pestaña"; aria-pressed indica cuál está activo -->
@@ -90,10 +96,20 @@
                 <path d="M8.5 12h.01M12 12h.01M15.5 12h.01" />
               </svg>
             </div>
-            <h2>Todavía no hay publicaciones</h2>
-            <p class="texto-secundario">
-              Cuando la comunidad empiece a compartir lo que mira, lee o dibuja, lo vas a ver acá.
-            </p>
+            @if (vista() === 'siguiendo') {
+              <!-- En "Siguiendo" vacío: no seguís a nadie, o la gente que seguís no publicó -->
+              <h2>Nada por acá todavía</h2>
+              <p class="texto-secundario">
+                Acá aparece lo que publica la gente que seguís. Tocá el nombre de alguien en
+                "Para todos" para ver su perfil y seguirlo.
+              </p>
+              <button type="button" class="boton boton-secundario" (click)="cambiarVista('todos')">Ver todas las publicaciones</button>
+            } @else {
+              <h2>Todavía no hay publicaciones</h2>
+              <p class="texto-secundario">
+                Cuando la comunidad empiece a compartir lo que mira, lee o dibuja, lo vas a ver acá.
+              </p>
+            }
           </div>
         }
       </div>

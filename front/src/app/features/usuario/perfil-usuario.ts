@@ -12,6 +12,8 @@ import { IPerfilPublico } from '../../core/interfaces/usuario';
 import IPublicacion from '../../core/interfaces/publicacion';
 import IEntrada, { nombreEstado } from '../../core/interfaces/biblioteca';
 import { Avatar } from '../../shared/components/avatar/avatar';
+import { ModalPersonas } from '../../shared/components/modal-personas/modal-personas';
+import { Modal } from '../../shared/components/modal/modal';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 
 // Perfil de OTRO usuario: /usuarios/beto (consigna, Sprint 5: "clic en el nombre o la
@@ -20,7 +22,7 @@ import { mensajeDeError } from '../../shared/utils/errores-http';
 // Usa los mismos estilos que Mi Perfil (perfil.css) para que se vean iguales.
 @Component({
   selector: 'app-perfil-usuario',
-  imports: [DatePipe, RouterLink, Avatar],
+  imports: [DatePipe, RouterLink, Avatar, ModalPersonas, Modal],
   templateUrl: './perfil-usuario.html',
   styleUrls: ['../perfil/perfil.css', './perfil-usuario.css'],
 })
@@ -40,6 +42,11 @@ export class PerfilUsuario {
   protected readonly publicaciones = signal<IPublicacion[]>([]);
   protected readonly totalPublicaciones = signal<number | null>(null);
   protected readonly cargandoPublicaciones = signal(true);
+
+  // "Seguir" (extra): esperando al back, el error si falla y qué lista está abierta.
+  protected readonly ocupadoSeguir = signal(false);
+  protected readonly errorSeguir = signal<string | null>(null);
+  protected readonly lista = signal<'seguidores' | 'siguiendo' | null>(null);
 
   // Su biblioteca (null = todavía no llegó; si falla, queda vacía).
   protected readonly biblioteca = signal<IEntrada[] | null>(null);
@@ -83,6 +90,7 @@ export class PerfilUsuario {
     this.cargando.set(true);
     this.error.set(null);
     this.perfil.set(null);
+    this.lista.set(null);
     this.biblioteca.set(null);
 
     this.usuariosApi.perfil(nombreUsuario).subscribe({
@@ -99,6 +107,27 @@ export class PerfilUsuario {
           error.status === 404 ? `No encontramos a @${nombreUsuario}.` : mensajeDeError(error),
         );
         this.cargando.set(false);
+      },
+    });
+  }
+
+  // Seguir / dejar de seguir. El back devuelve los números nuevos (seguidores, etc.)
+  // y los mezclamos con el perfil: así el botón y el contador cambian sin recargar.
+  protected alternarSeguir() {
+    const perfil = this.perfil();
+    if (!perfil || this.ocupadoSeguir()) return;
+    this.ocupadoSeguir.set(true);
+    const pedido = perfil.loSigo
+      ? this.usuariosApi.dejarDeSeguir(perfil._id)
+      : this.usuariosApi.seguir(perfil._id);
+    pedido.subscribe({
+      next: (numeros) => {
+        this.perfil.update((actual) => (actual ? { ...actual, ...numeros } : actual));
+        this.ocupadoSeguir.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.errorSeguir.set(mensajeDeError(error));
+        this.ocupadoSeguir.set(false);
       },
     });
   }
