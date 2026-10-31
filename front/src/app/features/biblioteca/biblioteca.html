@@ -1,15 +1,45 @@
-<header class="encabezado">
-  <div>
+<header class="panel encabezado">
+  <div class="encabezado-texto">
     <p class="kicker" lang="ja" aria-hidden="true">本棚</p>
     <h1>Mi Biblioteca</h1>
     <p class="texto-secundario">Lo que estás viendo y leyendo, lo que terminaste y lo que tenés pendiente.</p>
+
+    <!-- Números del tipo elegido: el valor grande arriba y la etiqueta abajo -->
+    <dl class="resumen" [attr.aria-busy]="cargando()">
+      <div>
+        <dt>{{ tipo() === 'anime' ? 'Animes' : 'Mangas' }}</dt>
+        <dd>{{ cargando() ? '–' : delTipo().length }}</dd>
+      </div>
+      <div>
+        <dt>{{ tipo() === 'anime' ? 'Episodios vistos' : 'Capítulos leídos' }}</dt>
+        <dd>{{ cargando() ? '–' : resumen().vistos }}</dd>
+      </div>
+      <div>
+        <dt>Completados</dt>
+        <dd>{{ cargando() ? '–' : resumen().completados }}</dd>
+      </div>
+      <div>
+        <dt>Tu nota promedio</dt>
+        <dd><span class="estrella" aria-hidden="true">★</span> {{ resumen().promedio ?? '–' }}</dd>
+      </div>
+    </dl>
+
+    <button type="button" class="boton" (click)="buscadorAbierto.set(!buscadorAbierto())" [attr.aria-expanded]="buscadorAbierto()">
+      <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      Agregar {{ tipo() === 'anime' ? 'anime' : 'manga' }}
+    </button>
   </div>
-  <button type="button" class="boton" (click)="buscadorAbierto.set(!buscadorAbierto())" [attr.aria-expanded]="buscadorAbierto()">
-    <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-    Agregar {{ tipo() === 'anime' ? 'anime' : 'manga' }}
-  </button>
+
+  <!-- Decoración: tus tapas en abanico, como libros sacados del estante -->
+  @if (tapasDestacadas().length) {
+    <div class="abanico" aria-hidden="true">
+      @for (tapa of tapasDestacadas(); track tapa) {
+        <img [src]="tapa" alt="" />
+      }
+    </div>
+  }
 </header>
 
 <!-- Anime / Manga: pestañas con la cantidad de cada uno -->

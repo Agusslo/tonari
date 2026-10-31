@@ -2,7 +2,7 @@ import { IsIn, IsInt, IsOptional, Max, Min, ValidateIf } from 'class-validator';
 import { ESTADOS } from '../entities/entrada.entity.js';
 import type { EstadoEntrada } from '../entities/entrada.entity.js';
 
-// PATCH: se manda solo lo que cambia (estado, progreso o puntuación).
+// PATCH: se manda solo lo que cambia (estado, progreso, puntuación o total).
 export class ActualizarEntradaDto {
   @IsOptional()
   @IsIn(ESTADOS, { message: 'El estado no es válido' })
@@ -20,4 +20,12 @@ export class ActualizarEntradaDto {
   @Min(1, { message: 'La puntuación va de 1 a 10' })
   @Max(10, { message: 'La puntuación va de 1 a 10' })
   puntuacion?: number | null;
+
+  // El total de episodios/capítulos. Lo manda la ficha cuando AniList ya lo sabe
+  // y nosotros no (por ejemplo, un manga que estaba en publicación y terminó).
+  @IsOptional()
+  @ValidateIf((_, valor) => valor !== null)
+  @IsInt({ message: 'El total debe ser un número entero' })
+  @Min(1, { message: 'El total tiene que ser al menos 1' })
+  total?: number | null;
 }

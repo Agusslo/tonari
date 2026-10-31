@@ -98,25 +98,35 @@
         }
       </div>
 
-      <!-- Paginación: solo si hay más de una página -->
-      @if (totalPaginas() > 1) {
-        <nav class="paginacion" aria-label="Páginas de publicaciones">
-          <button type="button" class="paginacion-boton" [disabled]="pagina() === 1" (click)="irAPagina(pagina() - 1)">
-            <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-              <path d="M15 6l-6 6 6 6" />
-            </svg>
-            Anterior
-          </button>
-          <span class="paginacion-estado" aria-live="polite">
-            Página <strong>{{ pagina() }}</strong> de {{ totalPaginas() }}
-          </span>
-          <button type="button" class="paginacion-boton" [disabled]="pagina() === totalPaginas()" (click)="irAPagina(pagina() + 1)">
-            Siguiente
-            <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-              <path d="M9 6l6 6-6 6" />
-            </svg>
-          </button>
-        </nav>
+      <!-- Scroll infinito: al llegar acá se piden las siguientes (lo vigila un IntersectionObserver) -->
+      @if (hayMas()) {
+        <div class="fin-lista" #finDeLista>
+          @if (errorMas(); as mensaje) {
+            <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+            <button type="button" class="boton boton-secundario" (click)="reintentarMas()">Reintentar</button>
+          } @else if (cargandoMas()) {
+            <!-- Una tarjeta "fantasma" mientras llegan las siguientes -->
+            <div class="panel esqueleto" aria-hidden="true">
+              <div class="esqueleto-autor">
+                <span class="esqueleto-circulo"></span>
+                <div>
+                  <span class="esqueleto-linea" style="width: 8rem"></span>
+                  <span class="esqueleto-linea esqueleto-chica" style="width: 11rem"></span>
+                </div>
+              </div>
+              <span class="esqueleto-linea esqueleto-titulo"></span>
+              <span class="esqueleto-linea" style="width: 70%"></span>
+            </div>
+            <span class="solo-lector" role="status">Cargando más publicaciones…</span>
+          } @else {
+            <!-- Por si el navegador no avisa (o se usa el teclado): también se puede tocar -->
+            <button type="button" class="boton boton-secundario" (click)="cargarMas()">Ver más publicaciones</button>
+          }
+        </div>
+      } @else if (publicaciones().length > 5) {
+        <p class="fin-muro texto-secundario">
+          <span lang="ja" aria-hidden="true">おわり</span> Ya viste todas las publicaciones.
+        </p>
       }
     }
   </section>

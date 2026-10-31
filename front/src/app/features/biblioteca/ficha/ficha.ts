@@ -1,14 +1,16 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Location } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import IEntrada, { ESTADOS, EstadoEntrada, IFicha, nombreEstado } from '../../../core/interfaces/biblioteca';
+import IEntrada, { ESTADOS, EstadoEntrada, IFicha, nombreEstado, TipoObra } from '../../../core/interfaces/biblioteca';
 import { BibliotecaApi, CambiosEntrada } from '../../../core/services/biblioteca-api';
 import { Anilist } from '../../../core/services/anilist';
 import { CapitulosManga, CatalogoApi } from '../../../core/services/catalogo-api';
 import { Auth } from '../../../core/services/auth';
 import { Modal } from '../../../shared/components/modal/modal';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
+import { rutaFicha } from '../../../shared/utils/rutas';
 import { ListaCapitulos } from './lista-capitulos/lista-capitulos';
 
 // Ficha de una obra de la biblioteca (estilo MangaDex): /biblioteca/:id
@@ -31,8 +33,14 @@ export class Ficha implements OnInit {
   private readonly router = inject(Router);
   private readonly titulo = inject(Title);
 
-  // El :id de la ruta (/biblioteca/6adc...), igual que en la página de una publicación.
-  private readonly id = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
+  private readonly location = inject(Location);
+
+  // La URL es /biblioteca/:tipo/:obra -> /biblioteca/anime/154587-sousou-no-frieren
+  // De "154587-sousou-no-frieren" solo importa el número (parseInt lee los dígitos
+  // del principio y corta en el guion); el título es decorativo.
+  private readonly parametros = inject(ActivatedRoute).snapshot.paramMap;
+  private readonly tipo = this.parametros.get('tipo') ?? '';
+  private readonly idAnilist = parseInt(this.parametros.get('obra') ?? '', 10);
 
   protected readonly entrada = signal<IEntrada | null>(null);
   protected readonly ficha = signal<IFicha | null>(null);
@@ -49,6 +57,12 @@ export class Ficha implements OnInit {
   protected readonly errorGuardar = signal<string | null>(null);
   protected readonly confirmarQuitar = signal(false);
   protected readonly sinopsisCompleta = signal(false);
+
+  // Sinopsis en español (la traduce y la guarda nuestro back; ver CatalogoApi.sinopsis).
+  protected readonly sinopsisEs = signal<string | null>(null);
+  protected readonly traduciendo = signal(false);
+  protected readonly errorTraduccion = signal(false);
+  protected readonly verOriginal = signal(false); // "Ver original en inglés"
 
   // Lo que está escrito en el contador (todavía sin guardar).
   protected readonly progresoEscrito = signal('');
@@ -99,11 +113,18 @@ export class Ficha implements OnInit {
   cargar() {
     this.cargando.set(true);
     this.error.set(null);
-    this.api.obtener(this.id).subscribe({
+    // URL mal escrita (/biblioteca/serie/abc): ni le preguntamos al back.
+    if ((this.tipo !== 'anime' && this.tipo !== 'manga') || Number.isNaN(this.idAnilist)) {
+      this.error.set('Esa obra no existe. Revisá la dirección o buscala en tu biblioteca.');
+      this.cargando.set(false);
+      return;
+    }
+    this.api.obtenerPorObra(this.tipo as TipoObra, this.idAnilist).subscribe({
       next: (entrada) => {
         this.mostrar(entrada);
         this.cargando.set(false);
         this.titulo.setTitle(`${entrada.titulo} · TONARI`);
+        this.corregirUrl(entrada);
         this.cargarFicha(entrada);
       },
       error: (error: HttpErrorResponse) => {
@@ -120,10 +141,48 @@ export class Ficha implements OnInit {
       next: (ficha) => {
         this.ficha.set(ficha);
         this.cargarCapitulos(entrada, ficha);
+        this.actualizarTotal(entrada, ficha);
+        if (ficha.sinopsis) this.cargarSinopsis(entrada.idAnilist);
       },
       error: () => {
         this.errorAnilist.set(true);
         this.cargarCapitulos(entrada, null); // igual probamos con el título guardado
+      },
+    });
+  }
+
+  // Si entraste con la URL "incompleta" (/biblioteca/anime/154587) o con otro título,
+  // la cambiamos por la buena sin recargar ni agregar un paso al "Atrás" del navegador.
+  private corregirUrl(entrada: IEntrada) {
+    const buena = this.router.serializeUrl(this.router.createUrlTree(rutaFicha(entrada)));
+    if (this.location.path() !== buena) this.location.replaceState(buena);
+  }
+
+  // Si AniList ya sabe el total y nosotros tenemos otro (o ninguno, porque cuando la
+  // agregaste todavía salía), se lo avisamos al back para que lo guarde. Así las reglas
+  // (no pasarse del total, Completado al llegar al final) usan el dato nuevo.
+  // Es "silencioso": si falla, no pasa nada (se intenta la próxima vez que abras la ficha).
+  private actualizarTotal(entrada: IEntrada, ficha: IFicha) {
+    if (!this.esMia() || ficha.total === null || ficha.total === entrada.total) return;
+    this.api.actualizar(entrada._id, { total: ficha.total }).subscribe({
+      next: (actualizada) => this.mostrar(actualizada),
+      error: () => {},
+    });
+  }
+
+  // La sinopsis en español. Mientras llega se ve la original (en inglés);
+  // si la traducción falla, queda la original con un aviso.
+  private cargarSinopsis(idAnilist: number) {
+    this.traduciendo.set(true);
+    this.errorTraduccion.set(false);
+    this.catalogo.sinopsis(idAnilist).subscribe({
+      next: ({ traducida }) => {
+        this.sinopsisEs.set(traducida);
+        this.traduciendo.set(false);
+      },
+      error: () => {
+        this.errorTraduccion.set(true);
+        this.traduciendo.set(false);
       },
     });
   }

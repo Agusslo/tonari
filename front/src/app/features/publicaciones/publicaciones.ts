@@ -2,10 +2,12 @@ import {
   afterRenderEffect,
   Component,
   computed,
+  effect,
   ElementRef,
   inject,
   OnInit,
   signal,
+  viewChild,
   viewChildren,
 } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -40,14 +42,20 @@ export class Publicaciones implements OnInit {
 
   // Orden y paginación (consigna: por fecha por defecto, o por "Me gusta";
   // cantidad limitada por página).
+  // Scroll infinito (como Twitter): se piden de a 10 y, al llegar al final de la lista,
+  // se piden las 10 siguientes y se AGREGAN abajo. Cada pedido sigue trayendo una
+  // cantidad limitada (offset + limit), así que la paginación la sigue haciendo el back.
   protected readonly orden = signal<'fecha' | 'meGusta'>('fecha');
-  protected readonly pagina = signal(1);
-  private readonly porPagina = 5;
+  private readonly porPagina = 10;
+  protected readonly cargandoMas = signal(false);
+  protected readonly errorMas = signal<string | null>(null);
 
-  // computed: se recalcula solo cuando cambian total o pagina.
-  protected readonly totalPaginas = computed(() =>
-    Math.max(1, Math.ceil(this.total() / this.porPagina)),
-  );
+  // computed: ¿quedan publicaciones por traer? (las que tengo < las que hay en total)
+  protected readonly hayMas = computed(() => this.publicaciones().length < this.total());
+
+  // El elemento invisible del final de la lista y si está en pantalla ahora.
+  private readonly finDeLista = viewChild<ElementRef<HTMLElement>>('finDeLista');
+  private readonly finVisible = signal(false);
 
   // Acciones sobre una publicación
   protected readonly ocupada = signal<string | null>(null); // _id de la que se está procesando
@@ -76,8 +84,32 @@ export class Publicaciones implements OnInit {
 
   constructor() {
     // Después de dibujar la lista, las tarjetas nuevas entran en cascada (GSAP).
+    // Las que ya estaban no se vuelven a animar: al cargar más, solo entran las nuevas.
     afterRenderEffect(() => {
       entrarEnCascada(this.tarjetas().map((tarjeta) => tarjeta.nativeElement));
+    });
+
+    // IntersectionObserver: el navegador avisa cuando un elemento entra o sale de la
+    // pantalla (sin estar escuchando el scroll todo el tiempo). Observamos el elemento
+    // del final de la lista: cuando aparece, pedimos más.
+    // rootMargin 400px: avisa un poco ANTES de llegar, así casi no se ve la espera.
+    // El effect se vuelve a ejecutar si el elemento aparece o desaparece (está dentro
+    // de un @if) y onCleanup desconecta el observador viejo.
+    effect((onCleanup) => {
+      const elemento = this.finDeLista()?.nativeElement;
+      if (!elemento) return;
+      const observador = new IntersectionObserver(
+        ([entrada]) => {
+          this.finVisible.set(entrada.isIntersecting);
+          if (entrada.isIntersecting) this.cargarMas();
+        },
+        { rootMargin: '400px' },
+      );
+      observador.observe(elemento);
+      onCleanup(() => {
+        observador.disconnect();
+        this.finVisible.set(false);
+      });
     });
   }
 
@@ -120,48 +152,70 @@ export class Publicaciones implements OnInit {
     titulo?.focus({ preventScroll: true });
   }
 
+  // La primera tanda (al entrar, al cambiar el orden o al publicar): reemplaza la lista.
   cargar() {
     this.cargando.set(true);
     this.error.set(null);
+    this.errorMas.set(null);
+
+    this.api.listar({ orden: this.orden(), offset: 0, limit: this.porPagina }).subscribe({
+      next: (pagina) => {
+        this.publicaciones.set(pagina.publicaciones);
+        this.total.set(pagina.total);
+        this.cargando.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.error.set(mensajeDeError(error));
+        this.cargando.set(false);
+      },
+    });
+  }
+
+  // Las siguientes: offset = las que ya tengo (si tengo 10, salteá 10 y traé 10 más).
+  // Se AGREGAN al final de la lista. El "if" evita pedir dos veces lo mismo
+  // si el observador avisa mientras todavía está cargando.
+  cargarMas() {
+    if (this.cargando() || this.cargandoMas() || !this.hayMas() || this.errorMas()) return;
+    this.cargandoMas.set(true);
 
     this.api
-      .listar({
-        orden: this.orden(),
-        offset: (this.pagina() - 1) * this.porPagina, // página 1 -> 0, página 2 -> 5...
-        limit: this.porPagina,
-      })
+      .listar({ orden: this.orden(), offset: this.publicaciones().length, limit: this.porPagina })
       .subscribe({
         next: (pagina) => {
-          this.publicaciones.set(pagina.publicaciones);
+          // Por si alguien publicó mientras tanto, no repetimos ninguna que ya esté.
+          const yaEstan = new Set(this.publicaciones().map((p) => p._id));
+          const nuevas = pagina.publicaciones.filter((p) => !yaEstan.has(p._id));
+          this.publicaciones.update((lista) => [...lista, ...nuevas]);
           this.total.set(pagina.total);
-          this.cargando.set(false);
+          this.cargandoMas.set(false);
+          // Si la pantalla es alta y el final sigue a la vista, el observador no vuelve
+          // a avisar (no "entró" de nuevo): pedimos la siguiente tanda nosotros.
+          if (this.finVisible() && nuevas.length) queueMicrotask(() => this.cargarMas());
         },
         error: (error: HttpErrorResponse) => {
-          this.error.set(mensajeDeError(error));
-          this.cargando.set(false);
+          // Se muestra abajo de la lista con un botón para reintentar.
+          this.errorMas.set(mensajeDeError(error));
+          this.cargandoMas.set(false);
         },
       });
   }
 
-  // Recién publicada: volvemos a "Más recientes", página 1, para que se vea arriba.
+  reintentarMas() {
+    this.errorMas.set(null);
+    this.cargarMas();
+  }
+
+  // Recién publicada: volvemos a "Más recientes" desde el principio, para que se vea arriba.
   alCrear() {
     this.orden.set('fecha');
-    this.pagina.set(1);
     this.cargar();
     this.cargarMiResumen();
   }
 
-  // Al cambiar el orden se vuelve a la primera página.
+  // Al cambiar el orden se arranca la lista de nuevo.
   cambiarOrden(orden: 'fecha' | 'meGusta') {
     this.orden.set(orden);
-    this.pagina.set(1);
     this.cargar();
-  }
-
-  irAPagina(pagina: number) {
-    this.pagina.set(pagina);
-    this.cargar();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // Dar o quitar "Me gusta", según si ya lo había dado.
@@ -202,11 +256,9 @@ export class Publicaciones implements OnInit {
     this.api.eliminar(publicacion._id, usuario._id).subscribe({
       next: () => {
         this.ocupada.set(null);
-        // Si era la única de la última página, volvemos una página atrás.
-        if (this.publicaciones().length === 1 && this.pagina() > 1) {
-          this.pagina.update((pagina) => pagina - 1);
-        }
-        this.cargar(); // recargamos para que la paginación quede bien
+        // La sacamos de la lista sin recargar (así no perdés por dónde ibas scrolleando).
+        this.publicaciones.update((lista) => lista.filter((p) => p._id !== publicacion._id));
+        this.total.update((total) => total - 1);
         this.cargarMiResumen();
       },
       error: (error: HttpErrorResponse) => {

@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import IEntrada, { EstadoEntrada, IObra } from '../interfaces/biblioteca';
+import IEntrada, { EstadoEntrada, IObra, TipoObra } from '../interfaces/biblioteca';
 
 // Lo que se puede cambiar de una obra de la biblioteca.
 export interface CambiosEntrada {
   estado?: EstadoEntrada;
   progreso?: number;
   puntuacion?: number | null;
+  total?: number | null; // lo manda la ficha si AniList ya sabe el total y nosotros no
 }
 
 // Habla con /biblioteca de NUESTRO back (el token lo pone el interceptor).
@@ -22,7 +23,12 @@ export class BibliotecaApi {
     return this.http.get<IEntrada[]>(this.url, { params });
   }
 
-  // Una obra sola, para su ficha.
+  // Una obra de MI biblioteca por tipo + id de AniList (la ficha, con la URL linda).
+  obtenerPorObra(tipo: TipoObra, idAnilist: number) {
+    return this.http.get<IEntrada>(`${this.url}/obra/${tipo}/${idAnilist}`);
+  }
+
+  // Una obra sola, por su _id de Mongo.
   obtener(id: string) {
     return this.http.get<IEntrada>(`${this.url}/${id}`);
   }

@@ -15,6 +15,11 @@ export interface CapitulosManga {
   urlMangadex: string | null;
 }
 
+export interface SinopsisTraducida {
+  original: string; // en inglés, como viene de AniList
+  traducida: string; // en español (traducción automática)
+}
+
 // Habla con /catalogo de nuestro back (el token lo pone el interceptor).
 @Service()
 export class CatalogoApi {
@@ -27,5 +32,11 @@ export class CatalogoApi {
     if (alternativo) params['alternativo'] = alternativo;
     if (idMal) params['idMal'] = String(idMal);
     return this.http.get<CapitulosManga>(`${this.url}/manga/${idAnilist}/capitulos`, { params });
+  }
+
+  // GET /catalogo/sinopsis/:idAnilist -> la sinopsis traducida al español
+  // (el back la traduce la primera vez y después la guarda).
+  sinopsis(idAnilist: number) {
+    return this.http.get<SinopsisTraducida>(`${this.url}/sinopsis/${idAnilist}`);
   }
 }

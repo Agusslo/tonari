@@ -14,13 +14,13 @@
       <a routerLink="/biblioteca" routerLinkActive="activo" ariaCurrentWhenActive="page">Biblioteca</a>
       <a routerLink="/mi-perfil" routerLinkActive="activo" ariaCurrentWhenActive="page" class="nav-perfil">
         <app-avatar [usuario]="usuario" />
-        Mi perfil
+        <span class="nav-texto">Mi perfil</span>
       </a>
       <button type="button" class="nav-salir" (click)="salir()">
         <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
           <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11" />
         </svg>
-        Salir
+        <span class="nav-texto">Salir</span>
       </button>
     } @else {
       <a routerLink="/login" routerLinkActive="activo" ariaCurrentWhenActive="page">Ingresar</a>

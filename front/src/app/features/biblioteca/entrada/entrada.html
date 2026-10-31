@@ -1,8 +1,8 @@
 @let e = entrada();
 
 <article class="entrada" [class.ocupada]="guardando()" [attr.aria-label]="e.titulo">
-  <!-- La tapa y el título llevan a la ficha de la obra (/biblioteca/:id) -->
-  <a class="tapa-entrada" [routerLink]="['/biblioteca', e._id]" [attr.aria-label]="'Abrir la ficha de ' + e.titulo">
+  <!-- La tapa y el título llevan a la ficha de la obra (/biblioteca/anime/154587-sousou-no-frieren) -->
+  <a class="tapa-entrada" [routerLink]="rutaFicha(e)" [attr.aria-label]="'Abrir la ficha de ' + e.titulo">
     @if (e.imagen) {
       <img [src]="e.imagen" alt="" loading="lazy" />
     }
@@ -14,13 +14,13 @@
   </a>
 
   <div class="cuerpo">
-    <h3 class="titulo" [attr.title]="e.titulo"><a [routerLink]="['/biblioteca', e._id]">{{ e.titulo }}</a></h3>
+    <h3 class="titulo" [attr.title]="e.titulo"><a [routerLink]="rutaFicha(e)">{{ e.titulo }}</a></h3>
 
-    <!-- Progreso: barra + contador "12 / 24 ep." -->
+    <!-- Progreso: barra + contador "12 / 24 ep." (sin total, la barra queda rayada) -->
     <div class="progreso">
-      @if (porcentaje() !== null) {
-        <div class="barra" aria-hidden="true"><span [style.width.%]="porcentaje()"></span></div>
-      }
+      <div class="barra" [class.sin-total]="porcentaje() === null" aria-hidden="true">
+        <span [style.width.%]="porcentaje() ?? 0"></span>
+      </div>
       <div class="contador">
         @if (editable()) {
           <button

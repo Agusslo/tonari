@@ -207,14 +207,30 @@
     <!-- ---------- Sinopsis (de AniList) ---------- -->
     <section class="panel sinopsis" aria-labelledby="titulo-sinopsis">
       <h2 id="titulo-sinopsis">Sinopsis</h2>
-      @if (f?.sinopsis; as sinopsis) {
-        <p class="texto-sinopsis" [class.recortada]="!sinopsisCompleta()" lang="en">{{ sinopsis }}</p>
-        @if (sinopsis.length > 400) {
+      @if (f?.sinopsis; as original) {
+        <!-- En español si ya llegó la traducción (y no pediste el original); si no, en inglés -->
+        @let enEspanol = sinopsisEs() !== null && !verOriginal();
+        @let texto = enEspanol ? sinopsisEs()! : original;
+        <p class="texto-sinopsis" [class.recortada]="!sinopsisCompleta()" [attr.lang]="enEspanol ? 'es' : 'en'">{{ texto }}</p>
+        @if (texto.length > 400) {
           <button type="button" class="ver-mas" (click)="sinopsisCompleta.set(!sinopsisCompleta())">
             {{ sinopsisCompleta() ? 'Ver menos' : 'Ver más' }}
           </button>
         }
-        <p class="ayuda">Sinopsis en inglés, de AniList.</p>
+        <p class="ayuda nota-sinopsis" aria-live="polite">
+          @if (traduciendo()) {
+            <span class="spinner spinner-chico" aria-hidden="true"></span> Traduciendo al español…
+          } @else if (sinopsisEs() !== null) {
+            {{ enEspanol ? 'Traducción automática de la sinopsis de AniList.' : 'Sinopsis original, en inglés.' }}
+            <button type="button" class="cambiar-idioma" (click)="verOriginal.set(!verOriginal())">
+              {{ enEspanol ? 'Ver original en inglés' : 'Ver en español' }}
+            </button>
+          } @else if (errorTraduccion()) {
+            No se pudo traducir ahora: te la mostramos en inglés, de AniList.
+          } @else {
+            Sinopsis en inglés, de AniList.
+          }
+        </p>
       } @else if (errorAnilist()) {
         <p class="texto-secundario">No se pudo cargar la información de AniList en este momento. Tu seguimiento funciona igual.</p>
       } @else if (f) {

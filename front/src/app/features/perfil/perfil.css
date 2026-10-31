@@ -440,6 +440,22 @@
   }
 }
 
+.tapa-enlace {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radio-campo);
+}
+
+.tapa-enlace:hover .tapa-titulo {
+  color: var(--color-menta);
+}
+
+.tapa-enlace:focus-visible {
+  outline: 2px solid var(--color-menta);
+  outline-offset: 3px;
+}
+
 .tapa img {
   width: 100%;
   max-width: 100%;

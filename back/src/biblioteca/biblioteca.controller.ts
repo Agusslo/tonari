@@ -1,9 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -28,6 +30,22 @@ export class BibliotecaController {
   @Get()
   listar(@Req() req: RequestConToken, @Query() listarBibliotecaDto: ListarBibliotecaDto) {
     return this.bibliotecaService.listar(req.usuario.id, listarBibliotecaDto);
+  }
+
+  // GET /biblioteca/obra/anime/154587 -> esa obra en MI biblioteca (404 si no la tengo).
+  // Lo usa la ficha con las URLs lindas. Va ANTES de ":id" para que Nest no confunda
+  // "obra" con un id.
+  @Get('obra/:tipo/:idAnilist')
+  obtenerPorObra(
+    @Req() req: RequestConToken,
+    @Param('tipo') tipo: string,
+    @Param(
+      'idAnilist',
+      new ParseIntPipe({ exceptionFactory: () => new BadRequestException('El id de AniList no es válido') }),
+    )
+    idAnilist: number,
+  ) {
+    return this.bibliotecaService.obtenerPorObra(req.usuario.id, tipo, idAnilist);
   }
 
   // GET /biblioteca/:id -> una obra de la biblioteca (para su ficha).

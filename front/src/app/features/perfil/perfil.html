@@ -181,13 +181,16 @@
           <ul class="tapas">
             @for (entrada of tapas(); track entrada._id) {
               <li class="tapa">
-                @if (entrada.imagen) {
-                  <img [src]="entrada.imagen" alt="" loading="lazy" />
-                }
-                <p class="tapa-titulo">{{ entrada.titulo }}</p>
-                <p class="tapa-detalle">
-                  {{ nombreEstado(entrada.estado, entrada.tipo) }} · {{ entrada.progreso }}/{{ entrada.total ?? '?' }}
-                </p>
+                <!-- Cada tapa lleva a la ficha de esa obra -->
+                <a class="tapa-enlace" [routerLink]="rutaFicha(entrada)">
+                  @if (entrada.imagen) {
+                    <img [src]="entrada.imagen" alt="" loading="lazy" />
+                  }
+                  <p class="tapa-titulo">{{ entrada.titulo }}</p>
+                  <p class="tapa-detalle">
+                    {{ nombreEstado(entrada.estado, entrada.tipo) }} · {{ entrada.progreso }}/{{ entrada.total ?? '?' }}
+                  </p>
+                </a>
               </li>
             }
           </ul>

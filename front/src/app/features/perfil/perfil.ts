@@ -11,6 +11,7 @@ import { ComentariosApi } from '../../core/services/comentarios-api';
 import { BibliotecaApi } from '../../core/services/biblioteca-api';
 import IEntrada, { nombreEstado } from '../../core/interfaces/biblioteca';
 import { mensajeDeError } from '../../shared/utils/errores-http';
+import { rutaFicha } from '../../shared/utils/rutas';
 import { Avatar } from '../../shared/components/avatar/avatar';
 import { EditarPerfil } from './editar-perfil/editar-perfil';
 
@@ -40,6 +41,7 @@ export class Perfil implements OnInit {
   // Mi Biblioteca (extra): un resumen en el perfil. null = todavía cargando.
   protected readonly biblioteca = signal<IEntrada[] | null>(null);
   protected readonly nombreEstado = nombreEstado;
+  protected readonly rutaFicha = rutaFicha;
   // Cuántas hay en cada estado (anime y manga juntos).
   protected readonly resumenBiblioteca = computed(() => {
     const lista = this.biblioteca() ?? [];

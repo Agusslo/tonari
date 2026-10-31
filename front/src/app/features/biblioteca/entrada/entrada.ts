@@ -1,6 +1,7 @@
 import { Component, ElementRef, computed, inject, input, output, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
+import { rutaFicha } from '../../../shared/utils/rutas';
 import IEntrada, { ESTADOS, EstadoEntrada, nombreEstado } from '../../../core/interfaces/biblioteca';
 import { BibliotecaApi, CambiosEntrada } from '../../../core/services/biblioteca-api';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
@@ -36,6 +37,7 @@ export class Entrada {
 
   protected readonly estados = ESTADOS;
   protected readonly nombreEstado = nombreEstado;
+  protected readonly rutaFicha = rutaFicha;
   protected readonly puntuaciones = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   // "ep." para anime, "cap." para manga.

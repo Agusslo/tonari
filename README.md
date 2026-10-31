@@ -81,6 +81,10 @@
 ## ✨ Extras (no los pide la consigna)
 
 - **Mi Biblioteca**: lista personal de anime y manga con estado (viendo/leyendo, completado, pendiente, abandonado), progreso por episodio o capítulo y puntuación del 1 al 10. Las obras se buscan con la API pública de [AniList](https://anilist.co) (GraphQL, sin clave), con espera al escribir, límite de tiempo y un reintento si falla. Resumen en Mi Perfil.
+  - **Ficha de cada obra** (estilo MangaDex) con URL legible (`/biblioteca/anime/154587-sousou-no-frieren`): banner, géneros, puntaje, contador para escribir por dónde vas y nota.
+  - **Lista de capítulos/episodios con "ojito"** para marcar hasta dónde viste o leíste, y "Marcar todo" por tomo. Los capítulos de manga y sus tomos salen de [MangaDex](https://mangadex.org), consultado desde el back (con caché de 6 horas).
+  - **Sinopsis en español**: el back la traduce una sola vez con [MyMemory](https://mymemory.translated.net) y la guarda en Mongo (caché); se puede ver el original en inglés.
+  - El total de capítulos se actualiza solo cuando AniList lo conoce (por ejemplo, cuando un manga termina).
 - **Respuestas a comentarios** (un nivel, como Instagram).
 - **Imágenes en Cloudinary** con recorte automático para los avatares.
 - **Avatar generado** ([blobatar](https://blobatar.dev)) cuando el usuario no sube foto; si no carga, iniciales.
@@ -132,7 +136,7 @@
 - **Página Publicaciones**
   - [x] Listado de publicaciones ordenado por fecha por defecto
   - [x] Cambiar el ordenamiento a cantidad de "Me gusta"
-  - [x] Cantidad limitada de publicaciones, con paginación
+  - [x] Cantidad limitada de publicaciones, con paginación (de a 10, con scroll infinito)
   - [x] Cada publicación es un componente
   - [x] Dar y quitar "Me gusta" cuando corresponda
   - [x] Eliminar mis propias publicaciones
@@ -226,7 +230,7 @@
   - [ ] Clic en el nombre o la foto de otro usuario para ver su perfil: datos y últimas 3 publicaciones
   - [ ] Mantener las acciones del administrador (baja lógica de publicaciones)
 - **Publicaciones**
-  - [ ] Scroll infinito en vez de paginación tradicional
+  - [x] Scroll infinito en vez de paginación tradicional
 - **Dashboard / Estadísticas**
   - [ ] Cantidad de ingresos (login) por usuario
   - [ ] Visitas a mi perfil (de usuarios que no sean uno mismo)

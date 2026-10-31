@@ -435,6 +435,40 @@
   background: var(--velo-menta);
 }
 
+/* "Traduciendo…" / "Ver original en inglés" */
+.nota-sinopsis {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.6rem;
+}
+
+.cambiar-idioma {
+  padding: 0.2rem 0.5rem;
+  font: 600 0.8rem var(--fuente-texto);
+  color: var(--color-menta);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cambiar-idioma:hover {
+  background: var(--velo-menta);
+}
+
+.cambiar-idioma:focus-visible {
+  outline: none;
+  box-shadow: var(--halo-menta);
+}
+
+/* La ruedita global (styles.css), más chica */
+.spinner-chico {
+  width: 0.85rem;
+  height: 0.85rem;
+  color: var(--color-menta);
+}
+
 .sinopsis .ayuda {
   margin-top: 0.75rem;
 }

@@ -25,4 +25,19 @@
     padding: 0.4rem 0.6rem;
     font-size: 0.875rem;
   }
+
+  /* "Mi perfil" queda solo con tu foto y "Salir" solo con el ícono: así el menú
+     entra en un renglón. El texto sigue ahí para los lectores de pantalla. */
+  .nav-texto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .navegacion a.nav-perfil {
+    padding-inline: 0.35rem;
+  }
 }

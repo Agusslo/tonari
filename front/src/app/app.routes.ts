@@ -44,8 +44,9 @@ export const routes: Routes = [
     loadComponent: () => import('./features/biblioteca/biblioteca').then((m) => m.Biblioteca),
   },
   {
-    // Ficha de una obra de la biblioteca (estilo MangaDex).
-    path: 'biblioteca/:id',
+    // Ficha de una obra de la biblioteca (estilo MangaDex):
+    // /biblioteca/anime/154587-sousou-no-frieren (tipo + id de AniList + título "slug").
+    path: 'biblioteca/:tipo/:obra',
     title: 'Obra · TONARI',
     canActivate: [sesionGuard],
     loadComponent: () => import('./features/biblioteca/ficha/ficha').then((m) => m.Ficha),

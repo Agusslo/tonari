@@ -50,6 +50,24 @@ export class Biblioteca implements OnInit {
     anime: this.entradas().filter((e) => e.tipo === 'anime').length,
     manga: this.entradas().filter((e) => e.tipo === 'manga').length,
   }));
+  // Los números del encabezado, del tipo que se está mirando.
+  protected readonly resumen = computed(() => {
+    const lista = this.delTipo();
+    const notas = lista.map((e) => e.puntuacion).filter((n): n is number => n !== null);
+    const promedio = notas.length ? notas.reduce((suma, n) => suma + n, 0) / notas.length : null;
+    return {
+      vistos: lista.reduce((suma, e) => suma + e.progreso, 0).toLocaleString('es-AR'),
+      completados: this.cuantos()['completado'] ?? 0,
+      promedio: promedio === null ? null : promedio.toFixed(1).replace('.', ','),
+    };
+  });
+  // Hasta 3 tapas para el abanico del encabezado: primero lo que estás viendo o leyendo.
+  protected readonly tapasDestacadas = computed(() => {
+    const conTapa = this.delTipo().filter((e) => e.imagen);
+    const enCurso = conTapa.filter((e) => e.estado === 'en-curso');
+    const resto = conTapa.filter((e) => e.estado !== 'en-curso');
+    return [...enCurso, ...resto].slice(0, 3).map((e) => e.imagen!);
+  });
   // Los idAnilist que ya tengo de este tipo, para que el buscador marque "En tu biblioteca".
   protected readonly yaAgregadas = computed(() => new Set(this.delTipo().map((e) => e.idAnilist)));
 
