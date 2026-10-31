@@ -35,6 +35,35 @@
     var(--color-campo);
 }
 
+/* Es un link (lleva a la ficha): sin subrayado y con zoom suave en la tapa */
+a.tapa-entrada {
+  display: block;
+  overflow: hidden;
+}
+
+a.tapa-entrada:focus-visible,
+.titulo a:focus-visible {
+  outline: 2px solid var(--color-menta);
+  outline-offset: 2px;
+}
+
+.titulo a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.titulo a:hover {
+  color: var(--color-menta);
+}
+
+.tapa-entrada img {
+  transition: transform 0.3s ease;
+}
+
+a.tapa-entrada:hover img {
+  transform: scale(1.04);
+}
+
 .tapa-entrada img {
   width: 100%;
   height: 100%;

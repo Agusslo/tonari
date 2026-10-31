@@ -30,6 +30,24 @@ export interface IObra {
   formato: string | null; // "TV", "Película", "Manga", "Novela ligera"...
 }
 
+// Lo que muestra la ficha de una obra (sale de AniList, no se guarda en nuestra base).
+export interface IFicha {
+  tituloIngles: string | null;
+  tituloNativo: string | null; // en japonés
+  sinopsis: string | null; // en inglés (AniList no la tiene en español)
+  generos: string[];
+  formato: string | null;
+  estadoPublicacion: string | null; // "En emisión", "Finalizado"...
+  anio: number | null;
+  total: number | null;
+  emitidos: number | null; // anime en emisión: episodios que ya salieron
+  puntajeAnilist: number | null; // promedio de AniList, de 0 a 10
+  banner: string | null; // imagen ancha para el fondo de la cabecera
+  tapa: string | null; // tapa en alta calidad
+  urlAnilist: string;
+  idMal: number | null; // id en MyAnimeList, para el link
+}
+
 // Los textos de cada estado. "En curso" cambia según el tipo: viendo / leyendo.
 export function nombreEstado(estado: EstadoEntrada, tipo: TipoObra): string {
   if (estado === 'en-curso') return tipo === 'anime' ? 'Viendo' : 'Leyendo';

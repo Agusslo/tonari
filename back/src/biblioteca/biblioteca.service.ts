@@ -31,6 +31,18 @@ export class BibliotecaService implements OnModuleInit {
     return this.entradaModel.find(filtro).sort({ updatedAt: -1 });
   }
 
+  // Una obra sola (400 si el id no es válido, 404 si no existe).
+  async obtener(id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('El id no es válido'); // 400
+    }
+    const entrada = await this.entradaModel.findById(id);
+    if (!entrada) {
+      throw new NotFoundException('Esa obra no está en la biblioteca'); // 404
+    }
+    return entrada;
+  }
+
   async agregar(usuarioId: string, dto: AgregarEntradaDto) {
     try {
       const entrada = new this.entradaModel({

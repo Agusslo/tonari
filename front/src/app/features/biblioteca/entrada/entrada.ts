@@ -1,5 +1,6 @@
 import { Component, ElementRef, computed, inject, input, output, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
 import IEntrada, { ESTADOS, EstadoEntrada, nombreEstado } from '../../../core/interfaces/biblioteca';
 import { BibliotecaApi, CambiosEntrada } from '../../../core/services/biblioteca-api';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
@@ -10,6 +11,7 @@ import { mensajeDeError } from '../../../shared/utils/errores-http';
 // la obra actualizada, que avisamos al padre con "actualizada".
 @Component({
   selector: 'app-entrada',
+  imports: [RouterLink],
   templateUrl: './entrada.html',
   styleUrl: './entrada.css',
   host: {

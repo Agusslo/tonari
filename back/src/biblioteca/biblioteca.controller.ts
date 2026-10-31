@@ -30,6 +30,13 @@ export class BibliotecaController {
     return this.bibliotecaService.listar(req.usuario.id, listarBibliotecaDto);
   }
 
+  // GET /biblioteca/:id -> una obra de la biblioteca (para su ficha).
+  // Cualquiera con sesión la puede ver; cambiarla, solo el dueño (eso lo controla el PATCH).
+  @Get(':id')
+  obtener(@Param('id') id: string) {
+    return this.bibliotecaService.obtener(id);
+  }
+
   // POST /biblioteca -> 201 con la obra agregada (409 si ya estaba)
   @Post()
   agregar(@Req() req: RequestConToken, @Body() agregarEntradaDto: AgregarEntradaDto) {

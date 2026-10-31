@@ -44,6 +44,13 @@ export const routes: Routes = [
     loadComponent: () => import('./features/biblioteca/biblioteca').then((m) => m.Biblioteca),
   },
   {
+    // Ficha de una obra de la biblioteca (estilo MangaDex).
+    path: 'biblioteca/:id',
+    title: 'Obra · TONARI',
+    canActivate: [sesionGuard],
+    loadComponent: () => import('./features/biblioteca/ficha/ficha').then((m) => m.Ficha),
+  },
+  {
     path: 'mi-perfil',
     title: 'Mi perfil · TONARI',
     canActivate: [sesionGuard],

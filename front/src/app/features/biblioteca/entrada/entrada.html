@@ -1,7 +1,8 @@
 @let e = entrada();
 
 <article class="entrada" [class.ocupada]="guardando()" [attr.aria-label]="e.titulo">
-  <div class="tapa-entrada">
+  <!-- La tapa y el título llevan a la ficha de la obra (/biblioteca/:id) -->
+  <a class="tapa-entrada" [routerLink]="['/biblioteca', e._id]" [attr.aria-label]="'Abrir la ficha de ' + e.titulo">
     @if (e.imagen) {
       <img [src]="e.imagen" alt="" loading="lazy" />
     }
@@ -10,10 +11,10 @@
     @if (e.puntuacion) {
       <span class="nota" [attr.aria-label]="'Tu puntuación: ' + e.puntuacion + ' de 10'">★ {{ e.puntuacion }}</span>
     }
-  </div>
+  </a>
 
   <div class="cuerpo">
-    <h3 class="titulo" [attr.title]="e.titulo">{{ e.titulo }}</h3>
+    <h3 class="titulo" [attr.title]="e.titulo"><a [routerLink]="['/biblioteca', e._id]">{{ e.titulo }}</a></h3>
 
     <!-- Progreso: barra + contador "12 / 24 ep." -->
     <div class="progreso">

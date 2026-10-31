@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { map, retry, throwError, timeout, timer } from 'rxjs';
-import { IObra, TipoObra } from '../interfaces/biblioteca';
+import { IFicha, IObra, TipoObra } from '../interfaces/biblioteca';
 
 // AniList (https://anilist.co) es una API pública y gratuita de anime y manga.
 // No pide clave. Límite: unos 90 pedidos por minuto.
@@ -57,6 +57,56 @@ const FORMATOS: Record<string, string> = {
   ONE_SHOT: 'One shot',
 };
 
+// La consulta de la ficha: UNA obra por su id, con más datos que la búsqueda.
+const CONSULTA_FICHA = `
+  query ($id: Int) {
+    Media(id: $id) {
+      id
+      idMal
+      title { romaji english native }
+      description(asHtml: false)
+      format
+      status
+      episodes
+      chapters
+      startDate { year }
+      genres
+      averageScore
+      bannerImage
+      coverImage { extraLarge }
+      siteUrl
+      nextAiringEpisode { episode }
+    }
+  }
+`;
+
+interface FichaAnilist {
+  id: number;
+  idMal: number | null;
+  title: { romaji: string | null; english: string | null; native: string | null };
+  description: string | null;
+  format: string | null;
+  status: string | null;
+  episodes: number | null;
+  chapters: number | null;
+  startDate: { year: number | null } | null;
+  genres: string[] | null;
+  averageScore: number | null; // de 0 a 100
+  bannerImage: string | null;
+  coverImage: { extraLarge: string | null } | null;
+  siteUrl: string;
+  nextAiringEpisode: { episode: number } | null; // solo si se está emitiendo
+}
+
+// El estado de publicación, según sea anime (se emite) o manga (se publica).
+const ESTADOS_PUBLICACION: Record<string, [string, string]> = {
+  RELEASING: ['En emisión', 'En publicación'],
+  FINISHED: ['Finalizado', 'Finalizado'],
+  NOT_YET_RELEASED: ['Próximamente', 'Próximamente'],
+  CANCELLED: ['Cancelado', 'Cancelado'],
+  HIATUS: ['En pausa', 'En pausa'],
+};
+
 @Service()
 export class Anilist {
   private readonly http = inject(HttpClient);
@@ -82,6 +132,44 @@ export class Anilist {
     );
   }
 
+  // La ficha de una obra (sinopsis, géneros, banner...).
+  detalle(idAnilist: number, tipo: TipoObra) {
+    return this.http
+      .post<{ data: { Media: FichaAnilist } }>(URL_ANILIST, {
+        query: CONSULTA_FICHA,
+        variables: { id: idAnilist },
+      })
+      .pipe(
+        timeout(8000),
+        retry({
+          count: 1,
+          delay: (error) => (error?.status === 429 ? throwError(() => error) : timer(1000)),
+        }),
+        map(({ data }) => this.aFicha(data.Media, tipo)),
+      );
+  }
+
+  private aFicha(m: FichaAnilist, tipo: TipoObra): IFicha {
+    const estado = m.status ? ESTADOS_PUBLICACION[m.status] : undefined;
+    return {
+      tituloIngles: m.title.english,
+      tituloNativo: m.title.native,
+      sinopsis: m.description ? textoPlano(m.description) : null,
+      generos: m.genres ?? [],
+      formato: m.format ? (FORMATOS[m.format] ?? m.format) : null,
+      estadoPublicacion: estado ? estado[tipo === 'anime' ? 0 : 1] : null,
+      anio: m.startDate?.year ?? null,
+      total: (tipo === 'anime' ? m.episodes : m.chapters) ?? null,
+      // Si el próximo episodio que sale es el 1150, ya salieron 1149.
+      emitidos: m.nextAiringEpisode ? m.nextAiringEpisode.episode - 1 : null,
+      puntajeAnilist: m.averageScore !== null ? m.averageScore / 10 : null,
+      banner: m.bannerImage,
+      tapa: m.coverImage?.extraLarge ?? null,
+      urlAnilist: m.siteUrl,
+      idMal: m.idMal,
+    };
+  }
+
   private aObra(r: ResultadoAnilist, tipo: TipoObra): IObra {
     return {
       idAnilist: r.id,
@@ -94,4 +182,14 @@ export class Anilist {
       formato: r.format ? (FORMATOS[r.format] ?? r.format) : null,
     };
   }
+}
+
+// La sinopsis de AniList trae algo de HTML (<br>, <i>) y entidades (&quot;).
+// Los <br> pasan a saltos de línea y el resto lo "limpia" el propio navegador:
+// DOMParser arma el HTML sin mostrarlo ni ejecutar nada, y textContent devuelve solo el texto.
+// Así no usamos [innerHTML] con contenido que viene de afuera.
+function textoPlano(html: string): string {
+  const conSaltos = html.replace(/<br\s*\/?>/gi, '\n');
+  const texto = new DOMParser().parseFromString(conSaltos, 'text/html').body.textContent ?? '';
+  return texto.replace(/\n{3,}/g, '\n\n').trim();
 }

@@ -1,0 +1,501 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  align-self: flex-start;
+  font-weight: 500;
+  color: var(--color-texto-sec);
+  text-decoration: none;
+}
+
+.volver:hover {
+  color: var(--color-menta);
+}
+
+.volver .icono {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+/* ---------- Cabecera (banner + tapa + datos), como MangaDex ---------- */
+.cabecera-obra {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-panel);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-panel);
+  isolation: isolate;
+}
+
+/* La imagen de fondo: el banner de AniList o, si no tiene, la tapa desenfocada */
+.fondo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.5;
+}
+
+.fondo.desenfocado {
+  filter: blur(28px) saturate(1.2);
+  transform: scale(1.25);
+}
+
+/* Degradé para que el texto se lea sobre cualquier imagen */
+.cabecera-obra::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to top, var(--color-panel) 15%, rgb(24 24 31 / 0.75) 55%, rgb(24 24 31 / 0.35));
+}
+
+.cabecera-contenido {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  align-items: end;
+  gap: 1.75rem;
+  padding: 2.5rem 2rem 1.75rem;
+}
+
+.tapa-grande {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: var(--color-campo);
+  border-radius: var(--radio-campo);
+  box-shadow: 0 18px 40px -12px rgb(0 0 0 / 0.7);
+}
+
+.tapa-grande img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.esqueleto-tapa {
+  display: block;
+  height: auto;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.datos-obra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-texto-sec);
+}
+
+/* Puntito de color: verde si sigue saliendo */
+.estado-publicacion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.estado-publicacion::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--color-lila);
+  border-radius: 50%;
+}
+
+.estado-publicacion.vivo::before {
+  background: var(--color-menta);
+  box-shadow: 0 0 0 3px rgb(185 243 228 / 0.2);
+}
+
+.info h1 {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
+  font-weight: 400;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+
+.titulos-alternativos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1rem;
+  margin: 0;
+  color: var(--color-texto-sec);
+}
+
+.generos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.generos li {
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-hueso);
+  background: var(--velo-hueso);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-pildora);
+}
+
+.numeros-obra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-texto-sec);
+  font-variant-numeric: tabular-nums;
+}
+
+.numeros-obra .estrella {
+  color: #ffd27a;
+}
+
+/* ---------- Columnas: sinopsis | tu seguimiento ---------- */
+.columnas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 22rem;
+  grid-template-areas: 'sinopsis seguimiento';
+  align-items: start;
+  gap: 1.25rem;
+}
+
+.seguimiento {
+  grid-area: seguimiento;
+}
+
+.sinopsis {
+  grid-area: sinopsis;
+}
+
+.panel h2 {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+}
+
+.seguimiento {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: opacity 0.15s ease;
+}
+
+.seguimiento h2 {
+  margin: 0;
+}
+
+.seguimiento.ocupada {
+  opacity: 0.75;
+}
+
+/* Estado: 4 botones */
+.estados {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.estados button {
+  height: 2.4rem;
+  font: 700 0.85rem var(--fuente-texto);
+  color: var(--color-texto-sec);
+  background: var(--color-campo);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.estados button:hover:not(:disabled) {
+  color: var(--color-hueso);
+  border-color: var(--linea-campo);
+}
+
+.estados button[aria-pressed='true'] {
+  color: var(--color-tinta);
+  background: var(--color-hueso);
+  border-color: transparent;
+}
+
+.estados button[aria-pressed='true'][data-estado='en-curso'] {
+  background: var(--color-menta);
+}
+
+.estados button[aria-pressed='true'][data-estado='completado'] {
+  background: var(--color-lila);
+}
+
+.estados button[aria-pressed='true'][data-estado='abandonado'] {
+  background: var(--color-error);
+}
+
+.estados button:focus-visible,
+.grilla-nota button:focus-visible {
+  outline: none;
+  box-shadow: var(--halo-menta);
+}
+
+/* Contador */
+.contador {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.contador label,
+.etiqueta-nota {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.fila-contador {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.fila-contador input {
+  width: 6.5rem;
+  height: 3.2rem;
+  padding: 0 0.5rem;
+  font: 700 1.6rem var(--fuente-texto);
+  text-align: center;
+  color: var(--color-hueso);
+  background: var(--color-campo);
+  border: 1px solid var(--linea-campo);
+  border-radius: var(--radio-campo);
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Sin las flechitas del input number: se escribe el número */
+.fila-contador input::-webkit-inner-spin-button,
+.fila-contador input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.fila-contador input:focus-visible {
+  outline: none;
+  border-color: var(--color-menta);
+  box-shadow: var(--halo-menta);
+}
+
+.de-total {
+  flex: 1;
+  font-size: 1rem;
+  white-space: nowrap;
+  color: var(--color-texto-sec);
+  font-variant-numeric: tabular-nums;
+}
+
+.fila-contador .boton {
+  flex-shrink: 0;
+}
+
+.barra {
+  height: 6px;
+  overflow: hidden;
+  background: var(--velo-hueso);
+  border-radius: var(--radio-pildora);
+}
+
+.barra span {
+  display: block;
+  height: 100%;
+  background: var(--degrade-marca);
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+
+.ayuda {
+  margin: 0;
+}
+
+/* Nota 1–10 (mismo estilo que la de las tarjetas) */
+.nota-ficha {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.grilla-nota {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.3rem;
+}
+
+.grilla-nota button {
+  height: 2.2rem;
+  font: 700 0.9rem var(--fuente-texto);
+  color: var(--color-hueso);
+  background: var(--color-campo);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+
+.grilla-nota button:not(.elegida):hover:not(:disabled) {
+  color: #ffd27a;
+  border-color: rgb(255 210 122 / 0.45);
+}
+
+.grilla-nota button.elegida {
+  color: var(--color-tinta);
+  background: #ffd27a;
+}
+
+.sin-nota,
+.quitar-obra,
+.ver-mas {
+  align-self: flex-start;
+  padding: 0.35rem 0.6rem;
+  font: 600 0.8rem var(--fuente-texto);
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sin-nota {
+  color: var(--color-texto-sec);
+}
+
+.sin-nota:hover,
+.quitar-obra:hover {
+  color: var(--color-error);
+  background: rgb(255 155 143 / 0.08);
+}
+
+.quitar-obra {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: -0.6rem;
+  color: var(--color-texto-sec);
+}
+
+.quitar-obra .icono {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+/* Sinopsis */
+.texto-sinopsis {
+  margin: 0;
+  line-height: 1.65;
+  white-space: pre-line; /* respeta los saltos de línea de AniList */
+}
+
+.texto-sinopsis.recortada {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 8;
+}
+
+.ver-mas {
+  margin: 0.4rem 0 0 -0.6rem;
+  color: var(--color-menta);
+}
+
+.ver-mas:hover {
+  background: var(--velo-menta);
+}
+
+.sinopsis .ayuda {
+  margin-top: 0.75rem;
+}
+
+.sinopsis .esqueleto-linea {
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
+.enlaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--linea-suave);
+}
+
+.enlaces a {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-menta);
+  text-decoration: none;
+}
+
+.enlaces a:hover {
+  text-decoration: underline;
+}
+
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+/* ---------- Celular: todo en una columna, el seguimiento primero ---------- */
+@media (max-width: 860px) {
+  .columnas {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'seguimiento'
+      'sinopsis';
+  }
+}
+
+@media (max-width: 560px) {
+  .cabecera-contenido {
+    grid-template-columns: 7rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1.5rem 1rem 1.25rem;
+  }
+
+  .fila-contador {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .barra span,
+  .seguimiento {
+    transition: none;
+  }
+}

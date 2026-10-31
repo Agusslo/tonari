@@ -78,12 +78,14 @@ export class Biblioteca implements OnInit {
   }
 
   // Elegiste una obra en el buscador: se guarda como "Pendiente" y aparece primera.
+  // El buscador se cierra solo para que la veas en la lista.
   agregar(obra: IObra) {
     this.agregando.set(obra.idAnilist);
     this.api.agregar(obra).subscribe({
       next: (entrada) => {
         this.entradas.update((lista) => [entrada, ...lista]);
         this.agregando.set(null);
+        this.buscadorAbierto.set(false);
         this.filtro.set(null); // que se vea, aunque hubiera un filtro puesto
       },
       error: (error: HttpErrorResponse) => {

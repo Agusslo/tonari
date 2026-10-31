@@ -22,6 +22,11 @@ export class BibliotecaApi {
     return this.http.get<IEntrada[]>(this.url, { params });
   }
 
+  // Una obra sola, para su ficha.
+  obtener(id: string) {
+    return this.http.get<IEntrada>(`${this.url}/${id}`);
+  }
+
   // Agrega una obra que vino del buscador (AniList).
   agregar(obra: IObra, estado: EstadoEntrada = 'pendiente') {
     return this.http.post<IEntrada>(this.url, {
