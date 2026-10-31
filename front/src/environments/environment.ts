@@ -1,5 +1,6 @@
-// Se usa con "ng build" (producción, el deploy).
-// Cuando deployemos el back, acá va su URL pública.
+// Se usa con "ng build" (producción, el deploy en Vercel).
+// apiUrl: la URL pública del back en Vercel. Sin "/" al final:
+// los servicios le agregan "/auth/login", "/publicaciones", etc.
 export const environment = {
-    apiUrl: 'http://localhost:3000',
+    apiUrl: 'https://tonari-back.vercel.app',
 };
