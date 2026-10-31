@@ -30,4 +30,11 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
 }
-await bootstrap();
+
+// Sin "await" adelante: Vercel carga este archivo y necesita que termine de
+// cargarse enseguida (un "await" suelto acá arriba lo deja esperando y falla
+// con INTERNAL_FUNCTION_INVOCATION_FAILED). Si el arranque falla, que se vea en los logs.
+bootstrap().catch((error) => {
+  console.error('No se pudo iniciar el servidor:', error);
+  process.exit(1);
+});
