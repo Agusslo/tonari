@@ -14,5 +14,8 @@ import { UsuariosModule } from '../usuarios/usuarios.module.js';
   ],
   controllers: [PublicacionesController],
   providers: [PublicacionesService],
+  // Exporta el acceso a la colección de publicaciones para que el módulo de
+  // comentarios pueda usarla (verificar que exista y contar sus comentarios).
+  exports: [MongooseModule],
 })
 export class PublicacionesModule {}

@@ -1,5 +1,6 @@
 import { Component, computed, input, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import IPublicacion from '../../../core/interfaces/publicacion';
 import IUsuario from '../../../core/interfaces/usuario';
 import { Avatar } from '../../../shared/components/avatar/avatar';
@@ -8,7 +9,7 @@ import { Avatar } from '../../../shared/components/avatar/avatar';
 // una vez por cada publicación (consigna: "cada publicación es un componente").
 @Component({
   selector: 'app-tarjeta-publicacion',
-  imports: [DatePipe, Avatar],
+  imports: [DatePipe, RouterLink, Avatar],
   templateUrl: './tarjeta-publicacion.html',
   styleUrl: './tarjeta-publicacion.css',
 })
@@ -18,6 +19,9 @@ export class TarjetaPublicacion {
   // Quién está mirando (null = nadie logueado) y si hay una acción en curso.
   readonly usuario = input<IUsuario | null>(null);
   readonly ocupada = input(false);
+  // true en la página Publicación: la muestra "en grande" (imagen entera)
+  // y sin el link a sí misma. En el muro queda en false.
+  readonly detalle = input(false);
 
   // output: la tarjeta AVISA al padre qué quiere hacer el usuario;
   // el padre es el que habla con el back.

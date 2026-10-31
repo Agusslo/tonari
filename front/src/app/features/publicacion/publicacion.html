@@ -1,0 +1,153 @@
+<div class="pagina-publicacion">
+  <a routerLink="/publicaciones" class="volver">
+    <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+    Volver a publicaciones
+  </a>
+
+  <!-- ---------- La publicación en grande ---------- -->
+  @if (cargando()) {
+    <!-- Esqueleto con la forma de la tarjeta -->
+    <div class="panel esqueleto" aria-hidden="true">
+      <div class="esqueleto-autor">
+        <span class="esqueleto-circulo"></span>
+        <div>
+          <span class="esqueleto-linea" style="width: 8rem"></span>
+          <span class="esqueleto-linea esqueleto-chica" style="width: 11rem"></span>
+        </div>
+      </div>
+      <span class="esqueleto-linea esqueleto-titulo"></span>
+      <span class="esqueleto-linea" style="width: 90%"></span>
+      <span class="esqueleto-linea" style="width: 70%"></span>
+    </div>
+    <p class="solo-lector" role="status">Cargando la publicación…</p>
+  } @else if (error(); as mensaje) {
+    <section class="panel no-encontrada" role="alert">
+      <h1>No encontramos esta publicación</h1>
+      <p class="texto-secundario">{{ mensaje }}</p>
+      <a routerLink="/publicaciones" class="boton">Ir a publicaciones</a>
+    </section>
+  } @else if (publicacion(); as publicacion) {
+    <!-- La misma tarjeta del muro, en modo "detalle": imagen entera y sin link a sí misma -->
+    <app-tarjeta-publicacion
+      [publicacion]="publicacion"
+      [usuario]="usuario()"
+      [ocupada]="ocupada()"
+      [detalle]="true"
+      (alternarMeGusta)="alternarMeGusta($event)"
+      (eliminar)="aEliminar.set(true)"
+    />
+
+    <!-- ---------- Comentarios ---------- -->
+    <section class="panel comentarios" aria-labelledby="titulo-comentarios">
+      <h2 id="titulo-comentarios">
+        Comentarios
+        @if (!cargandoComentarios()) {
+          <!-- Con las respuestas incluidas, igual que el contador de la tarjeta -->
+          <span class="total">{{ publicacion.cantidadComentarios ?? totalComentarios() }}</span>
+        }
+      </h2>
+
+      <!-- Escribir un comentario -->
+      <form class="nuevo" [formGroup]="formulario" (ngSubmit)="comentar()">
+        <label for="nuevo-comentario" class="solo-lector">Escribí un comentario</label>
+        <textarea
+          id="nuevo-comentario"
+          formControlName="mensaje"
+          rows="3"
+          maxlength="500"
+          placeholder="Escribí un comentario…"
+        ></textarea>
+        <div class="nuevo-pie">
+          <span class="texto-secundario contador">{{ nuevo.value.length }}/500</span>
+          <button type="submit" class="boton" [disabled]="enviando() || !nuevo.value.trim()">
+            @if (enviando()) {
+              <span class="spinner" aria-hidden="true"></span>
+            }
+            Comentar
+          </button>
+        </div>
+        @if (errorEnvio(); as mensaje) {
+          <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+        }
+      </form>
+
+      <!-- La lista, del más nuevo al más viejo -->
+      @if (cargandoComentarios()) {
+        <ul class="lista-comentarios" aria-hidden="true">
+          @for (n of [1, 2, 3]; track n) {
+            <li class="esqueleto-comentario">
+              <span class="esqueleto-circulo"></span>
+              <div class="esqueleto-textos">
+                <span class="esqueleto-linea" style="width: 9rem"></span>
+                <span class="esqueleto-linea" style="width: 85%"></span>
+              </div>
+            </li>
+          }
+        </ul>
+        <p class="solo-lector" role="status">Cargando comentarios…</p>
+      } @else if (errorComentarios(); as mensaje) {
+        <p class="mensaje-error" role="alert">
+          {{ mensaje }}
+          <button type="button" class="reintentar" (click)="cargarComentarios()">Reintentar</button>
+        </p>
+      } @else {
+        <ul class="lista-comentarios">
+          @for (comentario of comentarios(); track comentario._id) {
+            <li>
+              <app-comentario
+                [comentario]="comentario"
+                [usuario]="usuario()"
+                (actualizado)="alEditar($event)"
+                (respondido)="alResponder()"
+              />
+            </li>
+          } @empty {
+            <li class="sin-comentarios texto-secundario">
+              Todavía nadie comentó. ¡Sé el primero!
+            </li>
+          }
+        </ul>
+
+        <!-- "Cargar más": suma los siguientes debajo, sin perder los que ya están -->
+        @if (hayMas()) {
+          <button
+            type="button"
+            class="boton boton-secundario boton-ancho cargar-mas"
+            [disabled]="cargandoMas()"
+            (click)="cargarMas()"
+          >
+            @if (cargandoMas()) {
+              <span class="spinner" aria-hidden="true"></span>
+            }
+            Cargar más comentarios ({{ totalComentarios() - comentarios().length }})
+          </button>
+        }
+      }
+    </section>
+  }
+</div>
+
+<!-- Confirmar eliminación (nada de confirm() del navegador) -->
+<app-modal
+  [abierto]="aEliminar()"
+  titulo="¿Eliminar publicación?"
+  tipo="error"
+  (cerrar)="aEliminar.set(false)"
+>
+  <p>La publicación y sus comentarios dejan de estar disponibles. No se puede deshacer.</p>
+  <button acciones type="button" class="boton boton-secundario" (click)="aEliminar.set(false)">Cancelar</button>
+  <button acciones type="button" class="boton boton-peligro" (click)="confirmarEliminar()">Eliminar</button>
+</app-modal>
+
+<!-- Error de una acción (Me gusta, eliminar, cargar más) -->
+<app-modal
+  [abierto]="errorAccion() !== null"
+  titulo="No se pudo completar la acción"
+  tipo="error"
+  (cerrar)="errorAccion.set(null)"
+>
+  <p>{{ errorAccion() }}</p>
+  <button acciones type="button" class="boton" (click)="errorAccion.set(null)">Entendido</button>
+</app-modal>

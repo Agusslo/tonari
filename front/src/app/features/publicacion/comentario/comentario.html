@@ -1,0 +1,160 @@
+@let c = comentario();
+
+<article class="comentario" [class.propio]="esMio()" [class.respuesta]="esRespuesta()">
+  <app-avatar [usuario]="c.usuario" />
+
+  <div class="cuerpo">
+    <header class="cabecera-comentario">
+      <span class="nombre">{{ c.usuario.nombre }} {{ c.usuario.apellido }}</span>
+      <span class="texto-secundario detalle">
+        &#64;{{ c.usuario.nombreUsuario }} ·
+        <time [attr.datetime]="c.createdAt">{{ c.createdAt | date: 'dd/MM/yyyy HH:mm' : '-0300' }}</time>
+        <!-- Consigna: un comentario editado lo anuncia -->
+        @if (c.modificado) {
+          · <span class="editado" [attr.title]="'Editado el ' + (c.updatedAt | date: 'dd/MM/yyyy HH:mm' : '-0300')">editado</span>
+        }
+      </span>
+    </header>
+
+    @if (editando()) {
+      <!-- Edición en el lugar: el texto se cambia por un campo -->
+      <form class="editar" [formGroup]="formulario" (ngSubmit)="guardar()">
+        <label [for]="'editar-' + c._id" class="solo-lector">Editar comentario</label>
+        <textarea
+          [id]="'editar-' + c._id"
+          formControlName="mensaje"
+          rows="3"
+          maxlength="500"
+          [attr.aria-invalid]="mensaje.invalid"
+        ></textarea>
+        <div class="editar-pie">
+          <span class="texto-secundario contador">{{ mensaje.value.length }}/500</span>
+          <div class="editar-botones">
+            <button type="button" class="boton boton-secundario boton-chico" (click)="cancelar()">
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="boton boton-chico"
+              [disabled]="guardando() || !mensaje.value.trim()"
+            >
+              @if (guardando()) {
+                <span class="spinner" aria-hidden="true"></span>
+              }
+              Guardar
+            </button>
+          </div>
+        </div>
+        @if (error(); as mensajeError) {
+          <p class="mensaje-error" role="alert">{{ mensajeError }}</p>
+        }
+      </form>
+    } @else {
+      <p class="mensaje">{{ c.mensaje }}</p>
+      <div class="acciones">
+        <button type="button" class="boton-editar" (click)="responder()">
+          <svg class="icono" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+            <path d="M9 14 4 9l5-5" />
+            <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
+          </svg>
+          Responder
+        </button>
+        @if (esMio()) {
+          <button type="button" class="boton-editar" (click)="empezarAEditar()">
+            <svg class="icono" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
+            </svg>
+            Editar
+          </button>
+        }
+      </div>
+    }
+
+    <!-- ---------- Respuestas (solo en los comentarios principales) ---------- -->
+    @if (!esRespuesta()) {
+      @if (totalRespuestas() > 0) {
+        <button
+          type="button"
+          class="ver-respuestas"
+          [attr.aria-expanded]="abiertas()"
+          (click)="alternarRespuestas()"
+        >
+          <span class="rayita" aria-hidden="true"></span>
+          @if (abiertas()) {
+            Ocultar respuestas
+          } @else {
+            Ver {{ totalRespuestas() }} {{ totalRespuestas() === 1 ? 'respuesta' : 'respuestas' }}
+          }
+        </button>
+      }
+
+      @if (abiertas()) {
+        <ul class="hilo">
+          @for (r of respuestas(); track r._id) {
+            <li>
+              <app-comentario
+                [comentario]="r"
+                [usuario]="usuario()"
+                [esRespuesta]="true"
+                (actualizado)="alEditarRespuesta($event)"
+                (pideResponder)="abrirRespuesta($event)"
+              />
+            </li>
+          }
+        </ul>
+
+        @if (cargandoRespuestas()) {
+          <p class="texto-secundario cargando-respuestas" role="status">
+            <span class="spinner" aria-hidden="true"></span> Cargando respuestas…
+          </p>
+        } @else if (errorRespuestas(); as mensajeError) {
+          <p class="mensaje-error" role="alert">{{ mensajeError }}</p>
+        } @else if (faltanRespuestas() > 0) {
+          <button type="button" class="ver-respuestas" (click)="cargarMasRespuestas()">
+            <span class="rayita" aria-hidden="true"></span>
+            Ver {{ faltanRespuestas() }} más
+          </button>
+        }
+      }
+
+      <!-- Campo para responder: uno solo por hilo, al final -->
+      @if (respondiendo()) {
+        <form class="editar responder" [formGroup]="formularioRespuesta" (ngSubmit)="enviarRespuesta()">
+          <label [for]="'responder-' + c._id" class="solo-lector">
+            Responder a {{ c.usuario.nombre }}
+          </label>
+          <textarea
+            #campoRespuesta
+            [id]="'responder-' + c._id"
+            formControlName="mensaje"
+            rows="2"
+            maxlength="500"
+            [placeholder]="'Responder a ' + c.usuario.nombre + '…'"
+            (keydown.escape)="cancelarRespuesta()"
+          ></textarea>
+          <div class="editar-pie">
+            <span class="texto-secundario contador">{{ respuesta.value.length }}/500</span>
+            <div class="editar-botones">
+              <button type="button" class="boton boton-secundario boton-chico" (click)="cancelarRespuesta()">
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="boton boton-chico"
+                [disabled]="enviandoRespuesta() || !respuesta.value.trim()"
+              >
+                @if (enviandoRespuesta()) {
+                  <span class="spinner" aria-hidden="true"></span>
+                }
+                Responder
+              </button>
+            </div>
+          </div>
+          @if (errorRespuesta(); as mensajeError) {
+            <p class="mensaje-error" role="alert">{{ mensajeError }}</p>
+          }
+        </form>
+      }
+    }
+  </div>
+</article>

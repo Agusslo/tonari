@@ -20,6 +20,11 @@ export class PublicacionesApi {
     return this.http.get<IPaginaPublicaciones>(this.url, { params });
   }
 
+  // GET /publicaciones/:id -> una sola publicación (para la página Publicación)
+  obtener(id: string) {
+    return this.http.get<IPublicacion>(`${this.url}/${id}`);
+  }
+
   // POST /publicaciones -> crea una publicación (multipart/form-data porque
   // puede llevar una imagen; con JSON no se puede mandar un archivo).
   crear(datos: { titulo: string; descripcion: string; usuario: string }, imagen: File | null) {

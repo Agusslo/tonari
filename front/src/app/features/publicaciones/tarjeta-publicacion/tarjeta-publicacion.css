@@ -88,6 +88,18 @@
   overflow-wrap: anywhere;
 }
 
+/* En el muro el título es un link a la publicación: hereda el color y se subraya al pasar */
+.titulo a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.titulo a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--color-menta);
+  text-underline-offset: 0.2em;
+}
+
 .descripcion {
   max-width: 68ch; /* renglones cómodos de leer */
   color: rgb(240 237 229 / 0.86);
@@ -105,6 +117,23 @@
   box-shadow: 0 16px 32px -20px rgb(0 0 0 / 0.7);
 }
 
+/* En la página Publicación ("en grande"): título más grande y la tarjeta quieta
+   (en el muro se levanta al pasar el mouse porque se puede abrir; acá ya está abierta) */
+.tarjeta-detalle .titulo {
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+}
+
+.tarjeta-detalle:hover {
+  border-color: var(--linea-suave);
+  transform: none;
+}
+
+/* La imagen entera, sin recortar */
+.imagen-completa {
+  max-height: none;
+  object-fit: contain;
+}
+
 /* ---------- Pie ---------- */
 .pie {
   display: flex;
@@ -116,7 +145,14 @@
   border-top: 1px solid var(--linea-suave);
 }
 
-.me-gusta {
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.me-gusta,
+.comentarios {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -134,7 +170,17 @@
     border-color 0.15s ease;
 }
 
-.me-gusta:hover:not(:disabled) {
+.comentarios {
+  text-decoration: none;
+}
+
+/* En la página Publicación es solo un contador: no reacciona al mouse */
+span.comentarios {
+  cursor: default;
+}
+
+.me-gusta:hover:not(:disabled),
+a.comentarios:hover {
   color: var(--color-menta);
   background: var(--velo-menta);
   border-color: rgb(185 243 228 / 0.45);
@@ -192,4 +238,11 @@
 .eliminar:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* En celulares angostos, "comentarios" se oculta y queda solo el ícono con el número */
+@media (max-width: 400px) {
+  .comentarios-texto {
+    display: none;
+  }
 }

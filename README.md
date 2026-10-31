@@ -62,7 +62,7 @@
 - [x] Colaborador `afriadenrich` agregado
 - [x] Colaborador `ndiez-utn` agregado
 - [x] Idea original (no copiar el diseño de una red social existente)
-- [ ] Los usuarios pueden hacer publicaciones, reaccionar y comentarlas
+- [x] Los usuarios pueden hacer publicaciones, reaccionar y comentarlas
 - [x] Cada usuario puede ver y editar su perfil
 - [x] Solo se accede a la aplicación estando registrado o logueado
 - [x] Diseño trabajado, no HTML plano
@@ -71,7 +71,7 @@
 - [x] Status correctos en la API (400, 401, 201, etc.). Nunca 200 en errores ni 400 en respuestas correctas
 - [x] Publicaciones con título, mensaje e imagen opcional
 - [x] Publicaciones con "Me gusta"
-- [ ] Publicaciones con comentarios
+- [x] Publicaciones con comentarios
 - [ ] UX: diseño trabajado y uniforme en toda la aplicación
 - [x] UX: navegación entre pantallas
 - [ ] UX: información clara y completa al mostrar mensajes o realizar acciones
@@ -127,7 +127,7 @@
   - [x] Eliminar mis propias publicaciones
 - **Mi Perfil**
   - [x] Todos los datos del usuario y su foto de perfil
-  - [ ] Mis últimas 3 publicaciones y sus comentarios
+  - [x] Mis últimas 3 publicaciones y sus comentarios
 
 ### Back
 - **Publicaciones controller**
@@ -147,11 +147,11 @@
 
 ### Front
 - **Página Publicación**
-  - [ ] Ver la publicación en grande junto con sus comentarios
-  - [ ] Escribir comentarios
-  - [ ] Comentarios ordenados, uno debajo del otro
-  - [ ] Primera carga limitada + botón "cargar más" que suma comentarios sin perder los anteriores
-  - [ ] El autor puede editar su comentario; un comentario editado lo anuncia
+  - [x] Ver la publicación en grande junto con sus comentarios
+  - [x] Escribir comentarios
+  - [x] Comentarios ordenados, uno debajo del otro
+  - [x] Primera carga limitada + botón "cargar más" que suma comentarios sin perder los anteriores
+  - [x] El autor puede editar su comentario; un comentario editado lo anuncia
 - **Login y Registro**
   - [x] Guardar localmente el token que devuelve la petición (o usar cookies)
 - **Página Cargando**
@@ -165,10 +165,10 @@
 
 ### Back
 - **Comentarios controller**
-  - [ ] Traer los comentarios de una publicación, agregar nuevos y modificarlos
-  - [ ] POST: agrega un comentario con el usuario que lo hizo y la fecha
-  - [ ] PUT: modifica el mensaje y agrega `modificado: true`
-  - [ ] GET: comentarios de una publicación, paginados, los más recientes primero
+  - [x] Traer los comentarios de una publicación, agregar nuevos y modificarlos
+  - [x] POST: agrega un comentario con el usuario que lo hizo y la fecha
+  - [x] PUT: modifica el mensaje y agrega `modificado: true`
+  - [x] GET: comentarios de una publicación, paginados, los más recientes primero
 - **Módulo Autenticación**
   - [x] Login y registro generan un JWT con quién es el usuario (uuid/correo/nombre de usuario) y su rol (usuario o administrador)
   - [x] Token devuelto en la respuesta o por cookies

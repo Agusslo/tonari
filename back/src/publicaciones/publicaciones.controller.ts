@@ -50,6 +50,12 @@ export class PublicacionesController {
     return this.publicacionesService.listar(listarPublicacionesDto);
   }
 
+  // GET /publicaciones/:id -> 200 con una publicación (para la página Publicación).
+  @Get(':id')
+  obtener(@Param('id') id: string) {
+    return this.publicacionesService.obtener(id);
+  }
+
   // DELETE /publicaciones/:id -> 200 OK (baja lógica)
   // :id es un parámetro de ruta: /publicaciones/6adc04a3... -> id = '6adc04a3...'
   @Delete(':id')

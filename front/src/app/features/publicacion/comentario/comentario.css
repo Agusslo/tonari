@@ -1,0 +1,193 @@
+:host {
+  display: block;
+}
+
+/* Foto a la izquierda y, al lado, nombre, fecha y mensaje */
+.comentario {
+  display: flex;
+  gap: 0.8rem;
+  padding: 1rem 0;
+}
+
+.comentario app-avatar {
+  --tam: 2.4rem;
+  flex: none;
+}
+
+.cuerpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0; /* deja que los textos largos se corten en vez de desbordar */
+}
+
+.cabecera-comentario {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.5rem;
+}
+
+.nombre {
+  font-weight: 700;
+}
+
+.detalle {
+  font-size: 0.8rem;
+}
+
+/* "editado": discreto pero visible (consigna: un comentario editado lo anuncia) */
+.editado {
+  font-style: italic;
+  color: var(--color-lila);
+}
+
+.mensaje {
+  margin: 0;
+  color: rgb(240 237 229 / 0.9);
+  white-space: pre-line; /* respeta los saltos de línea */
+  overflow-wrap: anywhere;
+}
+
+/* "Responder" y "Editar", uno al lado del otro debajo del mensaje */
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.acciones .boton-editar + .boton-editar {
+  margin-left: 0;
+}
+
+/* "Editar" / "Responder": links chiquitos debajo del mensaje */
+.boton-editar {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  margin-left: -0.5rem;
+  font: 500 0.8rem var(--fuente-texto);
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.boton-editar:hover {
+  color: var(--color-menta);
+  background: var(--velo-menta);
+}
+
+/* ---------- Edición ---------- */
+.editar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.editar textarea {
+  padding: 0.6rem 0.8rem;
+  font: inherit;
+  color: var(--color-hueso);
+  background: var(--color-campo);
+  border: 1px solid var(--color-menta);
+  border-radius: var(--radio-campo);
+  box-shadow: var(--halo-menta);
+  resize: vertical;
+}
+
+.editar textarea:focus-visible {
+  outline: none;
+}
+
+.editar-pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.contador {
+  font-size: 0.8rem;
+}
+
+.editar-botones {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Botones más bajos que los de los formularios grandes */
+.boton-chico {
+  min-height: 2.4rem;
+  padding: 0 1rem;
+  font-size: 0.9rem;
+}
+
+/* ---------- Respuestas ---------- */
+
+/* Las respuestas: foto más chica y sin tanto aire */
+.comentario.respuesta {
+  padding: 0.6rem 0;
+}
+
+.comentario.respuesta app-avatar {
+  --tam: 2rem;
+}
+
+.hilo {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* "Ver 3 respuestas": con una rayita adelante, como un hilo que se abre */
+.ver-respuestas {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.15rem;
+  padding: 0.25rem 0;
+  font: 600 0.82rem var(--fuente-texto);
+  color: var(--color-menta);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.ver-respuestas:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ver-respuestas:focus-visible {
+  outline: 2px solid var(--color-menta);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.rayita {
+  width: 1.5rem;
+  height: 1px;
+  background: rgb(185 243 228 / 0.5);
+}
+
+.cargando-respuestas {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+}
+
+.responder {
+  margin-top: 0.5rem;
+}

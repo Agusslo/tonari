@@ -30,6 +30,13 @@ export const routes: Routes = [
       import('./features/publicaciones/publicaciones').then((m) => m.Publicaciones),
   },
   {
+    // :id es un parámetro: /publicaciones/6adc... -> la página de esa publicación.
+    path: 'publicaciones/:id',
+    title: 'Publicación · TONARI',
+    canActivate: [sesionGuard],
+    loadComponent: () => import('./features/publicacion/publicacion').then((m) => m.Publicacion),
+  },
+  {
     path: 'mi-perfil',
     title: 'Mi perfil · TONARI',
     canActivate: [sesionGuard],

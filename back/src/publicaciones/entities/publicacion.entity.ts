@@ -28,6 +28,11 @@
     @Prop({ default: 0 })
     cantidadMeGusta: number;
 
+    // Cuántos comentarios tiene (lo suma el módulo de comentarios al crear uno).
+    // Sirve para mostrar el número en la tarjeta sin contar los comentarios cada vez.
+    @Prop({ default: 0 })
+    cantidadComentarios: number;
+
     // Baja lógica: en vez de borrarla, se marca como inactiva.
     @Prop({ default: true })
     activa: boolean;

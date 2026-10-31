@@ -75,6 +75,12 @@ export class PublicacionesService {
     return { publicaciones, total, offset, limit };
   }
 
+  // Una sola publicación (activa), con los datos del autor.
+  async obtener(id: string) {
+    const publicacion = await this.buscarActiva(id);
+    return publicacion.populate('usuario', DATOS_AUTOR);
+  }
+
   // Baja lógica: no se borra, se marca activa = false.
   // Solo puede hacerlo quien la creó o un administrador.
   async eliminar(id: string, usuarioId: string) {

@@ -1,0 +1,160 @@
+/* Una sola columna, más angosta que el muro: se lee mejor */
+.pagina-publicacion {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+.volver {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.5rem;
+  font-weight: 500;
+  color: var(--color-texto-sec);
+  text-decoration: none;
+  border-radius: var(--radio-pildora);
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.volver:hover {
+  color: var(--color-menta);
+  background: var(--velo-menta);
+}
+
+.no-encontrada {
+  text-align: center;
+}
+
+.no-encontrada h1 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+}
+
+.no-encontrada p {
+  margin: 0 0 1.5rem;
+}
+
+/* ---------- Comentarios ---------- */
+.comentarios h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1.25rem;
+  font-size: 1.35rem;
+}
+
+/* El total, como un chip menta al lado del título */
+.total {
+  padding: 0.1rem 0.6rem;
+  font: 700 0.85rem var(--fuente-texto);
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-radius: var(--radio-pildora);
+}
+
+.nuevo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--linea-suave);
+}
+
+.nuevo textarea {
+  min-height: 5.5rem;
+  padding: 0.75rem 0.95rem;
+  font: inherit;
+  color: var(--color-hueso);
+  background: var(--color-campo);
+  border: 1px solid var(--linea-campo);
+  border-radius: var(--radio-campo);
+  resize: vertical;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.nuevo textarea::placeholder {
+  color: var(--color-texto-sec);
+  opacity: 0.7;
+}
+
+.nuevo textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-menta);
+  box-shadow: var(--halo-menta);
+}
+
+.nuevo-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.contador {
+  font-size: 0.8rem;
+}
+
+.nuevo-pie .boton {
+  min-height: 2.6rem;
+  padding: 0 1.3rem;
+}
+
+/* Un comentario debajo del otro, separados por una línea suave */
+.lista-comentarios {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista-comentarios > li + li {
+  border-top: 1px solid var(--linea-suave);
+}
+
+.sin-comentarios {
+  padding: 1.5rem 0 0.25rem;
+  text-align: center;
+}
+
+.cargar-mas {
+  margin-top: 1rem;
+}
+
+.reintentar {
+  margin-left: 0.5rem;
+  padding: 0;
+  font: inherit;
+  color: var(--color-menta);
+  text-decoration: underline;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Esqueleto de comentario: círculo + dos líneas (el brillo está en styles.css) */
+.esqueleto-comentario {
+  display: flex;
+  gap: 0.8rem;
+  padding: 1rem 0;
+}
+
+.esqueleto-comentario .esqueleto-circulo {
+  flex: none;
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+.esqueleto-textos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+}

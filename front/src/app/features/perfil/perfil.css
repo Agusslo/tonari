@@ -281,6 +281,81 @@
   gap: 0.55rem;
 }
 
+/* El título de cada publicación es un link a su página */
+.mi-publicacion h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.mi-publicacion h3 a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--color-menta);
+  text-underline-offset: 0.2em;
+}
+
+/* La columna de texto ocupa todo el ancho que deja la miniatura
+   (así la línea de arriba de los comentarios llega hasta el borde) */
+.mi-publicacion-texto {
+  flex: 1;
+}
+
+/* Los comentarios de cada publicación, debajo de su fecha */
+.mis-comentarios {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--linea-suave);
+}
+
+.mini-comentario {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.mini-comentario app-avatar {
+  --tam: 1.5rem;
+  flex: none;
+}
+
+/* El comentario en una sola línea, con "…" si es largo */
+.mini-comentario p {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgb(240 237 229 / 0.85);
+}
+
+.mini-autor {
+  font-weight: 700;
+  color: var(--color-hueso);
+}
+
+.mini-editado {
+  font-style: italic;
+  color: var(--color-lila);
+}
+
+.mini-vacio {
+  font-size: 0.85rem;
+}
+
+.ver-comentarios {
+  align-self: flex-start;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-menta);
+  text-decoration: none;
+}
+
+.ver-comentarios:hover {
+  text-decoration: underline;
+}
+
 /* El estado vacío ya está adentro de la lista: sin margen extra arriba */
 .mis-publicaciones .vacio {
   margin-top: 0;

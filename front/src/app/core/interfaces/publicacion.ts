@@ -17,6 +17,7 @@
     usuario: IAutor;
     meGusta: string[]; // _id de los usuarios que dieron "Me gusta"
     cantidadMeGusta: number;
+    cantidadComentarios: number; // la suma el back cada vez que alguien comenta
     activa: boolean;
     createdAt: string;
     updatedAt: string;
