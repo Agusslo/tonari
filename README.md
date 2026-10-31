@@ -5,8 +5,8 @@
 
 | | |
 |---|---|
-| **Front (deploy)** | _pendiente_ |
-| **Back (deploy)** | _pendiente_ |
+| **Front (deploy)** | https://tonari-front.vercel.app |
+| **Back (deploy)** | https://tonari-back.vercel.app |
 | **Colaboradores** | `afriadenrich`, `ndiez-utn` |
 
 **Referencias:** ✅ hecho · ⬜ pendiente. Cada ítem copia el texto de la consigna.
@@ -86,7 +86,7 @@
 - [x] Pantalla Login
 - [x] Pantalla Publicaciones
 - [x] Pantalla Mi Perfil
-- [ ] Deploy en hosting
+- [x] Deploy en hosting
 - [x] Navegación entre componentes (sin límites de accesibilidad)
 - [x] Favicon propio
 - **Login**
