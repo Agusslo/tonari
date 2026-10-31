@@ -1,11 +1,14 @@
 @let c = comentario();
 
 <article class="comentario" [class.propio]="esMio()" [class.respuesta]="esRespuesta()">
-  <app-avatar [usuario]="c.usuario" />
+  <!-- Foto y nombre llevan al perfil de quien comentó (la foto, sin Tab: el nombre alcanza) -->
+  <a class="autor-foto" [routerLink]="['/usuarios', c.usuario.nombreUsuario]" tabindex="-1" aria-hidden="true">
+    <app-avatar [usuario]="c.usuario" />
+  </a>
 
   <div class="cuerpo">
     <header class="cabecera-comentario">
-      <span class="nombre">{{ c.usuario.nombre }} {{ c.usuario.apellido }}</span>
+      <a class="nombre" [routerLink]="['/usuarios', c.usuario.nombreUsuario]">{{ c.usuario.nombre }} {{ c.usuario.apellido }}</a>
       <span class="texto-secundario detalle">
         &#64;{{ c.usuario.nombreUsuario }} ·
         <time [attr.datetime]="c.createdAt">{{ c.createdAt | date: 'dd/MM/yyyy HH:mm' : '-0300' }}</time>

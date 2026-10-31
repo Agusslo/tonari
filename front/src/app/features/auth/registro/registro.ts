@@ -1,15 +1,13 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { debounceTime } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
 import { Modal } from '../../../shared/components/modal/modal';
 import { Portada } from '../../../shared/components/portada/portada';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
-import { urlBlobatar } from '../../../shared/utils/blobatar';
 import { celebrar } from '../../../shared/utils/animaciones';
+import { achicarImagen, TIPOS_IMAGEN } from '../../../shared/utils/achicar-imagen';
 import {
   camposIguales,
   contraseñaSegura,
@@ -18,8 +16,7 @@ import {
 } from '../../../shared/validators/validadores';
 
 // Mismas reglas que el back (DTO de registro y validación del archivo).
-const TIPOS_IMAGEN = ['image/jpeg', 'image/png', 'image/webp'];
-const PESO_MAXIMO_IMAGEN = 2 * 1024 * 1024; // 2 MB
+const IMAGEN_OBLIGATORIA = 'La imagen de perfil es obligatoria';
 const PATRON_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PATRON_USUARIO = /^[a-zA-Z0-9_.]+$/;
 
@@ -65,17 +62,7 @@ export class Registro {
   protected readonly vistaPrevia = signal<string | null>(null);
   protected readonly errorImagen = signal<string | null>(null);
   protected readonly intentoEnviar = signal(false);
-
-  // Sin foto elegida, el círculo muestra el blobatar que le va a tocar.
-  // debounceTime: se actualiza cuando deja de escribir, no en cada tecla.
-  private readonly nombreUsuario = toSignal(
-    this.formulario.controls.nombreUsuario.valueChanges.pipe(debounceTime(400)),
-    { initialValue: '' },
-  );
-  protected readonly blobatar = computed(() => {
-    const nombre = this.nombreUsuario().trim();
-    return PATRON_USUARIO.test(nombre) ? urlBlobatar(nombre) : null;
-  });
+  protected readonly procesandoImagen = signal(false); // mientras se achica una foto pesada
 
   // Mientras se espera la respuesta del back: botón deshabilitado y "Creando cuenta…"
   protected readonly enviando = signal(false);
@@ -87,7 +74,7 @@ export class Registro {
   protected readonly verContrasena = signal(false);
   protected readonly verRepetirContrasena = signal(false);
 
-  elegirImagen(evento: Event) {
+  async elegirImagen(evento: Event) {
     const archivo = (evento.target as HTMLInputElement).files?.[0] ?? null;
 
     // Liberamos la vista previa anterior para no dejar memoria ocupada.
@@ -96,23 +83,28 @@ export class Registro {
     this.vistaPrevia.set(null);
     this.imagen.set(null);
 
-    // Es opcional: si no elige nada, se queda con su blobatar.
+    // Es obligatoria: si sacó la que había elegido y ya intentó enviar, se lo marcamos.
     if (!archivo) {
-      this.errorImagen.set(null);
+      this.errorImagen.set(this.intentoEnviar() ? IMAGEN_OBLIGATORIA : null);
       return;
     }
     if (!TIPOS_IMAGEN.includes(archivo.type)) {
       this.errorImagen.set('La imagen debe ser JPG, PNG o WEBP');
       return;
     }
-    if (archivo.size > PESO_MAXIMO_IMAGEN) {
-      this.errorImagen.set('La imagen puede pesar hasta 2 MB');
-      return;
-    }
 
-    this.errorImagen.set(null);
-    this.imagen.set(archivo);
-    this.vistaPrevia.set(URL.createObjectURL(archivo));
+    // Si pesa más de 2 MB (las fotos del celular), la achicamos antes de subirla.
+    this.procesandoImagen.set(true);
+    try {
+      const liviana = await achicarImagen(archivo);
+      this.errorImagen.set(null);
+      this.imagen.set(liviana);
+      this.vistaPrevia.set(URL.createObjectURL(liviana));
+    } catch {
+      this.errorImagen.set('No pudimos procesar esa imagen. Probá con otra');
+    } finally {
+      this.procesandoImagen.set(false);
+    }
   }
 
   // ¿Mostramos el error de este campo? Solo si el usuario ya lo tocó
@@ -150,9 +142,11 @@ export class Registro {
     this.intentoEnviar.set(true);
     this.formulario.markAllAsTouched(); // muestra todos los errores de una
 
-    // La imagen es opcional (null = el back le asigna un blobatar).
+    // La imagen es obligatoria: sin ella no se envía (ni mientras se está achicando).
+    if (this.procesandoImagen()) return;
     const imagen = this.imagen();
-    if (this.formulario.invalid || this.errorImagen() || this.enviando()) return;
+    if (!imagen && !this.errorImagen()) this.errorImagen.set(IMAGEN_OBLIGATORIA);
+    if (this.formulario.invalid || !imagen || this.errorImagen() || this.enviando()) return;
 
     // "repetirContraseña" solo sirve en el front: al back no se manda.
     const { repetirContraseña: _repetida, ...datos } = this.formulario.getRawValue();

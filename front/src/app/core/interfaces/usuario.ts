@@ -14,3 +14,15 @@
     createdAt: string;
     updatedAt: string;
     }
+    // Lo que se ve del perfil de OTRO usuario (GET /usuarios/:nombreUsuario):
+    // solo los datos públicos, sin correo ni fecha de nacimiento.
+    export interface IPerfilPublico {
+    _id: string;
+    nombre: string;
+    apellido: string;
+    nombreUsuario: string;
+    imagenPerfil: string;
+    descripcion: string;
+    perfil: 'usuario' | 'administrador';
+    createdAt: string;
+    }

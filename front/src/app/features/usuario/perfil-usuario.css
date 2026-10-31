@@ -1,0 +1,24 @@
+/* El resto de los estilos son los de Mi Perfil (perfil.css): acá solo lo propio. */
+
+/* Esqueleto de la cabecera mientras carga */
+.esqueleto-foto {
+  width: clamp(6rem, 14vw, 8rem);
+  height: clamp(6rem, 14vw, 8rem);
+  flex: none;
+}
+
+.esqueleto-identidad {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.esqueleto-identidad .esqueleto-linea {
+  max-width: 100%;
+}
+
+/* "No encontramos a @..." */
+.sin-sesion h1 {
+  overflow-wrap: anywhere;
+}

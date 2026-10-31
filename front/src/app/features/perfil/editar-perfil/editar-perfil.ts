@@ -6,10 +6,7 @@ import IUsuario from '../../../core/interfaces/usuario';
 import { fechaLocalHoy, fechaNoFutura } from '../../../shared/validators/validadores';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
 import { Avatar } from '../../../shared/components/avatar/avatar';
-
-// Mismas reglas que el back para la foto.
-const TIPOS_IMAGEN = ['image/jpeg', 'image/png', 'image/webp'];
-const PESO_MAXIMO_IMAGEN = 2 * 1024 * 1024; // 2 MB
+import { achicarImagen, TIPOS_IMAGEN } from '../../../shared/utils/achicar-imagen';
 
 // Formulario para editar mi perfil (consigna: "cada usuario debe poder ver y editar su perfil").
 @Component({
@@ -38,6 +35,7 @@ export class EditarPerfil implements OnInit {
   protected readonly imagen = signal<File | null>(null);
   protected readonly vistaPrevia = signal<string | null>(null);
   protected readonly errorImagen = signal<string | null>(null);
+  protected readonly procesandoImagen = signal(false); // mientras se achica una foto pesada
 
   protected readonly enviando = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -54,7 +52,7 @@ export class EditarPerfil implements OnInit {
     });
   }
 
-  elegirImagen(evento: Event) {
+  async elegirImagen(evento: Event) {
     const entrada = evento.target as HTMLInputElement;
     const archivo = entrada.files?.[0] ?? null;
     this.quitarImagen();
@@ -65,13 +63,19 @@ export class EditarPerfil implements OnInit {
       entrada.value = '';
       return;
     }
-    if (archivo.size > PESO_MAXIMO_IMAGEN) {
-      this.errorImagen.set('La imagen puede pesar hasta 2 MB');
+
+    // Si pesa más de 2 MB (las fotos del celular), la achicamos antes de subirla.
+    this.procesandoImagen.set(true);
+    try {
+      const liviana = await achicarImagen(archivo);
+      this.imagen.set(liviana);
+      this.vistaPrevia.set(URL.createObjectURL(liviana));
+    } catch {
+      this.errorImagen.set('No pudimos procesar esa imagen. Probá con otra');
       entrada.value = '';
-      return;
+    } finally {
+      this.procesandoImagen.set(false);
     }
-    this.imagen.set(archivo);
-    this.vistaPrevia.set(URL.createObjectURL(archivo));
   }
 
   quitarImagen() {
@@ -98,7 +102,7 @@ export class EditarPerfil implements OnInit {
 
   guardar() {
     this.formulario.markAllAsTouched();
-    if (this.formulario.invalid || this.errorImagen() || this.enviando()) return;
+    if (this.formulario.invalid || this.errorImagen() || this.procesandoImagen() || this.enviando()) return;
 
     const datos = this.formulario.getRawValue();
     this.enviando.set(true);

@@ -52,6 +52,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/biblioteca/ficha/ficha').then((m) => m.Ficha),
   },
   {
+    // Perfil de otro usuario (/usuarios/beto): se llega tocando su nombre o su foto.
+    path: 'usuarios/:nombreUsuario',
+    title: 'Perfil · TONARI',
+    canActivate: [sesionGuard],
+    loadComponent: () =>
+      import('./features/usuario/perfil-usuario').then((m) => m.PerfilUsuario),
+  },
+  {
     path: 'mi-perfil',
     title: 'Mi perfil · TONARI',
     canActivate: [sesionGuard],

@@ -7,10 +7,7 @@ import IPublicacion from '../../../core/interfaces/publicacion';
 import IUsuario from '../../../core/interfaces/usuario';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
 import { Avatar } from '../../../shared/components/avatar/avatar';
-
-// Mismas reglas que el back (DTO y validación de la imagen).
-const TIPOS_IMAGEN = ['image/jpeg', 'image/png', 'image/webp'];
-const PESO_MAXIMO_IMAGEN = 2 * 1024 * 1024; // 2 MB
+import { achicarImagen, TIPOS_IMAGEN } from '../../../shared/utils/achicar-imagen';
 
 // Formulario para publicar: título, descripción e imagen opcional (consigna).
 @Component({
@@ -36,6 +33,7 @@ export class CrearPublicacion {
   protected readonly imagen = signal<File | null>(null);
   protected readonly vistaPrevia = signal<string | null>(null);
   protected readonly errorImagen = signal<string | null>(null);
+  protected readonly procesandoImagen = signal(false); // mientras se achica una foto pesada
 
   protected readonly intentoEnviar = signal(false);
   protected readonly enviando = signal(false);
@@ -50,7 +48,7 @@ export class CrearPublicacion {
   protected readonly restantes = computed(() => 1000 - this.largoDescripcion().length);
   protected readonly progreso = computed(() => Math.min(1, this.largoDescripcion().length / 1000));
 
-  elegirImagen(evento: Event) {
+  async elegirImagen(evento: Event) {
     const entrada = evento.target as HTMLInputElement;
     const archivo = entrada.files?.[0] ?? null;
     this.quitarImagen();
@@ -61,13 +59,19 @@ export class CrearPublicacion {
       entrada.value = '';
       return;
     }
-    if (archivo.size > PESO_MAXIMO_IMAGEN) {
-      this.errorImagen.set('La imagen puede pesar hasta 2 MB');
+
+    // Si pesa más de 2 MB (las fotos del celular), la achicamos antes de subirla.
+    this.procesandoImagen.set(true);
+    try {
+      const liviana = await achicarImagen(archivo);
+      this.imagen.set(liviana);
+      this.vistaPrevia.set(URL.createObjectURL(liviana));
+    } catch {
+      this.errorImagen.set('No pudimos procesar esa imagen. Probá con otra');
       entrada.value = '';
-      return;
+    } finally {
+      this.procesandoImagen.set(false);
     }
-    this.imagen.set(archivo);
-    this.vistaPrevia.set(URL.createObjectURL(archivo));
   }
 
   quitarImagen() {
@@ -94,7 +98,7 @@ export class CrearPublicacion {
   publicar(entradaImagen: HTMLInputElement) {
     this.intentoEnviar.set(true);
     this.formulario.markAllAsTouched();
-    if (this.formulario.invalid || this.errorImagen() || this.enviando()) return;
+    if (this.formulario.invalid || this.errorImagen() || this.procesandoImagen() || this.enviando()) return;
 
     const { titulo, descripcion } = this.formulario.getRawValue();
     this.enviando.set(true);

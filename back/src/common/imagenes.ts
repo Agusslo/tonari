@@ -8,8 +8,8 @@
     import { randomUUID } from 'node:crypto';
     import { v2 as cloudinary } from 'cloudinary';
 
-    // Todo lo de imágenes en un solo lugar: lo usan el registro (foto de perfil)
-    // y las publicaciones (imagen opcional), así las reglas son las mismas.
+    // Todo lo de imágenes en un solo lugar: lo usan el registro (foto de perfil,
+    // obligatoria) y las publicaciones (imagen opcional), así las reglas son las mismas.
 
     // Valida el archivo que llega con @UploadedFile().
     // "nombre" es para los mensajes: 'La imagen de perfil', 'La imagen', etc.
@@ -32,13 +32,6 @@
             error === 'File is required' ? `${nombre} es obligatoria` : error,
         ),
     });
-    }
-
-    // Foto de perfil por defecto: un blobatar (https://blobatar.dev), un avatar
-    // generado a partir del nombre de usuario. Como el nombre de usuario es único,
-    // cada cuenta recibe su propio blobatar, y siempre el mismo.
-    export function urlBlobatar(nombreUsuario: string) {
-    return `https://blobatar.dev/avatar/${encodeURIComponent(nombreUsuario)}`;
     }
 
     // Sube la imagen a Cloudinary (storage externo, clase 16) y devuelve su URL

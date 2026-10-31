@@ -85,9 +85,10 @@
   - **Lista de capítulos/episodios con "ojito"** para marcar hasta dónde viste o leíste, y "Marcar todo" por tomo. Los capítulos de manga y sus tomos salen de [MangaDex](https://mangadex.org), consultado desde el back (con caché de 6 horas).
   - **Sinopsis en español**: el back la traduce una sola vez con [MyMemory](https://mymemory.translated.net) y la guarda en Mongo (caché); se puede ver el original en inglés.
   - El total de capítulos se actualiza solo cuando AniList lo conoce (por ejemplo, cuando un manga termina).
+- **Perfil de otros usuarios** (`/usuarios/beto`): además de sus datos públicos y sus últimas publicaciones, muestra su biblioteca. Si entrás a tu propio nombre, te lleva a Mi Perfil.
 - **Respuestas a comentarios** (un nivel, como Instagram).
 - **Imágenes en Cloudinary** con recorte automático para los avatares.
-- **Avatar generado** ([blobatar](https://blobatar.dev)) cuando el usuario no sube foto; si no carga, iniciales.
+- **Avatar de respaldo** ([blobatar](https://blobatar.dev)) si la foto de perfil no carga; si tampoco carga, iniciales.
 - **Tarjeta "Tu actividad"** en el muro: "Me gusta" recibidos, promedio y tu publicación más querida.
 - **UX**: esqueletos de carga, View Transitions entre pantallas, animaciones con GSAP, confeti al registrarse, cuenta regresiva en el aviso de sesión.
 
@@ -227,7 +228,7 @@
 
 ### Front
 - **Perfil**
-  - [ ] Clic en el nombre o la foto de otro usuario para ver su perfil: datos y últimas 3 publicaciones
+  - [x] Clic en el nombre o la foto de otro usuario para ver su perfil: datos y últimas 3 publicaciones
   - [ ] Mantener las acciones del administrador (baja lógica de publicaciones)
 - **Publicaciones**
   - [x] Scroll infinito en vez de paginación tradicional

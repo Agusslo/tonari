@@ -2,6 +2,7 @@
     Body,
     Controller,
     ForbiddenException,
+    Get,
     Param,
     Patch,
     Req,
@@ -21,6 +22,13 @@
     @UseGuards(TokenGuard)
     export class UsuariosController {
     constructor(private readonly usuariosService: UsuariosService) {}
+
+    // GET /usuarios/beto -> el perfil PÚBLICO de otro usuario (para verlo desde una
+    // publicación o un comentario). Solo datos públicos: sin correo ni fecha de nacimiento.
+    @Get(':nombreUsuario')
+    perfilPublico(@Param('nombreUsuario') nombreUsuario: string) {
+        return this.usuariosService.perfilPublico(nombreUsuario);
+    }
 
     // PATCH /usuarios/:id -> 200 OK con el usuario actualizado.
     // PATCH (y no PUT) porque se cambia una PARTE del usuario, no el usuario entero.

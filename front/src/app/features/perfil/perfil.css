@@ -333,6 +333,11 @@
 .mini-autor {
   font-weight: 700;
   color: var(--color-hueso);
+  text-decoration: none; /* es un link al perfil de quien comentó */
+}
+
+.mini-autor:hover {
+  color: var(--color-menta);
 }
 
 .mini-editado {

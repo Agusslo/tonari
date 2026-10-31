@@ -121,7 +121,7 @@
                       <div class="mini-comentario">
                         <app-avatar [usuario]="comentario.usuario" />
                         <p>
-                          <span class="mini-autor">&#64;{{ comentario.usuario.nombreUsuario }}</span>
+                          <a class="mini-autor" [routerLink]="['/usuarios', comentario.usuario.nombreUsuario]">&#64;{{ comentario.usuario.nombreUsuario }}</a>
                           {{ comentario.mensaje }}
                           @if (comentario.modificado) {
                             <span class="mini-editado">(editado)</span>

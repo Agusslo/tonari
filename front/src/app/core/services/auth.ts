@@ -58,15 +58,15 @@
 
     // POST /auth/registro. Va como FormData (multipart/form-data) porque puede
     // llevar un archivo: con JSON no se puede mandar una imagen.
-    // La foto es opcional: sin foto, el back le asigna un blobatar.
+    // La foto es obligatoria (sin ella, el back responde 400).
     // El back devuelve { usuario, token }: guardamos la sesión y le pasamos
     // al componente solo el usuario (map).
-    registro(datos: DatosRegistro, imagenPerfil: File | null) {
+    registro(datos: DatosRegistro, imagenPerfil: File) {
         const formData = new FormData();
         for (const [campo, valor] of Object.entries(datos)) {
         formData.append(campo, valor);
         }
-        if (imagenPerfil) formData.append('imagenPerfil', imagenPerfil);
+        formData.append('imagenPerfil', imagenPerfil);
 
         return this.http.post<RespuestaAuth>(`${this.url}/registro`, formData).pipe(
         tap((respuesta) => this.iniciarSesion(respuesta)),

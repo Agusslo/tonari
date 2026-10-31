@@ -89,39 +89,16 @@
   border: 2px solid var(--color-menta);
 }
 
-.vista-previa,
-.blobatar {
+.vista-previa {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* Con el blobatar de muestra: borde menta sólido y aparece suave */
-.avatar.con-blobatar {
-  border: 2px solid rgb(185 243 228 / 0.6);
-}
-
-.blobatar {
-  animation: aparecer 0.3s ease-out both;
-}
-
-/* Aviso del blobatar: una caja suave en menta */
-.aviso-blobatar {
-  display: flex;
-  gap: 0.6rem;
-  margin: 0.35rem 0 0;
-  padding: 0.75rem 0.9rem;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  color: rgb(240 237 229 / 0.85);
-  background: var(--velo-menta);
-  border: 1px solid rgb(185 243 228 / 0.18);
-  border-radius: var(--radio-campo);
-}
-
-.aviso-blobatar .icono {
-  margin-top: 0.15rem;
-  color: var(--color-menta);
+/* Falta la foto (o no sirve): el círculo se marca en rojo, como los demás campos */
+.avatar.falta {
+  color: var(--color-error);
+  border-color: var(--color-error);
 }
 
 .imagen input {

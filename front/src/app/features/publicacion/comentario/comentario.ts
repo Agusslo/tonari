@@ -10,6 +10,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import IComentario from '../../../core/interfaces/comentario';
@@ -27,7 +28,7 @@ const RESPUESTAS_POR_TANDA = 5;
 // (este mismo componente se usa para cada respuesta, con esRespuesta = true).
 @Component({
   selector: 'app-comentario',
-  imports: [DatePipe, ReactiveFormsModule, Avatar],
+  imports: [DatePipe, ReactiveFormsModule, RouterLink, Avatar],
   templateUrl: './comentario.html',
   styleUrl: './comentario.css',
 })

@@ -29,10 +29,10 @@ export class AuthController {
   @UseInterceptors(FileInterceptor('imagenPerfil', { defParamCharset: 'utf8' }))
   registro(
     @Body() registroDto: RegistroDto,
-    // Opcional (si no viene, se le asigna un blobatar). Si viene:
+    // Obligatoria: sin archivo responde 400 "La imagen de perfil es obligatoria".
     // JPG/PNG/WEBP y hasta 2 MB (reglas en common/imagenes.ts)
-    @UploadedFile(validarImagen('La imagen de perfil', false))
-    imagenPerfil: Express.Multer.File | undefined,
+    @UploadedFile(validarImagen('La imagen de perfil', true))
+    imagenPerfil: Express.Multer.File,
   ) {
     return this.authService.registro(registroDto, imagenPerfil);
   }

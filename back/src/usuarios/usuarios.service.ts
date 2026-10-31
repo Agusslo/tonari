@@ -9,6 +9,19 @@
     export class UsuariosService {
     constructor(@InjectModel(Usuario.name) private usuarioModel: Model<Usuario>) {}
 
+    // El perfil que ven los demás. select: solo los campos públicos (el correo y la
+    // fecha de nacimiento son datos personales: esos los ve solo el dueño en Mi Perfil).
+    // Un usuario deshabilitado (baja lógica) no se muestra: 404, como si no existiera.
+    async perfilPublico(nombreUsuario: string) {
+        const usuario = await this.usuarioModel
+        .findOne({ nombreUsuario, habilitado: true })
+        .select('nombre apellido nombreUsuario imagenPerfil descripcion perfil createdAt');
+        if (!usuario) {
+        throw new NotFoundException('Ese usuario no existe'); // 404
+        }
+        return usuario;
+    }
+
     // Editar mi perfil: cambia solo los campos que vinieron y, si mandaron
     // una foto nueva, la guarda y reemplaza la URL.
     async actualizar(id: string, datos: ActualizarUsuarioDto, imagen?: Express.Multer.File) {

@@ -35,7 +35,7 @@
   <!-- Decoración: tus tapas en abanico, como libros sacados del estante -->
   @if (tapasDestacadas().length) {
     <div class="abanico" aria-hidden="true">
-      @for (tapa of tapasDestacadas(); track tapa) {
+      @for (tapa of tapasDestacadas(); track $index) {
         <img [src]="tapa" alt="" />
       }
     </div>

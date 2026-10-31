@@ -3,10 +3,17 @@
     <article class="panel tarjeta" [class.tarjeta-detalle]="detalle()" [attr.aria-labelledby]="'titulo-' + pub._id">
     <!-- Autor y fecha -->
     <header class="autor">
-        <!-- Sin foto (o si no carga): blobatar y, si tampoco, las iniciales -->
+        <!-- Sin foto (o si no carga): blobatar y, si tampoco, las iniciales.
+             La foto y el nombre llevan al perfil del autor (/usuarios/beto).
+             La foto no se puede enfocar con Tab (tabindex -1): así el teclado no pasa
+             dos veces por el mismo link; el del nombre alcanza. -->
+        <a class="autor-foto" [routerLink]="['/usuarios', pub.usuario.nombreUsuario]" tabindex="-1" aria-hidden="true">
         <app-avatar [usuario]="pub.usuario" />
+        </a>
         <div class="autor-datos">
-        <p class="autor-nombre">{{ pub.usuario.nombre }} {{ pub.usuario.apellido }}</p>
+        <p class="autor-nombre">
+            <a class="autor-enlace" [routerLink]="['/usuarios', pub.usuario.nombreUsuario]">{{ pub.usuario.nombre }} {{ pub.usuario.apellido }}</a>
+        </p>
         <p class="texto-secundario autor-detalle">
             &#64;{{ pub.usuario.nombreUsuario }} ·
             <!-- Un momento: se muestra en hora argentina -->

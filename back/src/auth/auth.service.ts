@@ -12,7 +12,7 @@ import jwt from 'jsonwebtoken';
 import { Usuario } from '../usuarios/entities/usuario.entity.js';
 import { RegistroDto } from './dto/registro.dto.js';
 import { LoginDto } from './dto/login.dto.js';
-import { guardarImagen, urlBlobatar } from '../common/imagenes.js';
+import { guardarImagen } from '../common/imagenes.js';
 import { PayloadToken } from './token/token.guard.js';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class AuthService {
     private readonly config: ConfigService,
   ) {}
 
-  async registro(registroDto: RegistroDto, imagen: Express.Multer.File | undefined) {
+  async registro(registroDto: RegistroDto, imagen: Express.Multer.File) {
     // 1. Revisar que el usuario no exista (correo y nombre de usuario son únicos).
     const existente = await this.usuarioModel.findOne({
       $or: [
@@ -41,11 +41,8 @@ export class AuthService {
     // 2. Hashear la contraseña. El 10 es el "costo": cuántas vueltas hace el algoritmo.
     const hash = await bcrypt.hash(registroDto.contraseña, 10);
 
-    // 3. Guardar la imagen de perfil y obtener su URL. Si no subió ninguna,
-    //    se le asigna su blobatar: así todos tienen una "identidad".
-    const urlImagen = imagen
-      ? await guardarImagen(imagen, 'perfiles')
-      : urlBlobatar(registroDto.nombreUsuario);
+    // 3. Guardar la imagen de perfil (obligatoria, ya validada en el controller) y obtener su URL.
+    const urlImagen = await guardarImagen(imagen, 'perfiles');
 
     // 4. Guardar el usuario con el hash en lugar de la contraseña.
     const usuario = await this.usuarioModel.create({
