@@ -90,6 +90,7 @@
 - **Banner de perfil** (como en Twitter): imagen ancha arriba del perfil, con la foto montada encima; se agrega, cambia o quita desde "Editar perfil" (se guarda en Cloudinary y se recorta en 3:1). También se ve en la tarjeta del muro.
 - **Seguir usuarios**: botón Seguir / Dejar de seguir en el perfil, contadores de seguidores y seguidos con su lista, aviso de "Te sigue" y pestaña **Siguiendo** en el muro (solo las publicaciones de la gente que seguís).
 - **Ingreso con Google**: botón "Continuar con Google" en el login y el registro. La primera vez se completa el perfil (usuario, fecha y descripción; nombre, correo y foto vienen de Google). El back verifica la credencial con Google y que sea para TONARI; si ya tenías cuenta con ese correo, se vincula. Con su [política de privacidad](https://tonari-front.vercel.app/privacidad) pública.
+- **PWA (se instala como app)**: manifiesto con íconos propios y service worker de Angular. Abre rápido, se puede instalar desde el navegador (botón "Instalar app" en el pie), muestra la app aunque se corte internet (con un aviso de "Sin conexión") y avisa cuando hay una versión nueva para actualizar con un toque.
 - **Respuestas a comentarios** (un nivel, como Instagram).
 - **Imágenes en Cloudinary** con recorte automático para los avatares.
 - **Avatar generado** ([blobatar](https://blobatar.dev)) cuando el usuario no sube foto; si no carga, iniciales.

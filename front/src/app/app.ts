@@ -2,6 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Auth } from './core/services/auth';
+import { Pwa } from './core/services/pwa';
 import { Avatar } from './shared/components/avatar/avatar';
 import { Modal } from './shared/components/modal/modal';
 import { mensajeDeError } from './shared/utils/errores-http';
@@ -24,6 +25,9 @@ export class App {
 
   // La cabecera cambia según haya alguien logueado o no.
   protected readonly usuario = this.auth.usuarioActual;
+
+  // PWA: versión nueva, sin conexión e instalar la app.
+  protected readonly pwa = inject(Pwa);
 
   // ---- Control de la sesión ----
   protected readonly avisoSesion = signal(false); // modal "¿extender la sesión?"

@@ -31,6 +31,17 @@
   </nav>
 </header>
 
+<!-- PWA: se cortó internet (lo ya cargado se sigue viendo) -->
+@if (!pwa.enLinea()) {
+  <p class="aviso-conexion" role="status">
+    <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+      <path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0" />
+      <line x1="3" y1="3" x2="21" y2="21" />
+    </svg>
+    Sin conexión: lo nuevo va a cargar cuando vuelva internet.
+  </p>
+}
+
 <main class="contenido">
   <router-outlet />
 </main>
@@ -43,8 +54,25 @@
   <p>
     Un mundo más cerca.
     <a routerLink="/privacidad" class="pie-enlace">Privacidad</a>
+    <!-- PWA: solo aparece si el navegador permite instalarla (y todavía no está instalada) -->
+    @if (pwa.sePuedeInstalar()) {
+      <button type="button" class="pie-instalar" (click)="pwa.instalar()">
+        <svg class="icono" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+          <path d="M12 3v12M7 10l5 5 5-5M5 21h14" />
+        </svg>
+        Instalar app
+      </button>
+    }
   </p>
 </footer>
+
+<!-- PWA: hay un deploy nuevo ya descargado -->
+@if (pwa.hayVersionNueva()) {
+  <div class="aviso-version" role="status">
+    <p>Hay una versión nueva de TONARI.</p>
+    <button type="button" class="boton" (click)="pwa.actualizar()">Actualizar</button>
+  </div>
+}
 
 
 

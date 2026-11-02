@@ -11,6 +11,14 @@
          buscan solos /favicon.ico como respaldo. "?v=2" evita que quede el viejo en caché. -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2" sizes="any" />
 
+    <!-- PWA: el manifiesto dice el nombre, los íconos y los colores de la app instalada -->
+    <link rel="manifest" href="manifest.webmanifest" />
+    <!-- iPhone/iPad no leen los íconos del manifiesto: usan este -->
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="TONARI" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
     <!-- Tipografías de Google Fonts. Si no cargan, se usan las de respaldo del CSS. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
