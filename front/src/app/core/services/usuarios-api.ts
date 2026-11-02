@@ -30,4 +30,15 @@ export class UsuariosApi {
   personas(nombreUsuario: string, cual: 'seguidores' | 'siguiendo') {
     return this.http.get<IAutor[]>(`${this.url}/${encodeURIComponent(nombreUsuario)}/${cual}`);
   }
+
+  // GET /usuarios/:id/contrasena -> si mi cuenta tiene contraseña (las de Google, no).
+  estadoContrasena(id: string) {
+    return this.http.get<{ tieneContraseña: boolean }>(`${this.url}/${id}/contrasena`);
+  }
+
+  // PATCH /usuarios/:id/contrasena -> crear (cuenta de Google) o cambiar mi contraseña.
+  // contraseñaActual solo va si la cuenta ya tenía una.
+  cambiarContrasena(id: string, datos: { contraseñaActual?: string; contraseñaNueva: string }) {
+    return this.http.patch<{ tieneContraseña: boolean }>(`${this.url}/${id}/contrasena`, datos);
+  }
 }

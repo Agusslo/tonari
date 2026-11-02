@@ -1,8 +1,10 @@
     import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
     import { InjectModel } from '@nestjs/mongoose';
     import { isValidObjectId, Model } from 'mongoose';
+    import bcrypt from 'bcryptjs';
     import { Usuario } from './entities/usuario.entity.js';
     import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto.js';
+    import { CambiarContrasenaDto } from './dto/cambiar-contrasena.dto.js';
     import { guardarImagen } from '../common/imagenes.js';
 
     @Injectable()
@@ -57,5 +59,56 @@
         // (findOne no la trae por el select:false, pero por las dudas la sacamos.)
         const { contraseña: _contraseña, ...sinContraseña } = usuario.toObject();
         return sinContraseña;
+    }
+
+    // GET /usuarios/:id/contrasena -> ¿mi cuenta tiene contraseña?
+    // Las que se crearon con Google no tienen: entran solo con el botón.
+    // Nunca se devuelve la contraseña (ni el hash): solo true o false.
+    // $nin [null, '']: "que no sea null ni vacía" (null también agarra al campo que no existe).
+    async estadoContrasena(id: string) {
+        if (!isValidObjectId(id)) {
+        throw new BadRequestException('El id del usuario no es válido'); // 400
+        }
+        const tieneContraseña = await this.usuarioModel.exists({
+        _id: id,
+        contraseña: { $nin: [null, ''] },
+        });
+        return { tieneContraseña: tieneContraseña !== null };
+    }
+
+    // PATCH /usuarios/:id/contrasena -> crear una contraseña (cuenta de Google) o cambiarla.
+    // Así alguien que se registró con Google puede entrar también con correo y contraseña,
+    // por ejemplo desde una compu donde no tiene su cuenta de Google abierta.
+    async cambiarContrasena(id: string, { contraseñaActual, contraseñaNueva }: CambiarContrasenaDto) {
+        if (!isValidObjectId(id)) {
+        throw new BadRequestException('El id del usuario no es válido'); // 400
+        }
+        // '+contraseña': la pedimos a propósito (el schema la oculta) para compararla.
+        const usuario = await this.usuarioModel
+        .findOne({ _id: id, habilitado: true })
+        .select('+contraseña');
+        if (!usuario) {
+        throw new NotFoundException('El usuario no existe'); // 404
+        }
+
+        // Si ya tenía contraseña, hay que saber la actual para cambiarla.
+        // 400 (y no 401): un 401 haría que el front cierre la sesión.
+        if (usuario.contraseña) {
+        if (!contraseñaActual) {
+            throw new BadRequestException('Ingresá tu contraseña actual'); // 400
+        }
+        const correcta = await bcrypt.compare(contraseñaActual, usuario.contraseña);
+        if (!correcta) {
+            throw new BadRequestException('La contraseña actual no es correcta'); // 400
+        }
+        if (contraseñaActual === contraseñaNueva) {
+            throw new BadRequestException('La contraseña nueva tiene que ser distinta de la actual'); // 400
+        }
+        }
+
+        // Igual que en el registro: se guarda el hash, nunca la contraseña.
+        usuario.contraseña = await bcrypt.hash(contraseñaNueva, 10);
+        await usuario.save();
+        return { tieneContraseña: true };
     }
     }

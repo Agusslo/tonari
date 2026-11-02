@@ -1,0 +1,139 @@
+<div class="contrasena">
+  <div class="fila-contrasena">
+    <div>
+      <p class="etiqueta">Contraseña</p>
+      @if (errorEstado()) {
+        <p class="valor">
+          No pudimos revisarla.
+          <button type="button" class="reintentar" (click)="cargarEstado()">Reintentar</button>
+        </p>
+      } @else if (tieneContrasena() === null) {
+        <span class="esqueleto-linea" aria-hidden="true"></span>
+      } @else if (tieneContrasena()) {
+        <p class="valor" aria-label="Tenés una contraseña">••••••••</p>
+      } @else {
+        <p class="valor texto-secundario">Sin contraseña: entrás con Google</p>
+      }
+    </div>
+
+    @if (tieneContrasena() !== null && !abierto()) {
+      <button type="button" class="boton-contrasena" (click)="abrir()">
+        <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <rect x="4" y="11" width="16" height="10" rx="2" />
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+        </svg>
+        {{ tieneContrasena() ? 'Cambiar' : 'Crear contraseña' }}
+      </button>
+    }
+  </div>
+
+  <!-- Para las cuentas de Google: por qué le conviene crear una -->
+  @if (tieneContrasena() === false && !abierto()) {
+    <p class="ayuda texto-secundario explicacion">
+      Creá una para poder entrar también con tu correo o nombre de usuario, por ejemplo desde una
+      compu donde no tenés tu cuenta de Google abierta.
+    </p>
+  }
+
+  @if (listo(); as mensaje) {
+    <p class="aviso-listo" role="status">{{ mensaje }}</p>
+  }
+
+  @if (abierto()) {
+    <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate class="formulario-contrasena">
+      @if (tieneContrasena()) {
+        <div class="campo">
+          <label for="contrasena-actual">Contraseña actual</label>
+          <div class="campo-contraseña">
+            <input
+              id="contrasena-actual"
+              [type]="verContrasenas() ? 'text' : 'password'"
+              formControlName="actual"
+              autocomplete="current-password"
+              [attr.aria-invalid]="mostrarError('actual')"
+              aria-describedby="error-contrasena-actual"
+            />
+            <ng-container *ngTemplateOutlet="ojito; context: { campo: 'contrasena-actual' }" />
+          </div>
+          @if (mostrarError('actual')) {
+            <p id="error-contrasena-actual" class="mensaje-error">{{ mensajeError('actual') }}</p>
+          }
+        </div>
+      }
+
+      <div class="campo">
+        <label for="contrasena-nueva">{{ tieneContrasena() ? 'Contraseña nueva' : 'Contraseña' }}</label>
+        <div class="campo-contraseña">
+          <input
+            id="contrasena-nueva"
+            [type]="verContrasenas() ? 'text' : 'password'"
+            formControlName="nueva"
+            autocomplete="new-password"
+            [attr.aria-invalid]="mostrarError('nueva')"
+            aria-describedby="ayuda-contrasena-nueva error-contrasena-nueva"
+          />
+          <ng-container *ngTemplateOutlet="ojito; context: { campo: 'contrasena-nueva' }" />
+        </div>
+        <p id="ayuda-contrasena-nueva" class="ayuda texto-secundario">
+          Mínimo 8 caracteres, una mayúscula y un número.
+        </p>
+        @if (mostrarError('nueva')) {
+          <p id="error-contrasena-nueva" class="mensaje-error">{{ mensajeError('nueva') }}</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="contrasena-repetir">Repetir contraseña</label>
+        <div class="campo-contraseña">
+          <input
+            id="contrasena-repetir"
+            [type]="verContrasenas() ? 'text' : 'password'"
+            formControlName="repetir"
+            autocomplete="new-password"
+            [attr.aria-invalid]="mostrarError('repetir')"
+            aria-describedby="error-contrasena-repetir"
+          />
+          <ng-container *ngTemplateOutlet="ojito; context: { campo: 'contrasena-repetir' }" />
+        </div>
+        @if (mostrarError('repetir')) {
+          <p id="error-contrasena-repetir" class="mensaje-error">{{ mensajeError('repetir') }}</p>
+        }
+      </div>
+
+      @if (error(); as mensaje) {
+        <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+      }
+
+      <div class="botones">
+        <button type="button" class="boton boton-secundario" (click)="cancelar()">Cancelar</button>
+        <button type="submit" class="boton" [attr.aria-disabled]="enviando()" [attr.aria-busy]="enviando()">
+          @if (enviando()) {
+            <span class="spinner" aria-hidden="true"></span>
+            Guardando…
+          } @else {
+            {{ tieneContrasena() ? 'Cambiar contraseña' : 'Crear contraseña' }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>
+
+<!-- El "ojito", igual que en el registro. Es uno solo para los 3 campos. -->
+<ng-template #ojito let-campo="campo">
+  <button
+    type="button"
+    class="boton-ojo"
+    (click)="verContrasenas.set(!verContrasenas())"
+    [attr.aria-label]="verContrasenas() ? 'Ocultar contraseñas' : 'Mostrar contraseñas'"
+    [attr.aria-controls]="campo"
+  >
+    <svg class="icono" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+      <circle cx="12" cy="12" r="3" />
+      @if (verContrasenas()) {
+        <line x1="3" y1="3" x2="21" y2="21" />
+      }
+    </svg>
+  </button>
+</ng-template>

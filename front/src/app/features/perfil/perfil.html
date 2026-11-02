@@ -86,6 +86,8 @@
             <dd>{{ usuario.createdAt | date: 'dd/MM/yyyy' : '-0300' }}</dd>
           </div>
         </dl>
+        <!-- Crear (cuentas de Google) o cambiar la contraseña -->
+        <app-contrasena [usuarioId]="usuario._id" />
       }
     </section>
 

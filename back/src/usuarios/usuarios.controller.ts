@@ -16,6 +16,7 @@
     import { UsuariosService } from './usuarios.service.js';
     import { SeguimientosService } from './seguimientos.service.js';
     import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto.js';
+    import { CambiarContrasenaDto } from './dto/cambiar-contrasena.dto.js';
     import { validarImagen } from '../common/imagenes.js';
     import { TokenGuard } from '../auth/token/token.guard.js';
     import type { RequestConToken } from '../auth/token/token.guard.js';
@@ -63,6 +64,25 @@
         return this.seguimientosService.dejarDeSeguir(req.usuario.id, id);
     }
 
+    // GET /usuarios/:id/contrasena -> { tieneContraseña: true/false }
+    // ("contrasena" sin ñ en la URL: las URLs con ñ se codifican raro, %C3%B1.)
+    @Get(':id/contrasena')
+    estadoContrasena(@Param('id') id: string, @Req() req: RequestConToken) {
+        this.soloElDueño(id, req, 'Solo podés ver los datos de tu propia cuenta');
+        return this.usuariosService.estadoContrasena(id);
+    }
+
+    // PATCH /usuarios/:id/contrasena -> crear o cambiar MI contraseña.
+    @Patch(':id/contrasena')
+    cambiarContrasena(
+        @Param('id') id: string,
+        @Req() req: RequestConToken,
+        @Body() cambiarContrasenaDto: CambiarContrasenaDto,
+    ) {
+        this.soloElDueño(id, req, 'Solo podés cambiar tu propia contraseña');
+        return this.usuariosService.cambiarContrasena(id, cambiarContrasenaDto);
+    }
+
     // PATCH /usuarios/:id -> 200 OK con el usuario actualizado.
     // PATCH (y no PUT) porque se cambia una PARTE del usuario, no el usuario entero.
     // Llega como multipart/form-data por si trae imágenes nuevas, las dos opcionales:
@@ -98,5 +118,12 @@
         );
         const banner = await validarImagen('El banner', false).transform(archivos.banner?.[0]);
         return this.usuariosService.actualizar(id, actualizarUsuarioDto, imagenPerfil, banner);
+    }
+
+    // El token dice quién sos: estas rutas son solo para tu propia cuenta (403 si no).
+    private soloElDueño(id: string, req: RequestConToken, mensaje: string) {
+        if (req.usuario.id !== id) {
+        throw new ForbiddenException(mensaje);
+        }
     }
     }

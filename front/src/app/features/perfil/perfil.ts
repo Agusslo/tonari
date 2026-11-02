@@ -18,13 +18,14 @@ import { ModalPersonas } from '../../shared/components/modal-personas/modal-pers
 import { UsuariosApi } from '../../core/services/usuarios-api';
 import { IResumenSeguir } from '../../core/interfaces/usuario';
 import { EditarPerfil } from './editar-perfil/editar-perfil';
+import { Contrasena } from './contrasena/contrasena';
 import { EstadoObraPipe } from '../../shared/pipes/estado-obra.pipe';
 import { NumeroCortoPipe } from '../../shared/pipes/numero-corto.pipe';
 import { ImagenRespaldoDirective } from '../../shared/directives/imagen-respaldo.directive';
 
 @Component({
   selector: 'app-perfil',
-  imports: [DatePipe, RouterLink, Avatar, EditarPerfil, ModalPersonas, EstadoObraPipe, NumeroCortoPipe, ImagenRespaldoDirective],
+  imports: [DatePipe, RouterLink, Avatar, EditarPerfil, Contrasena, ModalPersonas, EstadoObraPipe, NumeroCortoPipe, ImagenRespaldoDirective],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
