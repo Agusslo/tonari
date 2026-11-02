@@ -45,10 +45,10 @@
         <!-- Seguidores / siguiendo (abren la lista) y el botón Seguir -->
         <div class="fila-seguir">
           <button type="button" class="contador-seguir" (click)="lista.set('seguidores')">
-            <strong>{{ perfil.seguidores }}</strong> {{ perfil.seguidores === 1 ? 'seguidor' : 'seguidores' }}
+            <strong>{{ perfil.seguidores | numeroCorto }}</strong> {{ perfil.seguidores === 1 ? 'seguidor' : 'seguidores' }}
           </button>
           <button type="button" class="contador-seguir" (click)="lista.set('siguiendo')">
-            <strong>{{ perfil.siguiendo }}</strong> siguiendo
+            <strong>{{ perfil.siguiendo | numeroCorto }}</strong> siguiendo
           </button>
           <!-- aria-pressed: el lector de pantalla anuncia si ya lo seguís.
                Si ya lo seguís, al pasar el mouse dice "Dejar de seguir". -->
@@ -145,7 +145,7 @@
                   <time [attr.datetime]="publicacion.createdAt">
                     {{ publicacion.createdAt | date: 'dd/MM/yyyy HH:mm' : '-0300' }}
                   </time>
-                  · {{ publicacion.cantidadMeGusta }} Me gusta
+                  · {{ publicacion.cantidadMeGusta | numeroCorto }} Me gusta
                   · {{ publicacion.cantidadComentarios }}
                   {{ publicacion.cantidadComentarios === 1 ? 'comentario' : 'comentarios' }}
                 </p>
@@ -192,11 +192,11 @@
                   [attr.aria-label]="entrada.titulo + ' en AniList (se abre en otra pestaña)'"
                 >
                   @if (entrada.imagen) {
-                    <img [src]="entrada.imagen" alt="" loading="lazy" />
+                    <img appImagenRespaldo [src]="entrada.imagen" alt="" loading="lazy" />
                   }
                   <p class="tapa-titulo">{{ entrada.titulo }}</p>
                   <p class="tapa-detalle">
-                    {{ nombreEstado(entrada.estado, entrada.tipo) }} · {{ entrada.progreso }}/{{ entrada.total ?? '?' }}
+                    {{ entrada.estado | estadoObra: entrada.tipo }} · {{ entrada.progreso }}/{{ entrada.total ?? '?' }}
                     @if (entrada.puntuacion) {
                       · ★ {{ entrada.puntuacion }}
                     }

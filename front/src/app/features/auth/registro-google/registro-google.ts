@@ -9,6 +9,7 @@ import { Portada } from '../../../shared/components/portada/portada';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
 import { celebrar } from '../../../shared/utils/animaciones';
 import { fechaLocalHoy, fechaNoFutura } from '../../../shared/validators/validadores';
+import { AutoAlturaDirective } from '../../../shared/directives/auto-altura.directive';
 
 const PATRON_USUARIO = /^[a-zA-Z0-9_.]+$/;
 
@@ -18,7 +19,7 @@ const PATRON_USUARIO = /^[a-zA-Z0-9_.]+$/;
 // Mismas reglas que el registro común (y que el DTO del back).
 @Component({
   selector: 'app-registro-google',
-  imports: [ReactiveFormsModule, RouterLink, Avatar, Modal, Portada],
+  imports: [ReactiveFormsModule, RouterLink, Avatar, Modal, Portada, AutoAlturaDirective],
   templateUrl: './registro-google.html',
   // Reusa los estilos del registro (grupos, filas, contador) y suma los propios.
   styleUrls: ['../registro/registro.css', './registro-google.css'],

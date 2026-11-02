@@ -9,7 +9,7 @@ import IPublicacion from '../../core/interfaces/publicacion';
 import { IPaginaComentarios } from '../../core/interfaces/comentario';
 import { ComentariosApi } from '../../core/services/comentarios-api';
 import { BibliotecaApi } from '../../core/services/biblioteca-api';
-import IEntrada, { nombreEstado } from '../../core/interfaces/biblioteca';
+import IEntrada from '../../core/interfaces/biblioteca';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 import { rutaFicha } from '../../shared/utils/rutas';
 import { urlBanner } from '../../shared/utils/cloudinary';
@@ -18,10 +18,13 @@ import { ModalPersonas } from '../../shared/components/modal-personas/modal-pers
 import { UsuariosApi } from '../../core/services/usuarios-api';
 import { IResumenSeguir } from '../../core/interfaces/usuario';
 import { EditarPerfil } from './editar-perfil/editar-perfil';
+import { EstadoObraPipe } from '../../shared/pipes/estado-obra.pipe';
+import { NumeroCortoPipe } from '../../shared/pipes/numero-corto.pipe';
+import { ImagenRespaldoDirective } from '../../shared/directives/imagen-respaldo.directive';
 
 @Component({
   selector: 'app-perfil',
-  imports: [DatePipe, RouterLink, Avatar, EditarPerfil, ModalPersonas],
+  imports: [DatePipe, RouterLink, Avatar, EditarPerfil, ModalPersonas, EstadoObraPipe, NumeroCortoPipe, ImagenRespaldoDirective],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
@@ -49,7 +52,6 @@ export class Perfil implements OnInit {
 
   // Mi Biblioteca (extra): un resumen en el perfil. null = todavía cargando.
   protected readonly biblioteca = signal<IEntrada[] | null>(null);
-  protected readonly nombreEstado = nombreEstado;
   protected readonly rutaFicha = rutaFicha;
   protected readonly urlBanner = urlBanner;
   // Cuántas hay en cada estado (anime y manga juntos).

@@ -15,6 +15,7 @@ import {
   fechaLocalHoy,
   fechaNoFutura,
 } from '../../../shared/validators/validadores';
+import { AutoAlturaDirective } from '../../../shared/directives/auto-altura.directive';
 
 // Mismas reglas que el back (DTO de registro y validación del archivo).
 const IMAGEN_OBLIGATORIA = 'La imagen de perfil es obligatoria';
@@ -23,7 +24,7 @@ const PATRON_USUARIO = /^[a-zA-Z0-9_.]+$/;
 
 @Component({
   selector: 'app-registro',
-  imports: [ReactiveFormsModule, RouterLink, Modal, Portada, BotonGoogle],
+  imports: [ReactiveFormsModule, RouterLink, Modal, Portada, BotonGoogle, AutoAlturaDirective],
   templateUrl: './registro.html',
   styleUrl: './registro.css',
 })

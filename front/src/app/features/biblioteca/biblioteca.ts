@@ -1,17 +1,20 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BibliotecaApi } from '../../core/services/biblioteca-api';
-import IEntrada, { ESTADOS, EstadoEntrada, IObra, nombreEstado, TipoObra } from '../../core/interfaces/biblioteca';
+import IEntrada, { ESTADOS, EstadoEntrada, IObra, TipoObra } from '../../core/interfaces/biblioteca';
 import { Entrada } from './entrada/entrada';
 import { Buscador } from './buscador/buscador';
 import { Modal } from '../../shared/components/modal/modal';
 import { mensajeDeError } from '../../shared/utils/errores-http';
+import { EstadoObraPipe } from '../../shared/pipes/estado-obra.pipe';
+import { ImagenRespaldoDirective } from '../../shared/directives/imagen-respaldo.directive';
+import { ClickAfueraDirective } from '../../shared/directives/click-afuera.directive';
 
 // Mi Biblioteca (extra, no lo pide la consigna): tu lista de anime y manga
 // con estado, progreso y puntuación. Las obras se buscan en AniList.
 @Component({
   selector: 'app-biblioteca',
-  imports: [Entrada, Buscador, Modal],
+  imports: [Entrada, Buscador, Modal, EstadoObraPipe, ImagenRespaldoDirective, ClickAfueraDirective],
   templateUrl: './biblioteca.html',
   styleUrl: './biblioteca.css',
 })
@@ -33,7 +36,6 @@ export class Biblioteca implements OnInit {
   protected readonly errorAccion = signal<string | null>(null);
 
   protected readonly estados = ESTADOS;
-  protected readonly nombreEstado = nombreEstado;
 
   // computed: se recalculan solos cuando cambian entradas, tipo o filtro.
   protected readonly delTipo = computed(() => this.entradas().filter((e) => e.tipo === this.tipo()));

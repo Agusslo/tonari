@@ -11,6 +11,7 @@ import { TarjetaPublicacion } from '../publicaciones/tarjeta-publicacion/tarjeta
 import { Comentario } from './comentario/comentario';
 import { Modal } from '../../shared/components/modal/modal';
 import { mensajeDeError } from '../../shared/utils/errores-http';
+import { AutoAlturaDirective } from '../../shared/directives/auto-altura.directive';
 
 // Cuántos comentarios se traen por vez (la primera carga y cada "cargar más").
 const POR_TANDA = 5;
@@ -18,7 +19,7 @@ const POR_TANDA = 5;
 // Página Publicación (/publicaciones/:id): la publicación en grande y sus comentarios.
 @Component({
   selector: 'app-publicacion',
-  imports: [ReactiveFormsModule, RouterLink, TarjetaPublicacion, Comentario, Modal],
+  imports: [ReactiveFormsModule, RouterLink, TarjetaPublicacion, Comentario, Modal, AutoAlturaDirective],
   templateUrl: './publicacion.html',
   styleUrl: './publicacion.css',
 })

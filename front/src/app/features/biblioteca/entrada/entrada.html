@@ -4,10 +4,10 @@
   <!-- La tapa y el título llevan a la ficha de la obra (/biblioteca/anime/154587-sousou-no-frieren) -->
   <a class="tapa-entrada" [routerLink]="rutaFicha(e)" [attr.aria-label]="'Abrir la ficha de ' + e.titulo">
     @if (e.imagen) {
-      <img [src]="e.imagen" alt="" loading="lazy" />
+      <img appImagenRespaldo [src]="e.imagen" alt="" loading="lazy" />
     }
     <!-- El estado, como etiqueta de color sobre la portada -->
-    <span class="estado-chip" [attr.data-estado]="e.estado">{{ nombreEstado(e.estado, e.tipo) }}</span>
+    <span class="estado-chip" [attr.data-estado]="e.estado">{{ e.estado | estadoObra: e.tipo }}</span>
     @if (e.puntuacion) {
       <span class="nota" [attr.aria-label]="'Tu puntuación: ' + e.puntuacion + ' de 10'">★ {{ e.puntuacion }}</span>
     }
@@ -51,7 +51,7 @@
         <label class="solo-lector" [for]="'estado-' + e._id">Estado de {{ e.titulo }}</label>
         <select class="select-estado" [id]="'estado-' + e._id" [value]="e.estado" [disabled]="guardando()" (change)="cambiarEstado($event)">
           @for (estado of estados; track estado) {
-            <option [value]="estado" [selected]="estado === e.estado">{{ nombreEstado(estado, e.tipo) }}</option>
+            <option [value]="estado" [selected]="estado === e.estado">{{ estado | estadoObra: e.tipo }}</option>
           }
         </select>
 

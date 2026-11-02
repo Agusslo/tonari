@@ -17,8 +17,9 @@
         <p class="texto-secundario autor-detalle">
             &#64;{{ pub.usuario.nombreUsuario }} ·
             <!-- Un momento: se muestra en hora argentina -->
-            <time [attr.datetime]="pub.createdAt">
-            {{ pub.createdAt | date: 'dd/MM/yyyy HH:mm' : '-0300' }}
+            <!-- "hace 5 min" (pipe propia); la fecha completa aparece al pasar el mouse -->
+            <time [attr.datetime]="pub.createdAt" [attr.title]="pub.createdAt | date: 'dd/MM/yyyy HH:mm' : '-0300'">
+            {{ pub.createdAt | tiempoRelativo }}
             </time>
         </p>
         </div>
@@ -60,7 +61,7 @@
         <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
             <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />
         </svg>
-        {{ pub.cantidadMeGusta }} Me gusta
+        {{ pub.cantidadMeGusta | numeroCorto }} Me gusta
         </button>
 
         <!-- Comentarios: en el muro es un link a la página de la publicación;
@@ -70,14 +71,14 @@
             <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
             <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" />
             </svg>
-            {{ pub.cantidadComentarios ?? 0 }} {{ pub.cantidadComentarios === 1 ? 'comentario' : 'comentarios' }}
+            {{ pub.cantidadComentarios ?? 0 | numeroCorto }} {{ pub.cantidadComentarios === 1 ? 'comentario' : 'comentarios' }}
         </span>
         } @else {
         <a class="comentarios" [routerLink]="['/publicaciones', pub._id]">
             <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
             <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" />
             </svg>
-            {{ pub.cantidadComentarios ?? 0 }}
+            {{ pub.cantidadComentarios ?? 0 | numeroCorto }}
             <span class="comentarios-texto">{{ pub.cantidadComentarios === 1 ? 'comentario' : 'comentarios' }}</span>
         </a>
         }

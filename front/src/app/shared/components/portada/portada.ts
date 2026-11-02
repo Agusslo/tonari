@@ -2,11 +2,13 @@
   import { toSignal } from '@angular/core/rxjs-interop';
   import { catchError, of } from 'rxjs';
   import { Anilist } from '../../../core/services/anilist';
+  import { ImagenRespaldoDirective } from '../../directives/imagen-respaldo.directive';
 
   // La portada tipo tapa de manga de las pantallas de acceso (registro y login).
   // Está en un componente porque se repite: se escribe una vez y se usa en las dos.
   @Component({
     selector: 'app-portada',
+    imports: [ImagenRespaldoDirective],
     templateUrl: './portada.html',
     styleUrl: './portada.css',
   })

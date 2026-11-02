@@ -10,12 +10,15 @@ import { PublicacionesApi } from '../../core/services/publicaciones-api';
 import { BibliotecaApi } from '../../core/services/biblioteca-api';
 import { IPerfilPublico } from '../../core/interfaces/usuario';
 import IPublicacion from '../../core/interfaces/publicacion';
-import IEntrada, { nombreEstado } from '../../core/interfaces/biblioteca';
+import IEntrada from '../../core/interfaces/biblioteca';
 import { Avatar } from '../../shared/components/avatar/avatar';
 import { ModalPersonas } from '../../shared/components/modal-personas/modal-personas';
 import { Modal } from '../../shared/components/modal/modal';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 import { urlBanner } from '../../shared/utils/cloudinary';
+import { EstadoObraPipe } from '../../shared/pipes/estado-obra.pipe';
+import { NumeroCortoPipe } from '../../shared/pipes/numero-corto.pipe';
+import { ImagenRespaldoDirective } from '../../shared/directives/imagen-respaldo.directive';
 
 // Perfil de OTRO usuario: /usuarios/beto (consigna, Sprint 5: "clic en el nombre o la
 // foto de otro usuario para ver su perfil: datos y últimas 3 publicaciones").
@@ -23,7 +26,7 @@ import { urlBanner } from '../../shared/utils/cloudinary';
 // Usa los mismos estilos que Mi Perfil (perfil.css) para que se vean iguales.
 @Component({
   selector: 'app-perfil-usuario',
-  imports: [DatePipe, RouterLink, Avatar, ModalPersonas, Modal],
+  imports: [DatePipe, RouterLink, Avatar, ModalPersonas, Modal, EstadoObraPipe, NumeroCortoPipe, ImagenRespaldoDirective],
   templateUrl: './perfil-usuario.html',
   styleUrls: ['../perfil/perfil.css', './perfil-usuario.css'],
 })
@@ -51,7 +54,6 @@ export class PerfilUsuario {
 
   // Su biblioteca (null = todavía no llegó; si falla, queda vacía).
   protected readonly biblioteca = signal<IEntrada[] | null>(null);
-  protected readonly nombreEstado = nombreEstado;
   protected readonly urlBanner = urlBanner;
 
   protected readonly resumenBiblioteca = computed(() => {

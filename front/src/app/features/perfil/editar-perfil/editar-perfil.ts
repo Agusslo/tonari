@@ -8,11 +8,12 @@ import { mensajeDeError } from '../../../shared/utils/errores-http';
 import { Avatar } from '../../../shared/components/avatar/avatar';
 import { achicarImagen, TIPOS_IMAGEN } from '../../../shared/utils/achicar-imagen';
 import { urlBanner } from '../../../shared/utils/cloudinary';
+import { AutoAlturaDirective } from '../../../shared/directives/auto-altura.directive';
 
 // Formulario para editar mi perfil (consigna: "cada usuario debe poder ver y editar su perfil").
 @Component({
   selector: 'app-editar-perfil',
-  imports: [ReactiveFormsModule, Avatar],
+  imports: [ReactiveFormsModule, Avatar, AutoAlturaDirective],
   templateUrl: './editar-perfil.html',
   styleUrl: './editar-perfil.css',
 })

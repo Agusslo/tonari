@@ -18,6 +18,8 @@ import IUsuario from '../../../core/interfaces/usuario';
 import { ComentariosApi } from '../../../core/services/comentarios-api';
 import { Avatar } from '../../../shared/components/avatar/avatar';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
+import { TiempoRelativoPipe } from '../../../shared/pipes/tiempo-relativo.pipe';
+import { AutoAlturaDirective } from '../../../shared/directives/auto-altura.directive';
 
 // Cuántas respuestas se traen por vez ("Ver respuestas" y cada "Ver más").
 const RESPUESTAS_POR_TANDA = 5;
@@ -28,7 +30,7 @@ const RESPUESTAS_POR_TANDA = 5;
 // (este mismo componente se usa para cada respuesta, con esRespuesta = true).
 @Component({
   selector: 'app-comentario',
-  imports: [DatePipe, ReactiveFormsModule, RouterLink, Avatar],
+  imports: [DatePipe, ReactiveFormsModule, RouterLink, Avatar, TiempoRelativoPipe, AutoAlturaDirective],
   templateUrl: './comentario.html',
   styleUrl: './comentario.css',
 })

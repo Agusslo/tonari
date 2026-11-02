@@ -41,7 +41,7 @@
       @for (obra of resultados(); track obra.idAnilist) {
         <li class="resultado">
           @if (obra.imagen) {
-            <img [src]="obra.imagen" alt="" class="miniatura" loading="lazy" />
+            <img appImagenRespaldo [src]="obra.imagen" alt="" class="miniatura" loading="lazy" />
           } @else {
             <span class="miniatura sin-imagen" aria-hidden="true"></span>
           }

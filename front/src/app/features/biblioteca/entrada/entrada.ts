@@ -2,9 +2,11 @@ import { Component, ElementRef, computed, inject, input, output, signal } from '
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { rutaFicha } from '../../../shared/utils/rutas';
-import IEntrada, { ESTADOS, EstadoEntrada, nombreEstado } from '../../../core/interfaces/biblioteca';
+import IEntrada, { ESTADOS, EstadoEntrada } from '../../../core/interfaces/biblioteca';
 import { BibliotecaApi, CambiosEntrada } from '../../../core/services/biblioteca-api';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
+import { EstadoObraPipe } from '../../../shared/pipes/estado-obra.pipe';
+import { ImagenRespaldoDirective } from '../../../shared/directives/imagen-respaldo.directive';
 
 // Una obra de la biblioteca: portada, estado, progreso y puntuación.
 // Cada cambio se guarda enseguida en el back; el back aplica las reglas
@@ -12,7 +14,7 @@ import { mensajeDeError } from '../../../shared/utils/errores-http';
 // la obra actualizada, que avisamos al padre con "actualizada".
 @Component({
   selector: 'app-entrada',
-  imports: [RouterLink],
+  imports: [RouterLink, EstadoObraPipe, ImagenRespaldoDirective],
   templateUrl: './entrada.html',
   styleUrl: './entrada.css',
   host: {
@@ -36,7 +38,6 @@ export class Entrada {
   protected readonly notaAbierta = signal(false);
 
   protected readonly estados = ESTADOS;
-  protected readonly nombreEstado = nombreEstado;
   protected readonly rutaFicha = rutaFicha;
   protected readonly puntuaciones = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 

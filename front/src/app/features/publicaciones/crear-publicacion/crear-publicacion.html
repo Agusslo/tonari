@@ -24,8 +24,9 @@
         }
 
         <label for="descripcion" class="solo-lector">Mensaje</label>
-        <!-- field-sizing: content (en el CSS) hace que crezca a medida que escribís -->
+        <!-- appAutoAltura (directiva propia): crece a medida que escribís, en todos los navegadores -->
         <textarea
+          appAutoAltura
           id="descripcion"
           class="entrada-mensaje"
           formControlName="descripcion"

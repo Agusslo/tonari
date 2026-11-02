@@ -215,8 +215,8 @@
   - [ ] Comentarios por publicación en un lapso de tiempo elegible
 - **A nivel aplicación**
   - [x] PWA
-  - [ ] 3 pipes propias
-  - [ ] 3 directivas propias
+  - [x] 3 pipes propias (`tiempoRelativo`, `estadoObra`, `numeroCorto`)
+  - [x] 3 directivas propias (`appAutoAltura`, `appImagenRespaldo`, `appClickAfuera`)
 
 ### Back
 - **Usuarios controller** (validar que el token sea de un administrador)

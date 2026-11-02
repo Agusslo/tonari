@@ -4,12 +4,14 @@ import { RouterLink } from '@angular/router';
 import IPublicacion from '../../../core/interfaces/publicacion';
 import IUsuario from '../../../core/interfaces/usuario';
 import { Avatar } from '../../../shared/components/avatar/avatar';
+import { TiempoRelativoPipe } from '../../../shared/pipes/tiempo-relativo.pipe';
+import { NumeroCortoPipe } from '../../../shared/pipes/numero-corto.pipe';
 
 // Una publicación del muro. La pantalla Publicaciones repite este componente
 // una vez por cada publicación (consigna: "cada publicación es un componente").
 @Component({
   selector: 'app-tarjeta-publicacion',
-  imports: [DatePipe, RouterLink, Avatar],
+  imports: [DatePipe, RouterLink, Avatar, TiempoRelativoPipe, NumeroCortoPipe],
   templateUrl: './tarjeta-publicacion.html',
   styleUrl: './tarjeta-publicacion.css',
 })

@@ -8,11 +8,12 @@ import IUsuario from '../../../core/interfaces/usuario';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
 import { Avatar } from '../../../shared/components/avatar/avatar';
 import { achicarImagen, TIPOS_IMAGEN } from '../../../shared/utils/achicar-imagen';
+import { AutoAlturaDirective } from '../../../shared/directives/auto-altura.directive';
 
 // Formulario para publicar: título, descripción e imagen opcional (consigna).
 @Component({
   selector: 'app-crear-publicacion',
-  imports: [ReactiveFormsModule, Avatar],
+  imports: [ReactiveFormsModule, Avatar, AutoAlturaDirective],
   templateUrl: './crear-publicacion.html',
   styleUrl: './crear-publicacion.css',
 })

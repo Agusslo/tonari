@@ -23,10 +23,10 @@
         @if (numerosSeguir(); as numeros) {
           <div class="fila-seguir">
             <button type="button" class="contador-seguir" (click)="lista.set('seguidores')">
-              <strong>{{ numeros.seguidores }}</strong> {{ numeros.seguidores === 1 ? 'seguidor' : 'seguidores' }}
+              <strong>{{ numeros.seguidores | numeroCorto }}</strong> {{ numeros.seguidores === 1 ? 'seguidor' : 'seguidores' }}
             </button>
             <button type="button" class="contador-seguir" (click)="lista.set('siguiendo')">
-              <strong>{{ numeros.siguiendo }}</strong> siguiendo
+              <strong>{{ numeros.siguiendo | numeroCorto }}</strong> siguiendo
             </button>
           </div>
         }
@@ -129,7 +129,7 @@
                   <time [attr.datetime]="publicacion.createdAt">
                     {{ publicacion.createdAt | date: 'dd/MM/yyyy HH:mm' : '-0300' }}
                   </time>
-                  · {{ publicacion.cantidadMeGusta }} Me gusta
+                  · {{ publicacion.cantidadMeGusta | numeroCorto }} Me gusta
                 </p>
 
                 <!-- Sus comentarios: los 3 más nuevos y un link para ver todos -->
@@ -202,11 +202,11 @@
                 <!-- Cada tapa lleva a la ficha de esa obra -->
                 <a class="tapa-enlace" [routerLink]="rutaFicha(entrada)">
                   @if (entrada.imagen) {
-                    <img [src]="entrada.imagen" alt="" loading="lazy" />
+                    <img appImagenRespaldo [src]="entrada.imagen" alt="" loading="lazy" />
                   }
                   <p class="tapa-titulo">{{ entrada.titulo }}</p>
                   <p class="tapa-detalle">
-                    {{ nombreEstado(entrada.estado, entrada.tipo) }} · {{ entrada.progreso }}/{{ entrada.total ?? '?' }}
+                    {{ entrada.estado | estadoObra: entrada.tipo }} · {{ entrada.progreso }}/{{ entrada.total ?? '?' }}
                   </p>
                 </a>
               </li>

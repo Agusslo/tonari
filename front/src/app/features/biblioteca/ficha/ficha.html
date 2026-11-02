@@ -29,12 +29,12 @@
   <!-- ---------- Cabecera: banner de fondo, tapa y datos ---------- -->
   <section class="cabecera-obra" [attr.aria-labelledby]="'titulo-obra'">
     @if (fondo(); as imagen) {
-      <img class="fondo" [class.desenfocado]="!f?.banner" [src]="imagen" alt="" />
+      <img appImagenRespaldo class="fondo" [class.desenfocado]="!f?.banner" [src]="imagen" alt="" />
     }
     <div class="cabecera-contenido">
       <div class="tapa-grande">
         @if (f?.tapa ?? e.imagen; as tapa) {
-          <img [src]="tapa" [alt]="'Tapa de ' + e.titulo" />
+          <img appImagenRespaldo [src]="tapa" [alt]="'Tapa de ' + e.titulo" />
         }
       </div>
 
@@ -111,7 +111,7 @@
               [attr.aria-pressed]="e.estado === estado"
               [disabled]="guardando()"
               (click)="cambiarEstado(estado)"
-            >{{ nombreEstado(estado, e.tipo) }}</button>
+            >{{ estado | estadoObra: e.tipo }}</button>
           }
         </div>
 
@@ -196,7 +196,7 @@
         </button>
       } @else {
         <p>
-          {{ nombreEstado(e.estado, e.tipo) }} · va por el {{ unidad() }} {{ e.progreso }}
+          {{ e.estado | estadoObra: e.tipo }} · va por el {{ unidad() }} {{ e.progreso }}
           @if (e.puntuacion) {
             · ★ {{ e.puntuacion }}
           }

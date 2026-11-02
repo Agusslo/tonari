@@ -4,11 +4,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { catchError, debounceTime, distinctUntilChanged, filter, of, Subject, switchMap, tap } from 'rxjs';
 import { Anilist } from '../../../core/services/anilist';
 import { IObra, TipoObra } from '../../../core/interfaces/biblioteca';
+import { ImagenRespaldoDirective } from '../../../shared/directives/imagen-respaldo.directive';
 
 // Buscador de anime o manga (con la API de AniList) para agregar a la biblioteca.
 // No guarda nada: avisa al padre qué obra elegiste (output "agregar").
 @Component({
   selector: 'app-buscador',
+  imports: [ImagenRespaldoDirective],
   templateUrl: './buscador.html',
   styleUrl: './buscador.css',
 })

@@ -11,7 +11,7 @@
       <a class="nombre" [routerLink]="['/usuarios', c.usuario.nombreUsuario]">{{ c.usuario.nombre }} {{ c.usuario.apellido }}</a>
       <span class="texto-secundario detalle">
         &#64;{{ c.usuario.nombreUsuario }} ·
-        <time [attr.datetime]="c.createdAt">{{ c.createdAt | date: 'dd/MM/yyyy HH:mm' : '-0300' }}</time>
+        <time [attr.datetime]="c.createdAt" [attr.title]="c.createdAt | date: 'dd/MM/yyyy HH:mm' : '-0300'">{{ c.createdAt | tiempoRelativo }}</time>
         <!-- Consigna: un comentario editado lo anuncia -->
         @if (c.modificado) {
           · <span class="editado" [attr.title]="'Editado el ' + (c.updatedAt | date: 'dd/MM/yyyy HH:mm' : '-0300')">editado</span>
@@ -24,6 +24,7 @@
       <form class="editar" [formGroup]="formulario" (ngSubmit)="guardar()">
         <label [for]="'editar-' + c._id" class="solo-lector">Editar comentario</label>
         <textarea
+          appAutoAltura
           [id]="'editar-' + c._id"
           formControlName="mensaje"
           rows="3"
@@ -127,6 +128,7 @@
             Responder a {{ c.usuario.nombre }}
           </label>
           <textarea
+            appAutoAltura
             #campoRespuesta
             [id]="'responder-' + c._id"
             formControlName="mensaje"

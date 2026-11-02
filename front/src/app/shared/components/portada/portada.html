@@ -12,7 +12,7 @@
         @for (lugar of lugares; track lugar) {
             <div class="tapa">
             @if (tapas()[lugar]; as url) {
-                <img [src]="url" alt="" />
+                <img appImagenRespaldo [src]="url" alt="" />
             } @else if (lugar === 0) {
                 <!-- Sin tapas (cargando o sin AniList): el logo en la del medio -->
                 <img src="logo.svg" alt="" class="tapa-logo" />

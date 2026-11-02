@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Location } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import IEntrada, { ESTADOS, EstadoEntrada, IFicha, nombreEstado, TipoObra } from '../../../core/interfaces/biblioteca';
+import IEntrada, { ESTADOS, EstadoEntrada, IFicha, TipoObra } from '../../../core/interfaces/biblioteca';
 import { BibliotecaApi, CambiosEntrada } from '../../../core/services/biblioteca-api';
 import { Anilist } from '../../../core/services/anilist';
 import { CapitulosManga, CatalogoApi } from '../../../core/services/catalogo-api';
@@ -12,6 +12,8 @@ import { Modal } from '../../../shared/components/modal/modal';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
 import { rutaFicha } from '../../../shared/utils/rutas';
 import { ListaCapitulos } from './lista-capitulos/lista-capitulos';
+import { EstadoObraPipe } from '../../../shared/pipes/estado-obra.pipe';
+import { ImagenRespaldoDirective } from '../../../shared/directives/imagen-respaldo.directive';
 
 // Ficha de una obra de la biblioteca (estilo MangaDex): /biblioteca/:id
 // Junta dos fuentes:
@@ -21,7 +23,7 @@ import { ListaCapitulos } from './lista-capitulos/lista-capitulos';
 //  - MangaDex (a través de nuestro back, solo manga): los capítulos que hay y en qué tomo.
 @Component({
   selector: 'app-ficha',
-  imports: [RouterLink, Modal, ListaCapitulos],
+  imports: [RouterLink, Modal, ListaCapitulos, EstadoObraPipe, ImagenRespaldoDirective],
   templateUrl: './ficha.html',
   styleUrl: './ficha.css',
 })
@@ -68,7 +70,6 @@ export class Ficha implements OnInit {
   protected readonly progresoEscrito = signal('');
 
   protected readonly estados = ESTADOS;
-  protected readonly nombreEstado = nombreEstado;
   protected readonly puntuaciones = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   // Solo el dueño puede cambiarla (si algún día se ven bibliotecas ajenas, queda en solo lectura).

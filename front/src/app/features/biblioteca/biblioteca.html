@@ -36,7 +36,7 @@
   @if (tapasDestacadas().length) {
     <div class="abanico" aria-hidden="true">
       @for (tapa of tapasDestacadas(); track $index) {
-        <img [src]="tapa" alt="" />
+        <img appImagenRespaldo [src]="tapa" alt="" />
       }
     </div>
   }
@@ -60,7 +60,7 @@
     </button>
     @for (estado of estados; track estado) {
       <button type="button" [attr.aria-pressed]="filtro() === estado" (click)="filtro.set(estado)">
-        {{ nombreEstado(estado, tipo()) }} <span>{{ cuantos()[estado] ?? 0 }}</span>
+        {{ estado | estadoObra: tipo() }} <span>{{ cuantos()[estado] ?? 0 }}</span>
       </button>
     }
   </div>
@@ -73,6 +73,7 @@
     [agregando]="agregando()"
     (agregar)="agregar($event)"
     (cerrar)="buscadorAbierto.set(false)"
+    (appClickAfuera)="buscadorAbierto.set(false)"
   />
 }
 
@@ -105,7 +106,7 @@
           </svg>
         </div>
         @if (delTipo().length) {
-          <p class="vacio-titulo">No tenés nada en "{{ nombreEstado(filtro()!, tipo()) }}"</p>
+          <p class="vacio-titulo">No tenés nada en "{{ filtro()! | estadoObra: tipo() }}"</p>
           <button type="button" class="boton boton-secundario" (click)="filtro.set(null)">Ver todos</button>
         } @else {
           <p class="vacio-titulo">Todavía no agregaste ningún {{ tipo() }}</p>

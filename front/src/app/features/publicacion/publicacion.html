@@ -53,6 +53,7 @@
       <form class="nuevo" [formGroup]="formulario" (ngSubmit)="comentar()">
         <label for="nuevo-comentario" class="solo-lector">Escribí un comentario</label>
         <textarea
+          appAutoAltura
           id="nuevo-comentario"
           formControlName="mensaje"
           rows="3"
