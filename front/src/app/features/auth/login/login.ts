@@ -5,12 +5,13 @@ import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
 import { Modal } from '../../../shared/components/modal/modal';
 import { Portada } from '../../../shared/components/portada/portada';
+import { BotonGoogle } from '../../../shared/components/boton-google/boton-google';
 import { contraseñaSegura } from '../../../shared/validators/validadores';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, Modal, Portada],
+  imports: [ReactiveFormsModule, RouterLink, Modal, Portada, BotonGoogle],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

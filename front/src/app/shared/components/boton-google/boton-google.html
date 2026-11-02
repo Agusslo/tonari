@@ -1,0 +1,29 @@
+<div class="google" [attr.aria-busy]="ingresando()">
+  <!-- Acá Google dibuja su botón (un iframe). Mientras carga, un esqueleto con su forma. -->
+  <div #contenedor class="google-boton" [class.oculto]="ingresando()"></div>
+  @if (estado() === 'cargando') {
+    <span class="esqueleto-linea google-esqueleto" aria-hidden="true"></span>
+  }
+
+  @if (ingresando()) {
+    <p class="google-estado" role="status">
+      <span class="spinner" aria-hidden="true"></span>
+      Entrando con Google…
+    </p>
+  }
+
+  @if (estado() === 'fallo') {
+    <p class="google-fallo texto-secundario" role="status">
+      No pudimos cargar el botón de Google (¿sin conexión o un bloqueador de anuncios?).
+      Podés usar tu correo igual.
+    </p>
+  }
+
+  <p class="google-aviso texto-secundario">
+    Al continuar con Google aceptás nuestra
+    <a routerLink="/privacidad">política de privacidad</a>.
+  </p>
+</div>
+
+<!-- Separador entre Google y el formulario común -->
+<p class="separador texto-secundario"><span>o con tu correo</span></p>

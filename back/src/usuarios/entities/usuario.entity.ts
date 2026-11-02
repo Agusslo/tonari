@@ -18,8 +18,23 @@ export class Usuario {
 
   // Se guarda el HASH, nunca la contraseña real.
   // select: false -> no viene en las consultas salvo que se pida explícitamente.
-  @Prop({ required: true, select: false })
-  contraseña: string;
+  // Obligatoria salvo para las cuentas creadas con Google (esas no tienen contraseña:
+  // entran con el botón de Google). required con una función: Mongoose la evalúa
+  // con el documento como "this" cada vez que guarda.
+  @Prop({
+    required: function (this: Usuario) {
+      return !this.googleId;
+    },
+    select: false,
+  })
+  contraseña?: string;
+
+  // Ingreso con Google (extra): el "sub" del token de Google, un id que identifica
+  // a la cuenta de Google para siempre (el correo puede cambiar, el sub no).
+  // unique + sparse: no puede haber dos usuarios con el mismo googleId, pero
+  // los que no tienen (los de correo y contraseña) no cuentan para el índice.
+  @Prop({ unique: true, sparse: true })
+  googleId?: string;
 
   @Prop({ required: true })
   fechaNacimiento: Date;

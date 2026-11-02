@@ -23,6 +23,20 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/registro/registro').then((m) => m.Registro),
   },
   {
+    // Primera vez con Google: completar usuario, fecha y descripción (extra).
+    // Sin guard: todavía no tenés sesión. Si no venís del botón de Google, te manda al registro.
+    path: 'registro/google',
+    title: 'Completá tu perfil · TONARI',
+    loadComponent: () =>
+      import('./features/auth/registro-google/registro-google').then((m) => m.RegistroGoogle),
+  },
+  {
+    // Política de privacidad: pública (la pide Google para el ingreso con Google).
+    path: 'privacidad',
+    title: 'Privacidad · TONARI',
+    loadComponent: () => import('./features/privacidad/privacidad').then((m) => m.Privacidad),
+  },
+  {
     path: 'publicaciones',
     title: 'Publicaciones · TONARI',
     canActivate: [sesionGuard],

@@ -1,0 +1,105 @@
+<article class="panel privacidad" aria-labelledby="titulo-privacidad">
+  <p class="kicker" lang="ja" aria-hidden="true">プライバシー</p>
+  <h1 id="titulo-privacidad">Política de privacidad</h1>
+  <p class="texto-secundario actualizada">Última actualización: 2 de noviembre de 2026</p>
+
+  <p class="destacado">
+    TONARI es un proyecto académico: el trabajo práctico de Programación IV de la
+    Tecnicatura Universitaria en Programación (UTN Facultad Regional Avellaneda). No tiene
+    fines comerciales, no muestra publicidad y no vende ni comparte tus datos.
+  </p>
+
+  <section aria-labelledby="t-datos">
+    <h2 id="t-datos">Qué datos guardamos</h2>
+    <ul>
+      <li>
+        <strong>Tu cuenta:</strong> nombre, apellido, correo, nombre de usuario, fecha de
+        nacimiento, descripción, foto de perfil y banner (si subís uno).
+      </li>
+      <li>
+        <strong>Tu contraseña</strong>, solo como <em>hash</em> (bcrypt): un código del que no
+        se puede recuperar la contraseña original. Nadie, ni nosotros, puede leerla.
+      </li>
+      <li>
+        <strong>Lo que hacés en TONARI:</strong> tus publicaciones y comentarios, tus "me
+        gusta", tu biblioteca de anime y manga (estado, progreso y nota) y a quién seguís.
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="t-google">
+    <h2 id="t-google">Si entrás con Google</h2>
+    <p>
+      Google nos pasa solamente tu <strong>nombre, apellido, correo y foto de perfil</strong>,
+      y un número que identifica a tu cuenta de Google (para reconocerte la próxima vez).
+      No recibimos tu contraseña de Google ni tenemos acceso a tu Gmail, tu Drive, tus
+      contactos ni a nada más de tu cuenta. Las cuentas creadas con Google no tienen
+      contraseña en TONARI.
+    </p>
+    <p>
+      Al usar el botón de Google, Google aplica su propia
+      <a href="https://policies.google.com/privacy?hl=es" target="_blank" rel="noopener"
+        >política de privacidad</a
+      >.
+    </p>
+  </section>
+
+  <section aria-labelledby="t-para-que">
+    <h2 id="t-para-que">Para qué los usamos</h2>
+    <p>
+      Solo para que la red social funcione: crear tu cuenta, iniciar tu sesión, mostrar tu
+      perfil y lo que publicás. No los usamos para publicidad ni para armar perfiles tuyos.
+    </p>
+  </section>
+
+  <section aria-labelledby="t-quien-ve">
+    <h2 id="t-quien-ve">Qué ven los demás</h2>
+    <p>
+      Los demás usuarios ven tu nombre, apellido, nombre de usuario, foto, banner,
+      descripción, la fecha en que te sumaste, tus publicaciones, comentarios, tu biblioteca
+      y a quién seguís. <strong>Tu correo y tu fecha de nacimiento son privados</strong>: solo
+      los ves vos en Mi Perfil.
+    </p>
+  </section>
+
+  <section aria-labelledby="t-donde">
+    <h2 id="t-donde">Dónde se guardan</h2>
+    <ul>
+      <li><strong>MongoDB Atlas:</strong> la base de datos con tu cuenta y tu actividad.</li>
+      <li><strong>Cloudinary:</strong> las imágenes que subís (fotos, banners, publicaciones).</li>
+      <li><strong>Vercel:</strong> donde funciona la página y el servidor.</li>
+    </ul>
+    <p>
+      Para la biblioteca consultamos <strong>AniList</strong>, <strong>MangaDex</strong> y el
+      traductor <strong>MyMemory</strong>: a ellos solo les mandamos el título o el número
+      de la obra y el texto de la sinopsis, nunca datos tuyos.
+    </p>
+  </section>
+
+  <section aria-labelledby="t-sesion">
+    <h2 id="t-sesion">Tu sesión</h2>
+    <p>
+      Al ingresar guardamos un token en tu navegador (localStorage) para recordar que
+      iniciaste sesión. Dura 15 minutos y se borra al salir. No usamos cookies de rastreo ni
+      herramientas de estadísticas.
+    </p>
+  </section>
+
+  <section aria-labelledby="t-derechos">
+    <h2 id="t-derechos">Tus derechos</h2>
+    <p>
+      Podés ver y cambiar tus datos cuando quieras desde
+      <a routerLink="/mi-perfil">Mi Perfil</a>. Si querés que borremos tu cuenta y todo lo
+      que publicaste, escribinos y lo hacemos. Esto sigue la Ley 25.326 de Protección de los
+      Datos Personales de Argentina.
+    </p>
+  </section>
+
+  <section aria-labelledby="t-contacto">
+    <h2 id="t-contacto">Contacto</h2>
+    <p>
+      Cualquier duda o pedido:
+      <a [href]="'mailto:' + correoContacto">{{ correoContacto }}</a>.
+    </p>
+  </section>
+</article>

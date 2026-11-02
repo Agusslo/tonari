@@ -6,6 +6,9 @@
         <h1 id="titulo-login">Ingresar</h1>
         <p class="texto-secundario">Usá tu correo o tu nombre de usuario.</p>
 
+        <!-- Ingreso con Google (extra). Si falla, el mensaje va al mismo modal de error -->
+        <app-boton-google (error)="error.set($event)" />
+
         <form [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
         <div class="campo">
             <label for="usuario">Correo o nombre de usuario</label>

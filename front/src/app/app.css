@@ -41,3 +41,13 @@
     padding-inline: 0.35rem;
   }
 }
+/* Link a la política de privacidad, en el pie */
+.pie-enlace {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.pie-enlace:hover {
+  color: var(--color-menta);
+}

@@ -47,6 +47,7 @@
    - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`: datos de la cuenta de [Cloudinary](https://cloudinary.com), donde se guardan las imágenes (Dashboard → API Keys)
    - `URL_FRONT`: URL del front (`http://localhost:4200`)
    - `CONTRASENA_DEL_SERVER`: secreto con el que se firman los JWT (cualquier texto largo y difícil de adivinar)
+   - `GOOGLE_CLIENT_ID`: Client ID de Google Cloud, para el ingreso con Google (no es secreto)
 3. `npm run start:dev` → queda en `http://localhost:3000`
 
 **Front** (`front/`):
@@ -88,6 +89,7 @@
 - **Perfil de otros usuarios** (`/usuarios/beto`): además de sus datos públicos y sus últimas publicaciones, muestra su biblioteca. Si entrás a tu propio nombre, te lleva a Mi Perfil.
 - **Banner de perfil** (como en Twitter): imagen ancha arriba del perfil, con la foto montada encima; se agrega, cambia o quita desde "Editar perfil" (se guarda en Cloudinary y se recorta en 3:1). También se ve en la tarjeta del muro.
 - **Seguir usuarios**: botón Seguir / Dejar de seguir en el perfil, contadores de seguidores y seguidos con su lista, aviso de "Te sigue" y pestaña **Siguiendo** en el muro (solo las publicaciones de la gente que seguís).
+- **Ingreso con Google**: botón "Continuar con Google" en el login y el registro. La primera vez se completa el perfil (usuario, fecha y descripción; nombre, correo y foto vienen de Google). El back verifica la credencial con Google y que sea para TONARI; si ya tenías cuenta con ese correo, se vincula. Con su [política de privacidad](https://tonari-front.vercel.app/privacidad) pública.
 - **Respuestas a comentarios** (un nivel, como Instagram).
 - **Imágenes en Cloudinary** con recorte automático para los avatares.
 - **Avatar generado** ([blobatar](https://blobatar.dev)) cuando el usuario no sube foto; si no carga, iniciales.

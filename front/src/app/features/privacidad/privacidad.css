@@ -1,0 +1,52 @@
+/* Una sola columna angosta: es para leer de corrido */
+.privacidad {
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+.privacidad h1 {
+  margin: 0.25rem 0 0;
+}
+
+.actualizada {
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+}
+
+/* El aviso de "proyecto académico", con la línea menta de costado */
+.destacado {
+  margin: 1.5rem 0 0;
+  padding: 0.9rem 1.1rem;
+  background: var(--velo-menta);
+  border-left: 3px solid var(--color-menta);
+  border-radius: 0 0.75rem 0.75rem 0;
+}
+
+.privacidad section {
+  margin-top: 1.9rem;
+}
+
+.privacidad h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.15rem;
+}
+
+.privacidad p,
+.privacidad li {
+  line-height: 1.65;
+}
+
+.privacidad p {
+  margin: 0.5rem 0 0;
+}
+
+.privacidad ul {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.privacidad li::marker {
+  color: var(--color-menta);
+}

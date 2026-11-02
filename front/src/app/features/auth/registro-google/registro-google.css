@@ -1,0 +1,47 @@
+/* La tarjetita con lo que vino de Google: foto, nombre y correo */
+.cuenta-google {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1.5rem;
+  padding: 0.9rem 1rem;
+  background: var(--color-campo);
+  border: 1px solid var(--linea-suave);
+  border-radius: 1rem;
+}
+
+.cuenta-foto {
+  --tam: 3.25rem;
+  flex: none;
+}
+
+.cuenta-google > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.cuenta-nombre,
+.cuenta-correo {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cuenta-nombre {
+  font-weight: 700;
+}
+
+.cuenta-correo {
+  font-size: 0.875rem;
+}
+
+.insignia-google {
+  flex: none;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-radius: var(--radio-pildora);
+}

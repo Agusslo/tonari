@@ -29,6 +29,28 @@
     token: string;
     }
 
+    // Ingreso con Google (extra): lo que Google nos dio de vos la primera vez.
+    export interface DatosGoogle {
+    nombre: string;
+    apellido: string;
+    correo: string;
+    imagenPerfil: string; // la foto de tu cuenta de Google
+    }
+
+    // Lo que completás en "Completá tu perfil" (correo y foto los pone Google).
+    export interface DatosRegistroGoogle {
+    nombre: string;
+    apellido: string;
+    nombreUsuario: string;
+    fechaNacimiento: string; // 'YYYY-MM-DD'
+    descripcion: string;
+    }
+
+    // POST /auth/google responde una de dos cosas (el campo "nuevo" dice cuál):
+    type RespuestaGoogle =
+    | ({ nuevo: false } & RespuestaAuth) // ya tenías cuenta: entrás
+    | { nuevo: true; datos: DatosGoogle }; // primera vez: falta completar el perfil
+
     // Nombre con el que se guarda el token en el localStorage del navegador.
     const CLAVE_TOKEN = 'tonari-token';
 
@@ -55,6 +77,13 @@
     // Se lee del "exp" que viene adentro del token. computed: se recalcula solo
     // cada vez que cambia el token (login, refrescar, salir).
     readonly vencimiento = computed(() => leerVencimiento(this.tokenGuardado()));
+
+    // Registro con Google a medio hacer: la credencial de Google y lo que nos dio,
+    // hasta que completes el perfil. Solo en memoria (no en localStorage): la
+    // credencial sirve para entrar como vos, así que no la dejamos guardada.
+    // Si recargás "Completá tu perfil", se pierde y volvés a tocar el botón.
+    private readonly google = signal<{ credencial: string; datos: DatosGoogle } | null>(null);
+    readonly registroGooglePendiente = this.google.asReadonly();
 
     // POST /auth/registro. Va como FormData (multipart/form-data) porque puede
     // llevar un archivo: con JSON no se puede mandar una imagen.
@@ -84,6 +113,35 @@
         );
     }
 
+    // POST /auth/google: tocaste "Continuar con Google" y Google nos dio la credencial.
+    // Devuelve el usuario si ya tenías cuenta (y queda la sesión iniciada),
+    // o null si es la primera vez (guardamos lo de Google para completar el perfil).
+    loginGoogle(credencial: string) {
+        return this.http
+        .post<RespuestaGoogle>(`${this.url}/google`, { credential: credencial })
+        .pipe(
+            tap((respuesta) => {
+            if (respuesta.nuevo) this.google.set({ credencial, datos: respuesta.datos });
+            else this.iniciarSesion(respuesta);
+            }),
+            map((respuesta) => (respuesta.nuevo ? null : respuesta.usuario)),
+        );
+    }
+
+    // POST /auth/google/registro: completaste el perfil. Va como JSON (no hay archivo:
+    // la foto es la de Google). El back responde { usuario, token }, igual que el registro.
+    registroGoogle(credencial: string, datos: DatosRegistroGoogle) {
+        return this.http
+        .post<RespuestaAuth>(`${this.url}/google/registro`, { credential: credencial, ...datos })
+        .pipe(
+            tap((respuesta) => {
+            this.google.set(null);
+            this.iniciarSesion(respuesta);
+            }),
+            map((respuesta) => respuesta.usuario),
+        );
+    }
+
     // POST /auth/autorizar (el interceptor le pone el token).
     // Si el token sirve, el back devuelve los datos del usuario y los guardamos.
     // Lo va a usar la pantalla Cargando al abrir la app.
@@ -104,6 +162,7 @@
     // Cerrar sesión: se olvida quién estaba logueado y se borra el token.
     cerrarSesion() {
         this.usuario.set(null);
+        this.google.set(null);
         this.guardarToken(null);
     }
 

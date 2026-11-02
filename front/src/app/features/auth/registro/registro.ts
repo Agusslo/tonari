@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
 import { Modal } from '../../../shared/components/modal/modal';
 import { Portada } from '../../../shared/components/portada/portada';
+import { BotonGoogle } from '../../../shared/components/boton-google/boton-google';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
 import { celebrar } from '../../../shared/utils/animaciones';
 import { achicarImagen, TIPOS_IMAGEN } from '../../../shared/utils/achicar-imagen';
@@ -22,7 +23,7 @@ const PATRON_USUARIO = /^[a-zA-Z0-9_.]+$/;
 
 @Component({
   selector: 'app-registro',
-  imports: [ReactiveFormsModule, RouterLink, Modal, Portada],
+  imports: [ReactiveFormsModule, RouterLink, Modal, Portada, BotonGoogle],
   templateUrl: './registro.html',
   styleUrl: './registro.css',
 })
@@ -172,6 +173,11 @@ export class Registro {
         });
       },
     });
+  }
+
+  // El botón de Google falló: lo mostramos en el mismo modal que los errores del registro.
+  errorGoogle(mensaje: string) {
+    this.resultado.set({ tipo: 'error', titulo: 'No se pudo continuar con Google', mensaje });
   }
 
   // Se llama al cerrar el modal (con el botón o con Escape).

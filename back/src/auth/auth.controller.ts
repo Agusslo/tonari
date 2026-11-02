@@ -12,6 +12,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthService } from './auth.service.js';
 import { RegistroDto } from './dto/registro.dto.js';
 import { LoginDto } from './dto/login.dto.js';
+import { GoogleDto } from './dto/google.dto.js';
+import { RegistroGoogleDto } from './dto/registro-google.dto.js';
 import { validarImagen } from '../common/imagenes.js';
 import { TokenGuard } from './token/token.guard.js';
 import type { RequestConToken } from './token/token.guard.js';
@@ -42,6 +44,22 @@ export class AuthController {
   @HttpCode(200)
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  // POST /auth/google -> 200. Ingreso con Google (extra).
+  // Con cuenta: { nuevo: false, usuario, token }. Primera vez: { nuevo: true, datos }
+  // (datos = nombre, apellido, correo y foto que dio Google, para completar el perfil).
+  @Post('google')
+  @HttpCode(200)
+  loginGoogle(@Body() googleDto: GoogleDto) {
+    return this.authService.loginGoogle(googleDto);
+  }
+
+  // POST /auth/google/registro -> 201 con { usuario, token }.
+  // Va como JSON (no multipart): no hay archivo, la foto es la de Google.
+  @Post('google/registro')
+  registroGoogle(@Body() registroGoogleDto: RegistroGoogleDto) {
+    return this.authService.registroGoogle(registroGoogleDto);
   }
 
   // POST /auth/autorizar -> 200 con los datos del usuario, o 401.
