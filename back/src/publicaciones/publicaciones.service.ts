@@ -13,6 +13,7 @@ import { SeguimientosService } from '../usuarios/seguimientos.service.js';
 import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
 import { ListarPublicacionesDto } from './dto/listar-publicaciones.dto.js';
 import { guardarImagen } from '../common/imagenes.js';
+import { NotificacionesService } from '../notificaciones/notificaciones.service.js';
 
 // Los datos del autor que se muestran en cada publicación.
 // Nunca la contraseña (igual tiene select:false) ni el correo.
@@ -24,6 +25,7 @@ export class PublicacionesService {
     @InjectModel(Publicacion.name) private publicacionModel: Model<Publicacion>,
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
     private readonly seguimientosService: SeguimientosService,
+    private readonly notificacionesService: NotificacionesService,
   ) {}
 
   // usuarioId: quién publica (viene del token). imagen es opcional:
@@ -107,6 +109,8 @@ export class PublicacionesService {
 
     publicacion.activa = false;
     await publicacion.save();
+    // Sus notificaciones (me gusta, comentarios) ya no apuntan a nada: se borran.
+    await this.notificacionesService.retirarDePublicacion(publicacion._id);
     return { mensaje: 'Publicación eliminada' };
   }
 
@@ -122,6 +126,13 @@ export class PublicacionesService {
     publicacion.meGusta.push(new Types.ObjectId(usuarioId));
     publicacion.cantidadMeGusta = publicacion.meGusta.length;
     await publicacion.save();
+    // Aviso al autor: "<usuario> le gustó tu publicación" (si no es él mismo).
+    await this.notificacionesService.avisar({
+      destinatario: publicacion.usuario,
+      autor: usuarioId,
+      tipo: 'meGusta',
+      publicacion: publicacion._id,
+    });
     return publicacion.populate('usuario', DATOS_AUTOR);
   }
 
@@ -137,6 +148,12 @@ export class PublicacionesService {
     publicacion.meGusta = publicacion.meGusta.filter((meGusta) => !meGusta.equals(usuarioId));
     publicacion.cantidadMeGusta = publicacion.meGusta.length;
     await publicacion.save();
+    // Si lo saca, el aviso también se va.
+    await this.notificacionesService.retirar({
+      autor: usuarioId,
+      tipo: 'meGusta',
+      publicacion: publicacion._id,
+    });
     return publicacion.populate('usuario', DATOS_AUTOR);
   }
 

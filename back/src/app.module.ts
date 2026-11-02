@@ -9,6 +9,7 @@ import { PublicacionesModule } from './publicaciones/publicaciones.module.js';
 import { ComentariosModule } from './comentarios/comentarios.module.js';
 import { BibliotecaModule } from './biblioteca/biblioteca.module.js';
 import { CatalogoModule } from './catalogo/catalogo.module.js';
+import { NotificacionesModule } from './notificaciones/notificaciones.module.js';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CatalogoModule } from './catalogo/catalogo.module.js';
     ComentariosModule,
     BibliotecaModule,
     CatalogoModule,
+    NotificacionesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

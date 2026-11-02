@@ -12,6 +12,8 @@
     <!-- Con sesión: acceso al perfil con tu foto. Sin sesión: ingresar o crear cuenta -->
     @if (usuario(); as usuario) {
       <a routerLink="/biblioteca" routerLinkActive="activo" ariaCurrentWhenActive="page">Biblioteca</a>
+      <!-- Notificaciones (extra): la campanita con el numerito de no leídas -->
+      <app-campanita />
       <a routerLink="/mi-perfil" routerLinkActive="activo" ariaCurrentWhenActive="page" class="nav-perfil">
         <app-avatar [usuario]="usuario" />
         <span class="nav-texto">Mi perfil</span>

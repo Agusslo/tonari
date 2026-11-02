@@ -1,0 +1,340 @@
+/* El panel se ubica respecto de este contenedor (en escritorio) */
+.campanita {
+  position: relative;
+  display: flex;
+}
+
+/* El botón: redondo, del mismo gris que los links del menú */
+.campanita-boton {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.campanita-boton:hover {
+  color: var(--color-hueso);
+  background: var(--velo-hueso);
+}
+
+.campanita-boton.abierta {
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  box-shadow: inset 0 0 0 1px rgb(185 243 228 / 0.2);
+}
+
+/* El numerito: arriba a la derecha, con un borde del color de la cabecera
+   para que se "despegue" de la campana */
+.campanita-numero {
+  position: absolute;
+  top: -0.1rem;
+  right: -0.15rem;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  padding: 0 0.3rem;
+  font: 700 0.68rem/1.15rem var(--fuente-texto);
+  text-align: center;
+  color: var(--color-tinta);
+  background: var(--color-menta);
+  border-radius: var(--radio-pildora);
+  box-shadow: 0 0 0 2px var(--color-noche);
+  animation: aparecer-numero 0.25s ease-out;
+}
+
+/* Llegó una nueva: la campana se balancea un poco */
+.campanita-boton.sonando svg {
+  transform-origin: 50% 10%;
+  animation: sonar 0.9s ease-in-out;
+}
+
+@keyframes sonar {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-12deg); }
+  45% { transform: rotate(9deg); }
+  60% { transform: rotate(-6deg); }
+  75% { transform: rotate(3deg); }
+}
+
+@keyframes aparecer-numero {
+  from { transform: scale(0.4); opacity: 0; }
+}
+
+/* ---------- El panel ---------- */
+
+.campanita-panel {
+  position: absolute;
+  top: calc(100% + 0.85rem);
+  right: -0.25rem;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  width: min(24rem, calc(100vw - 2rem));
+  max-height: min(32rem, 70dvh);
+  background: var(--color-panel);
+  border: 1px solid var(--linea-suave);
+  border-radius: 20px;
+  box-shadow:
+    var(--brillo-borde),
+    0 24px 60px -20px rgb(0 0 0 / 0.8);
+  overflow: hidden;
+  transform-origin: top right;
+  animation: abrir-panel 0.18s ease-out;
+}
+
+@keyframes abrir-panel {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+}
+
+.campanita-titulo {
+  flex: none;
+  margin: 0;
+  padding: 1rem 1.25rem 0.75rem;
+  font: 400 1rem var(--fuente-titulo);
+  color: var(--color-hueso);
+  border-bottom: 1px solid var(--linea-suave);
+}
+
+.campanita-lista {
+  flex: 1;
+  margin: 0;
+  padding: 0.4rem;
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain; /* que el scroll del panel no mueva la página */
+}
+
+/* Cada aviso: foto, texto y fecha. Toda la fila es el link. */
+.aviso {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 0.7rem 2rem 0.7rem 0.75rem;
+  color: var(--color-hueso);
+  text-decoration: none;
+  border-radius: 14px;
+  transition: background-color 0.15s ease;
+}
+
+a.aviso:hover {
+  background: var(--velo-hueso);
+}
+
+a.aviso:focus-visible {
+  outline: 2px solid var(--color-menta);
+  outline-offset: -2px;
+}
+
+/* Las que no habías visto: fondito menta muy suave y el punto a la derecha */
+.aviso.sin-leer {
+  background: rgb(185 243 228 / 0.05);
+}
+
+.aviso-punto {
+  position: absolute;
+  top: 50%;
+  right: 0.85rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--color-menta);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.aviso-foto {
+  position: relative;
+  flex: none;
+}
+
+.aviso-foto app-avatar {
+  --tam: 2.6rem;
+}
+
+/* El iconito del tipo (corazón, persona, globito) sobre la esquina de la foto */
+.aviso-tipo {
+  position: absolute;
+  right: -0.2rem;
+  bottom: -0.2rem;
+  display: grid;
+  place-items: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--color-tinta);
+  background: var(--color-menta);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--color-panel);
+}
+
+.aviso-tipo[data-tipo='meGusta'] {
+  background: var(--color-error);
+}
+
+.aviso-tipo[data-tipo='meGusta'] svg {
+  fill: currentColor;
+}
+
+.aviso-tipo[data-tipo='seguir'] {
+  background: var(--color-lila);
+}
+
+.aviso-cuerpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0; /* para que el texto largo se corte en vez de estirar el panel */
+}
+
+.aviso-texto {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--color-texto-sec);
+  overflow-wrap: anywhere;
+}
+
+.aviso-texto strong {
+  font-weight: 700;
+  color: var(--color-hueso);
+}
+
+.aviso-titulo {
+  color: var(--color-hueso);
+}
+
+/* Un pedacito del comentario: hasta 2 renglones y "..." */
+.aviso-extracto {
+  display: -webkit-box;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--color-hueso);
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+.aviso-fecha {
+  font-size: 0.75rem;
+  color: var(--color-texto-sec);
+}
+
+/* Fila "fantasma" mientras carga */
+.aviso-fantasma .esqueleto-circulo {
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+.aviso-fantasma .esqueleto-linea {
+  width: 85%;
+}
+
+.aviso-fantasma .esqueleto-chica {
+  width: 35%;
+}
+
+/* Sin notificaciones o con error */
+.campanita-vacia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem 1.5rem 2.25rem;
+  text-align: center;
+}
+
+.campanita-vacia p {
+  margin: 0;
+}
+
+.campanita-vacia .icono {
+  color: var(--color-menta);
+  opacity: 0.7;
+}
+
+.campanita-ayuda {
+  font-size: 0.85rem;
+  color: var(--color-texto-sec);
+}
+
+.campanita-vacia .boton {
+  margin-top: 0.5rem;
+}
+
+.campanita-mas {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem;
+  font: 700 0.85rem var(--fuente-texto);
+  color: var(--color-menta);
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--linea-suave);
+  cursor: pointer;
+}
+
+.campanita-mas:hover:not(:disabled) {
+  background: var(--velo-menta);
+}
+
+.campanita-mas .spinner {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+/* En el celular el panel ocupa el ancho de la pantalla, pegado abajo de la cabecera.
+   .campanita deja de ser "relative": así el panel se ubica respecto de la cabecera
+   (que es sticky) y no del botón. */
+@media (max-width: 480px) {
+  .campanita {
+    position: static;
+  }
+
+  .campanita-boton {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+
+  .campanita-panel {
+    top: calc(100% + 0.5rem);
+    right: 0.75rem;
+    left: 0.75rem;
+    width: auto;
+    max-height: min(32rem, 75dvh);
+    transform-origin: top center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campanita-boton.sonando svg,
+  .campanita-numero,
+  .campanita-panel {
+    animation: none;
+  }
+}

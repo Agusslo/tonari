@@ -5,6 +5,7 @@ import { Auth } from './core/services/auth';
 import { Pwa } from './core/services/pwa';
 import { Avatar } from './shared/components/avatar/avatar';
 import { Modal } from './shared/components/modal/modal';
+import { Campanita } from './shared/components/campanita/campanita';
 import { mensajeDeError } from './shared/utils/errores-http';
 
 // Consigna: a los 10 minutos de iniciar sesión, avisar que quedan 5.
@@ -13,7 +14,7 @@ const AVISO_ANTES_MS = 5 * 60 * 1000;
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, Avatar, Modal],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Avatar, Modal, Campanita],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

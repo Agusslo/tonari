@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model, Types } from 'mongoose';
 import { Seguimiento } from './entities/seguimiento.entity.js';
 import { Usuario } from './entities/usuario.entity.js';
+import { NotificacionesService } from '../notificaciones/notificaciones.service.js';
 
 // Los datos que se muestran de cada persona en las listas de seguidores/seguidos.
 const DATOS_PUBLICOS = 'nombre apellido nombreUsuario imagenPerfil';
@@ -17,6 +18,7 @@ export class SeguimientosService {
   constructor(
     @InjectModel(Seguimiento.name) private seguimientoModel: Model<Seguimiento>,
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
+    private readonly notificacionesService: NotificacionesService,
   ) {}
 
   // Los números de un perfil: cuántos lo siguen, a cuántos sigue, si YO lo sigo
@@ -43,6 +45,8 @@ export class SeguimientosService {
       }
       throw error;
     }
+    // Aviso: "<seguidor> te empezó a seguir".
+    await this.notificacionesService.avisar({ destinatario: seguidoId, autor: seguidorId, tipo: 'seguir' });
     // Se devuelven los números nuevos para que el front los muestre sin pedir de nuevo.
     return this.resumen(seguidoId, seguidorId);
   }
@@ -59,6 +63,8 @@ export class SeguimientosService {
     if (deletedCount === 0) {
       throw new NotFoundException('No seguías a este usuario'); // 404
     }
+    // Si deja de seguir, el aviso de "te empezó a seguir" se borra.
+    await this.notificacionesService.retirar({ destinatario: seguidoId, autor: seguidorId, tipo: 'seguir' });
     return this.resumen(seguidoId, seguidorId);
   }
 

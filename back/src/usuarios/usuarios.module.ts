@@ -5,6 +5,7 @@ import { Seguimiento, SeguimientoSchema } from './entities/seguimiento.entity.js
 import { SeguimientosService } from './seguimientos.service.js';
 import { UsuariosService } from './usuarios.service.js';
 import { UsuariosController } from './usuarios.controller.js';
+import { NotificacionesModule } from '../notificaciones/notificaciones.module.js';
 
 @Module({
   imports: [
@@ -13,6 +14,8 @@ import { UsuariosController } from './usuarios.controller.js';
       // "Seguir" (extra): quién sigue a quién.
       { name: Seguimiento.name, schema: SeguimientoSchema },
     ]),
+    // Para avisar "te empezó a seguir".
+    NotificacionesModule,
   ],
   // Exporta el acceso a las colecciones (autenticación las usa) y el servicio de
   // seguimientos (el muro lo usa para el filtro "Siguiendo").

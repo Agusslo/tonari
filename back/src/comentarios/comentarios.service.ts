@@ -10,6 +10,7 @@ import { Comentario } from './entities/comentario.entity.js';
 import { Publicacion } from '../publicaciones/entities/publicacion.entity.js';
 import { MensajeComentarioDto } from './dto/mensaje-comentario.dto.js';
 import { ListarComentariosDto } from './dto/listar-comentarios.dto.js';
+import { NotificacionesService } from '../notificaciones/notificaciones.service.js';
 
 // Los datos del autor que se muestran en cada comentario (nunca correo ni contraseña).
 const DATOS_AUTOR = 'nombre apellido nombreUsuario imagenPerfil';
@@ -19,11 +20,12 @@ export class ComentariosService {
   constructor(
     @InjectModel(Comentario.name) private comentarioModel: Model<Comentario>,
     @InjectModel(Publicacion.name) private publicacionModel: Model<Publicacion>,
+    private readonly notificacionesService: NotificacionesService,
   ) {}
 
   // POST: guarda el comentario con quién lo hizo (token) y la fecha (createdAt, automática).
   async crear(publicacionId: string, usuarioId: string, { mensaje }: MensajeComentarioDto) {
-    await this.verificarPublicacion(publicacionId);
+    const publicacion = await this.verificarPublicacion(publicacionId);
 
     const comentario = await this.comentarioModel.create({
       mensaje,
@@ -34,6 +36,15 @@ export class ComentariosService {
     // Contador en la publicación, para mostrar "💬 3" en la tarjeta sin contar cada vez.
     // $inc suma 1 directamente en Mongo (no hace falta traer la publicación).
     await this.publicacionModel.updateOne({ _id: publicacionId }, { $inc: { cantidadComentarios: 1 } });
+
+    // Aviso al autor de la publicación: "<usuario> comentó tu publicación".
+    await this.notificacionesService.avisar({
+      destinatario: publicacion.usuario,
+      autor: usuarioId,
+      tipo: 'comentario',
+      publicacion: publicacion._id,
+      comentario: comentario._id,
+    });
 
     return comentario.populate('usuario', DATOS_AUTOR);
   }
@@ -59,6 +70,15 @@ export class ComentariosService {
       this.comentarioModel.updateOne({ _id: principalId }, { $inc: { cantidadRespuestas: 1 } }),
       this.publicacionModel.updateOne({ _id: publicacionId }, { $inc: { cantidadComentarios: 1 } }),
     ]);
+
+    // Aviso a quien escribió el comentario al que se responde: "<usuario> respondió tu comentario".
+    await this.notificacionesService.avisar({
+      destinatario: comentario.usuario,
+      autor: usuarioId,
+      tipo: 'respuesta',
+      publicacion: publicacionId,
+      comentario: respuesta._id,
+    });
 
     return respuesta.populate('usuario', DATOS_AUTOR);
   }
@@ -138,9 +158,13 @@ export class ComentariosService {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('El id de la publicación no es válido'); // 400
     }
-    const existe = await this.publicacionModel.exists({ _id: id, activa: true });
-    if (!existe) {
+    // select: solo hace falta el autor (para avisarle cuando le comentan).
+    const publicacion = await this.publicacionModel
+      .findOne({ _id: id, activa: true })
+      .select('usuario');
+    if (!publicacion) {
       throw new NotFoundException('La publicación no existe'); // 404
     }
+    return publicacion;
   }
 }
