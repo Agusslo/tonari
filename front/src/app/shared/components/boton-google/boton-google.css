@@ -13,6 +13,9 @@
   justify-content: center;
   width: 100%;
   min-height: 44px;
+  /* El botón de Google es un iframe. Si la página está en modo oscuro (color-scheme: dark)
+     y el iframe no, el navegador le pinta un fondo blanco alrededor. Así queda transparente. */
+  color-scheme: light;
 }
 
 .google-boton:empty {
