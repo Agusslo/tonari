@@ -5,9 +5,10 @@ import { Service } from '@angular/core';
 export interface GoogleId {
   initialize(opciones: {
     client_id: string;
-    callback: (respuesta: { credential: string }) => void;
+    ux_mode?: 'popup' | 'redirect';
+    login_uri?: string;
+    callback?: (respuesta: { credential: string }) => void;
     auto_select?: boolean;
-    cancel_on_tap_outside?: boolean;
   }): void;
   renderButton(elemento: HTMLElement, opciones: Record<string, string | number>): void;
 }

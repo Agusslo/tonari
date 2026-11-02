@@ -175,11 +175,6 @@ export class Registro {
     });
   }
 
-  // El botón de Google falló: lo mostramos en el mismo modal que los errores del registro.
-  errorGoogle(mensaje: string) {
-    this.resultado.set({ tipo: 'error', titulo: 'No se pudo continuar con Google', mensaje });
-  }
-
   // Se llama al cerrar el modal (con el botón o con Escape).
   cerrarResultado() {
     const fueExito = this.resultado()?.tipo === 'exito';

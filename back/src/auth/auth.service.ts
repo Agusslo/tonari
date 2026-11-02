@@ -199,6 +199,21 @@ export class AuthService {
     }
   }
 
+  // A dónde vuelve el navegador después de elegir la cuenta en Google.
+  // URL_FRONT puede tener varias URLs separadas por coma (localhost y Vercel):
+  // elegimos la https (la de Vercel) y, si no hay, la primera (tu PC).
+  // La credencial va en el "#" (fragmento) a propósito: lo que está después del #
+  // nunca se manda a ningún servidor, solo lo lee el front. Y el front lo borra enseguida.
+  urlVueltaDeGoogle(credential?: string) {
+    const fronts = this.config
+      .get<string>('URL_FRONT', 'http://localhost:4200')
+      .split(',')
+      .map((url) => url.trim());
+    const front = fronts.find((url) => url.startsWith('https://')) ?? fronts[0];
+    const fragmento = credential ? `credential=${encodeURIComponent(credential)}` : 'error=1';
+    return `${front}/ingreso-google#${fragmento}`;
+  }
+
   // Le pregunta a Google si la credencial es real (tokeninfo revisa la firma y
   // que no haya vencido) y después revisamos nosotros que sea PARA TONARI:
   //   aud = nuestro Client ID (si no, sería un token de otra app que alguien reusa)

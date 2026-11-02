@@ -23,6 +23,13 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/registro/registro').then((m) => m.Registro),
   },
   {
+    // Vuelta de Google (extra): el back te trae acá con la credencial en el "#".
+    path: 'ingreso-google',
+    title: 'Entrando con Google · TONARI',
+    loadComponent: () =>
+      import('./features/auth/ingreso-google/ingreso-google').then((m) => m.IngresoGoogle),
+  },
+  {
     // Primera vez con Google: completar usuario, fecha y descripción (extra).
     // Sin guard: todavía no tenés sesión. Si no venís del botón de Google, te manda al registro.
     path: 'registro/google',

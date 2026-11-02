@@ -3,6 +3,7 @@ import {
   Controller,
   HttpCode,
   Post,
+  Redirect,
   Req,
   UploadedFile,
   UseGuards,
@@ -53,6 +54,19 @@ export class AuthController {
   @HttpCode(200)
   loginGoogle(@Body() googleDto: GoogleDto) {
     return this.authService.loginGoogle(googleDto);
+  }
+
+  // POST /auth/google/redirect -> 303 de vuelta al front (modo "redirección" de Google).
+  // El botón no abre una ventanita (que Brave, Safari o los navegadores de Instagram
+  // bloquean): te lleva a Google en la misma pestaña, y cuando elegís tu cuenta
+  // GOOGLE hace un POST de formulario (no JSON) a esta URL con la credencial.
+  // Acá no hacemos nada más que devolverte al front con la credencial en el "#" de la
+  // URL; el front la manda a POST /auth/google, que es el que la verifica.
+  // @Redirect(): Nest responde con la URL y el código que devuelve el método.
+  @Post('google/redirect')
+  @Redirect()
+  volverDeGoogle(@Body('credential') credential?: string) {
+    return { url: this.authService.urlVueltaDeGoogle(credential), statusCode: 303 };
   }
 
   // POST /auth/google/registro -> 201 con { usuario, token }.

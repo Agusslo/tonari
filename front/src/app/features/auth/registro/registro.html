@@ -7,7 +7,7 @@
     <p class="texto-secundario">Completá tus datos para sumarte a TONARI.</p>
 
     <!-- Más rápido: con Google (nombre, correo y foto ya vienen de tu cuenta) -->
-    <app-boton-google (error)="errorGoogle($event)" />
+    <app-boton-google />
 
     <!-- novalidate: usamos nuestros mensajes, no los globitos del navegador -->
     <form [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>

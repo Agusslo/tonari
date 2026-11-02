@@ -1,28 +1,16 @@
-import {
-  afterNextRender,
-  Component,
-  DestroyRef,
-  ElementRef,
-  inject,
-  output,
-  signal,
-  viewChild,
-} from '@angular/core';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Router, RouterLink } from '@angular/router';
+import { afterNextRender, Component, DestroyRef, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { environment } from '../../../../environments/environment';
-import { Auth } from '../../../core/services/auth';
 import { Google } from '../../../core/services/google';
-import { mensajeDeError } from '../../utils/errores-http';
 
 // El botón "Continuar con Google" (extra), el mismo en el login y en el registro.
-// Cómo funciona:
+// Cómo funciona (modo "redirección"):
 //   1. Cargamos el script de Google y le pedimos que dibuje SU botón en el div.
 //      (Google no deja usar un botón propio: tiene que ser el suyo.)
-//   2. Tocás el botón -> Google abre su ventanita, elegís tu cuenta y Google
-//      nos devuelve una "credential" (un token firmado por Google con tu nombre, correo y foto).
-//   3. Se la mandamos al back, que la verifica con Google. Si ya tenés cuenta, entrás;
-//      si es la primera vez, te llevamos a "Completá tu perfil".
+//   2. Tocás el botón -> la pestaña entera va a Google (sin ventanita emergente:
+//      Brave, Safari y los navegadores de Instagram/WhatsApp las bloquean).
+//   3. Elegís tu cuenta -> Google le manda la credencial a nuestro back
+//      (login_uri), que te devuelve a /ingreso-google, y esa pantalla termina el ingreso.
 @Component({
   selector: 'app-boton-google',
   imports: [RouterLink],
@@ -31,15 +19,9 @@ import { mensajeDeError } from '../../utils/errores-http';
 })
 export class BotonGoogle {
   private readonly google = inject(Google);
-  private readonly auth = inject(Auth);
-  private readonly router = inject(Router);
-
-  // Si algo sale mal, el padre lo muestra en su modal de error.
-  readonly error = output<string>();
 
   private readonly contenedor = viewChild.required<ElementRef<HTMLElement>>('contenedor');
   protected readonly estado = signal<'cargando' | 'listo' | 'fallo'>('cargando');
-  protected readonly ingresando = signal(false);
 
   constructor() {
     let destruido = false;
@@ -53,9 +35,11 @@ export class BotonGoogle {
           if (destruido) return; // te fuiste de la pantalla antes de que cargue
           googleId.initialize({
             client_id: environment.googleClientId,
-            callback: ({ credential }) => this.ingresar(credential),
+            ux_mode: 'redirect',
+            // A dónde manda Google la credencial (tiene que estar en
+            // "URIs de redireccionamiento autorizados" del cliente en Google Cloud).
+            login_uri: `${environment.apiUrl}/auth/google/redirect`,
             auto_select: false,
-            cancel_on_tap_outside: true,
           });
           const elemento = this.contenedor().nativeElement;
           googleId.renderButton(elemento, {
@@ -74,22 +58,6 @@ export class BotonGoogle {
         .catch(() => {
           if (!destruido) this.estado.set('fallo');
         });
-    });
-  }
-
-  private ingresar(credencial: string) {
-    if (this.ingresando()) return;
-    this.ingresando.set(true);
-    this.auth.loginGoogle(credencial).subscribe({
-      next: (usuario) => {
-        this.ingresando.set(false);
-        // usuario = ya tenía cuenta. null = primera vez: falta completar el perfil.
-        this.router.navigate([usuario ? '/publicaciones' : '/registro/google']);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.ingresando.set(false);
-        this.error.emit(mensajeDeError(error));
-      },
     });
   }
 }
