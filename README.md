@@ -203,7 +203,7 @@
 
 ### Front
 - **Publicación y Publicaciones**
-  - [ ] Si se loguea un administrador: botones para dar de baja cualquier publicación (dejan de estar disponibles la publicación y sus comentarios)
+  - [x] Si se loguea un administrador: botones para dar de baja cualquier publicación (dejan de estar disponibles la publicación y sus comentarios)
 - **Dashboard / Usuarios** (solo administradores)
   - [ ] Listado de usuarios
   - [ ] Crear usuarios (mismos datos que el registro) con dos radio buttons: "usuario" o "administrador"
@@ -214,7 +214,7 @@
   - [ ] Comentarios realizados en un lapso de tiempo elegible
   - [ ] Comentarios por publicación en un lapso de tiempo elegible
 - **A nivel aplicación**
-  - [ ] PWA
+  - [x] PWA
   - [ ] 3 pipes propias
   - [ ] 3 directivas propias
 
@@ -234,7 +234,7 @@
 ### Front
 - **Perfil**
   - [x] Clic en el nombre o la foto de otro usuario para ver su perfil: datos y últimas 3 publicaciones
-  - [ ] Mantener las acciones del administrador (baja lógica de publicaciones)
+  - [x] Mantener las acciones del administrador (baja lógica de publicaciones)
 - **Publicaciones**
   - [x] Scroll infinito en vez de paginación tradicional
 - **Dashboard / Estadísticas**
