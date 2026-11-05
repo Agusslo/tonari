@@ -18,12 +18,12 @@ export class Usuario {
 
   // Se guarda el HASH, nunca la contraseña real.
   // select: false -> no viene en las consultas salvo que se pida explícitamente.
-  // Obligatoria salvo para las cuentas creadas con Google (esas no tienen contraseña:
-  // entran con el botón de Google). required con una función: Mongoose la evalúa
+  // Obligatoria salvo para las cuentas que entran con Google o Discord (esas pueden
+  // no tener contraseña). required con una función: Mongoose la evalúa
   // con el documento como "this" cada vez que guarda.
   @Prop({
     required: function (this: Usuario) {
-      return !this.googleId;
+      return !this.googleId && !this.discordId;
     },
     select: false,
   })
@@ -35,6 +35,24 @@ export class Usuario {
   // los que no tienen (los de correo y contraseña) no cuentan para el índice.
   @Prop({ unique: true, sparse: true })
   googleId?: string;
+
+  // El correo de la cuenta de Google vinculada (para mostrarlo en "Cuentas vinculadas":
+  // puede ser distinto del correo con el que te registraste).
+  @Prop()
+  googleCorreo?: string;
+
+  // Ingreso con Discord (extra): el id de la cuenta de Discord (no cambia nunca).
+  // unique + sparse, igual que googleId.
+  @Prop({ unique: true, sparse: true })
+  discordId?: string;
+
+  // El nombre de usuario de Discord (el que se busca en "Agregar amigo").
+  @Prop()
+  discordUsuario?: string;
+
+  // Si quiere que su Discord aparezca en el perfil público ("Ver en Discord").
+  @Prop({ default: true })
+  mostrarDiscord: boolean;
 
   @Prop({ required: true })
   fechaNacimiento: Date;

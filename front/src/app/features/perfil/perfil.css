@@ -10,6 +10,14 @@
   font-size: 1.25rem;
 }
 
+/* El kicker en japonés arriba de cada título de sección (como en el login) */
+.perfil section > .kicker,
+.datos-encabezado .kicker,
+.biblioteca-encabezado .kicker {
+  margin-bottom: 0.4rem;
+  font-size: 0.7rem;
+}
+
 /* ---------- Cabecera del perfil ---------- */
 .portada-perfil {
   grid-column: 1 / -1;
@@ -49,7 +57,8 @@
   border-width: 4px;
   box-shadow:
     0 0 0 3px var(--color-menta),
-    0 0 0 10px var(--velo-menta),
+    0 0 0 9px rgb(185 243 228 / 0.08),
+    0 0 0 10px rgb(199 184 255 / 0.18),
     0 20px 40px -12px rgb(0 0 0 / 0.6);
 }
 
@@ -84,9 +93,22 @@
   border-radius: var(--radio-pildora);
 }
 
+/* "Administrador" se distingue con el lila */
+.insignia-admin {
+  color: var(--color-lila);
+  background: rgb(199 184 255 / 0.1);
+  border-color: rgb(199 184 255 / 0.3);
+}
+
 .descripcion {
   max-width: 60ch;
   margin: 1rem 0 0;
+  color: rgb(240 237 229 / 0.88);
+}
+
+/* Sin descripción no queda un hueco */
+.descripcion:empty {
+  display: none;
 }
 
 /* ---------- Banner (extra): imagen ancha arriba y la foto "montada" encima ---------- */
@@ -132,27 +154,37 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 1rem;
-  margin-top: 1rem;
+  gap: 0.5rem;
+  margin-top: 1.1rem;
 }
 
 /* "12 seguidores" / "3 siguiendo": parecen texto, pero son botones (abren la lista) */
 .contador-seguir {
-  padding: 0.25rem 0.1rem;
-  font: 400 0.95rem var(--fuente-texto);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.35rem 0.9rem;
+  font: 400 0.9rem var(--fuente-texto);
   color: var(--color-texto-sec);
-  background: transparent;
-  border: 0;
-  border-radius: 6px;
+  background: var(--velo-hueso);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-pildora);
   cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .contador-seguir strong {
+  font-size: 1rem;
   color: var(--color-hueso);
 }
 
 .contador-seguir:hover {
   color: var(--color-menta);
+  background: var(--velo-menta);
+  border-color: rgb(185 243 228 / 0.3);
 }
 
 .contador-seguir:focus-visible {
@@ -166,8 +198,16 @@
 }
 
 /* Lista de definiciones: cada dato es "etiqueta" + "valor" */
+/* Dos columnas: Nombre | Apellido, Correo y Usuario a lo ancho, Nacimiento | Miembro desde */
 .datos dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1rem;
   margin: 1.25rem 0 0;
+}
+
+.datos dl > .dato-ancho {
+  grid-column: 1 / -1;
 }
 
 .datos dl > div {
@@ -198,7 +238,7 @@
 /* Título "Mis datos" + botón "Editar" en la misma línea */
 .datos-encabezado {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
 }
@@ -208,6 +248,7 @@
 }
 
 .boton-editar {
+  flex: none;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -287,12 +328,14 @@
   border-radius: var(--radio-campo);
   transition:
     border-color 0.15s ease,
-    transform 0.15s ease;
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .mi-publicacion:hover {
   border-color: rgb(185 243 228 / 0.35);
-  transform: translateX(3px);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -18px rgb(0 0 0 / 0.8);
 }
 
 .miniatura {
@@ -300,6 +343,7 @@
   width: 4.5rem;
   height: 4.5rem;
   object-fit: cover;
+  border: 1px solid var(--linea-suave);
   border-radius: var(--radio-campo);
 }
 
@@ -447,7 +491,7 @@
 
 .biblioteca-encabezado {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
 }
@@ -478,8 +522,9 @@
   display: flex;
   flex-direction: column-reverse; /* el número arriba, la etiqueta abajo */
   gap: 0.1rem;
-  padding: 0.7rem 0.8rem;
-  background: var(--color-campo);
+  padding: 0.8rem 0.9rem;
+  background: linear-gradient(180deg, rgb(185 243 228 / 0.05), transparent 70%), var(--color-campo);
+  border: 1px solid var(--linea-suave);
   border-radius: var(--radio-campo);
 }
 
@@ -490,8 +535,14 @@
 
 .biblioteca-numeros dd {
   margin: 0;
-  font: 400 1.4rem var(--fuente-titulo);
+  font: 400 1.5rem var(--fuente-titulo);
+  line-height: 1.2;
   color: var(--color-menta);
+}
+
+/* "En total" con el lila, para que no sean cuatro números iguales */
+.biblioteca-numeros div:last-child dd {
+  color: var(--color-lila);
 }
 
 @media (max-width: 520px) {
@@ -533,12 +584,25 @@
 }
 
 .tapa img {
+  display: block;
   width: 100%;
   max-width: 100%;
   aspect-ratio: 2 / 3;
   object-fit: cover;
   background: var(--color-campo);
+  border: 1px solid var(--linea-suave);
   border-radius: var(--radio-campo);
+  box-shadow: 0 12px 24px -16px rgb(0 0 0 / 0.8);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.tapa-enlace:hover img {
+  transform: translateY(-4px);
+  border-color: rgb(185 243 228 / 0.4);
+  box-shadow: 0 18px 30px -14px rgb(0 0 0 / 0.85);
 }
 
 .tapa p {
@@ -546,7 +610,7 @@
 }
 
 .tapa .tapa-titulo {
-  margin-top: 0.35rem;
+  margin-top: 0.5rem;
   overflow: hidden;
   font-size: 0.82rem;
   font-weight: 700;
@@ -589,6 +653,10 @@
     justify-content: center;
   }
 
+  .portada-perfil .descripcion {
+    margin-inline: auto;
+  }
+
   .portada-perfil {
     flex-direction: column;
     text-align: center;
@@ -615,5 +683,11 @@
 
   .portada-perfil .kicker {
     justify-content: center;
+  }
+}
+/* En pantallas muy angostas, los datos van uno abajo del otro */
+@media (max-width: 420px) {
+  .datos dl {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

@@ -16,6 +16,8 @@ import { RegistroDto } from './dto/registro.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { GoogleDto } from './dto/google.dto.js';
 import { RegistroGoogleDto } from './dto/registro-google.dto.js';
+import { DiscordDto, RegistroDiscordDto } from './dto/discord.dto.js';
+import { DiscordService } from './discord.service.js';
 import { guardarImagen } from '../common/imagenes.js';
 import { PayloadToken } from './token/token.guard.js';
 
@@ -24,6 +26,7 @@ export class AuthService {
   constructor(
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
     private readonly config: ConfigService,
+    private readonly discordService: DiscordService,
   ) {}
 
   async registro(registroDto: RegistroDto, imagen: Express.Multer.File) {
@@ -77,10 +80,11 @@ export class AuthService {
       })
       .select('+contraseña');
 
-    // Las cuentas creadas con Google no tienen contraseña: se entra con el botón.
+    // Las cuentas creadas con Google o Discord pueden no tener contraseña: se entra con el botón.
     if (usuario && !usuario.contraseña) {
+      const botones = [usuario.googleId && 'Google', usuario.discordId && 'Discord'].filter(Boolean);
       throw new UnauthorizedException(
-        'Esta cuenta se creó con Google: ingresá con el botón "Continuar con Google"',
+        `Esta cuenta no tiene contraseña: ingresá con ${botones.join(' o ')}`,
       ); // 401
     }
 
@@ -151,6 +155,7 @@ export class AuthService {
 
     if (!usuario.googleId) {
       usuario.googleId = google.sub;
+      usuario.googleCorreo = correo;
       await usuario.save();
     }
     return { nuevo: false, ...this.respuestaConToken(usuario) };
@@ -186,6 +191,7 @@ export class AuthService {
         ...datos,
         correo,
         googleId: google.sub,
+        googleCorreo: correo,
         // Sin contraseña: esta cuenta entra con Google.
         imagenPerfil: fotoGrande(google.picture),
       });
@@ -220,7 +226,8 @@ export class AuthService {
   //   iss = la emitió Google
   //   email_verified = Google comprobó que el correo es de esa persona
   // Con un fetch alcanza: no hace falta instalar la librería de Google.
-  private async verificarGoogle(credential: string): Promise<DatosGoogle> {
+  // Es pública porque también la usa "Cuentas vinculadas" (CuentasService) para vincular Google.
+  async verificarGoogle(credential: string): Promise<DatosGoogle> {
     const clientId = this.config.get<string>('GOOGLE_CLIENT_ID');
     if (!clientId) {
       throw new ServiceUnavailableException('El ingreso con Google no está configurado'); // 503
@@ -251,6 +258,100 @@ export class AuthService {
       throw new UnauthorizedException('Tu correo de Google no está verificado'); // 401
     }
     return datos;
+  }
+
+  // ---------- Ingreso con Discord (extra) ----------
+  // Igual que Google, pero en vez de una credencial de Google llega un TICKET que firmó
+  // nuestro propio back al volver de Discord (ver discord.service.ts).
+
+  // POST /auth/discord. Mismos dos casos que loginGoogle: ya tenés cuenta, o es la primera vez.
+  async loginDiscord({ ticket, nonce }: DiscordDto) {
+    const discord = this.discordService.verificarTicket(ticket, nonce, 'ingreso');
+
+    // 1. ¿Ya entró con esta cuenta de Discord antes?
+    let usuario = await this.usuarioModel.findOne({ discordId: discord.id });
+
+    // 2. Si no, ¿hay una cuenta con ese correo? Solo si Discord verificó que el correo es suyo:
+    //    si no, cualquiera podría poner tu correo en Discord y entrar a tu cuenta de TONARI.
+    if (!usuario && discord.correo && discord.verificado) {
+      usuario = await this.usuarioModel.findOne({ correo: discord.correo });
+      if (usuario?.discordId) {
+        throw new ConflictException('Ese correo ya está vinculado a otra cuenta de Discord'); // 409
+      }
+    }
+
+    // 3. Primera vez: devolvemos lo que dio Discord para "Completá tu perfil".
+    if (!usuario) {
+      this.correoVerificado(discord.correo, discord.verificado);
+      return {
+        nuevo: true,
+        datos: {
+          nombre: discord.nombre,
+          apellido: '', // Discord no tiene apellido: lo completa la persona
+          correo: discord.correo,
+          imagenPerfil: discord.avatar,
+          nombreUsuario: discord.usuario, // sugerencia: lo puede cambiar
+        },
+      };
+    }
+
+    if (!usuario.habilitado) {
+      throw new ForbiddenException(
+        'Tu cuenta está deshabilitada. Contactá a un administrador.',
+      ); // 403
+    }
+
+    // Se vincula (si entró por el correo) y se actualiza el nombre de Discord por si lo cambió.
+    usuario.discordId = discord.id;
+    usuario.discordUsuario = discord.usuario;
+    await usuario.save();
+    return { nuevo: false, ...this.respuestaConToken(usuario) };
+  }
+
+  // POST /auth/discord/registro. Completaste el perfil: creamos la cuenta.
+  // Correo y foto salen del ticket (firmado por nosotros), nunca del body.
+  async registroDiscord({ ticket, nonce, ...datos }: RegistroDiscordDto) {
+    const discord = this.discordService.verificarTicket(ticket, nonce, 'ingreso');
+    const correo = this.correoVerificado(discord.correo, discord.verificado);
+
+    const existente = await this.usuarioModel.findOne({
+      $or: [{ discordId: discord.id }, { correo }, { nombreUsuario: datos.nombreUsuario }],
+    });
+    if (existente) {
+      const esSuya = existente.discordId === discord.id || existente.correo === correo;
+      throw new ConflictException(
+        esSuya
+          ? 'Ya tenés una cuenta con ese correo: ingresá con "Continuar con Discord"'
+          : 'El nombre de usuario ya está en uso',
+      ); // 409
+    }
+
+    try {
+      const usuario = await this.usuarioModel.create({
+        ...datos,
+        correo,
+        discordId: discord.id,
+        discordUsuario: discord.usuario,
+        // Sin contraseña: esta cuenta entra con Discord (después puede crear una).
+        imagenPerfil: discord.avatar,
+      });
+      return this.respuestaConToken(usuario);
+    } catch (error) {
+      if ((error as { code?: number }).code === 11000) {
+        throw new ConflictException('El nombre de usuario ya está en uso'); // 409
+      }
+      throw error;
+    }
+  }
+
+  // Para crear una cuenta hace falta un correo, y que Discord haya verificado que es suyo.
+  private correoVerificado(correo: string | null, verificado: boolean) {
+    if (!correo || !verificado) {
+      throw new BadRequestException(
+        'Tu cuenta de Discord no tiene un correo verificado. Verificalo en Discord o creá la cuenta con el formulario',
+      ); // 400
+    }
+    return correo;
   }
 
   // POST /auth/autorizar. El guard ya validó el token (firma y vencimiento).
@@ -303,12 +404,13 @@ export class AuthService {
 }
 
 // Lo que nos interesa de la respuesta de tokeninfo (manda más campos).
-interface DatosGoogle {
+export interface DatosGoogle {
   sub: string; // id de la cuenta de Google
   aud: string; // para qué app es (nuestro Client ID)
   iss: string; // quién la emitió
   email: string;
   email_verified: string | boolean;
+  nonce?: string; // solo si el front lo pidió al dibujar el botón (para vincular)
   name?: string;
   given_name?: string;
   family_name?: string;

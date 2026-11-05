@@ -1,0 +1,82 @@
+/* Una pastilla con el color de Discord, al estilo de las insignias del perfil */
+.discord {
+  --color-discord: #5865f2;
+
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: 100%;
+  margin-top: 0.85rem;
+  padding: 0.3rem 0.35rem 0.3rem 0.7rem;
+  background: rgb(88 101 242 / 0.14);
+  border: 1px solid rgb(88 101 242 / 0.4);
+  border-radius: var(--radio-pildora);
+}
+
+.discord-cuenta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  margin-right: 0.2rem;
+  font-weight: 700;
+  color: var(--color-hueso);
+}
+
+.discord-cuenta img {
+  flex: none;
+}
+
+/* Sin el archivo del logo: que no deje un hueco */
+.discord-cuenta img.imagen-rota {
+  display: none;
+}
+
+.discord-usuario {
+  overflow-wrap: anywhere;
+}
+
+.discord-accion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.7rem;
+  font: 700 0.78rem var(--fuente-texto);
+  color: #ffffff;
+  text-decoration: none;
+  background: var(--color-discord);
+  border: 0;
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.discord-accion:hover {
+  background: #4752c4;
+}
+
+.discord-accion:focus-visible {
+  outline: 2px solid var(--color-menta);
+  outline-offset: 2px;
+}
+
+/* El segundo botón (Copiar) más tranquilo, para que "Ver en Discord" sea el principal */
+button.discord-accion {
+  color: var(--color-hueso);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgb(88 101 242 / 0.6);
+}
+
+button.discord-accion:hover {
+  background: rgb(88 101 242 / 0.25);
+}
+
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

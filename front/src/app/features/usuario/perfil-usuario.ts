@@ -14,6 +14,7 @@ import IEntrada from '../../core/interfaces/biblioteca';
 import { Avatar } from '../../shared/components/avatar/avatar';
 import { ModalPersonas } from '../../shared/components/modal-personas/modal-personas';
 import { Modal } from '../../shared/components/modal/modal';
+import { InsigniaDiscord } from '../../shared/components/insignia-discord/insignia-discord';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 import { urlBanner } from '../../shared/utils/cloudinary';
 import { EstadoObraPipe } from '../../shared/pipes/estado-obra.pipe';
@@ -26,7 +27,7 @@ import { ImagenRespaldoDirective } from '../../shared/directives/imagen-respaldo
 // Usa los mismos estilos que Mi Perfil (perfil.css) para que se vean iguales.
 @Component({
   selector: 'app-perfil-usuario',
-  imports: [DatePipe, RouterLink, Avatar, ModalPersonas, Modal, EstadoObraPipe, NumeroCortoPipe, ImagenRespaldoDirective],
+  imports: [DatePipe, RouterLink, Avatar, ModalPersonas, Modal, InsigniaDiscord, EstadoObraPipe, NumeroCortoPipe, ImagenRespaldoDirective],
   templateUrl: './perfil-usuario.html',
   styleUrls: ['../perfil/perfil.css', './perfil-usuario.css'],
 })

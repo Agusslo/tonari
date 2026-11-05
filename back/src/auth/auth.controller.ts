@@ -1,8 +1,14 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Delete,
+  Get,
   HttpCode,
+  Param,
+  Patch,
   Post,
+  Query,
   Redirect,
   Req,
   UploadedFile,
@@ -15,13 +21,23 @@ import { RegistroDto } from './dto/registro.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { GoogleDto } from './dto/google.dto.js';
 import { RegistroGoogleDto } from './dto/registro-google.dto.js';
+import { DiscordDto, RegistroDiscordDto } from './dto/discord.dto.js';
+import { MostrarDiscordDto, VincularGoogleDto } from './dto/cuentas.dto.js';
+import { DiscordService } from './discord.service.js';
+import type { ModoDiscord } from './discord.service.js';
+import { CuentasService } from './cuentas.service.js';
+import type { Proveedor } from './cuentas.service.js';
 import { validarImagen } from '../common/imagenes.js';
 import { TokenGuard } from './token/token.guard.js';
 import type { RequestConToken } from './token/token.guard.js';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly discordService: DiscordService,
+    private readonly cuentasService: CuentasService,
+  ) {}
 
   // POST /auth/registro -> 201 Created si sale bien (es el default de @Post).
   // Llega como multipart/form-data: campos de texto + el archivo "imagenPerfil".
@@ -74,6 +90,90 @@ export class AuthController {
   @Post('google/registro')
   registroGoogle(@Body() registroGoogleDto: RegistroGoogleDto) {
     return this.authService.registroGoogle(registroGoogleDto);
+  }
+
+  // ---------- Ingreso con Discord (extra) ----------
+
+  // GET /auth/discord?modo=ingreso|vincular&nonce=... -> 302 a Discord.
+  // Es un GET porque el front no lo llama con HttpClient: el navegador VA a esta URL
+  // (es un link), y nosotros lo mandamos a la página de Discord para aceptar.
+  @Get('discord')
+  @Redirect()
+  irADiscord(@Query('modo') modo: string, @Query('nonce') nonce: string) {
+    if (modo !== 'ingreso' && modo !== 'vincular') {
+      throw new BadRequestException('modo tiene que ser "ingreso" o "vincular"'); // 400
+    }
+    return { url: this.discordService.urlAutorizar(modo as ModoDiscord, nonce), statusCode: 302 };
+  }
+
+  // GET /auth/discord/callback?code=...&state=... -> 302 de vuelta al front.
+  // Esta es la "Redirect URI" que se registra en el Discord Developer Portal.
+  @Get('discord/callback')
+  @Redirect()
+  async volverDeDiscord(
+    @Query('code') code?: string,
+    @Query('state') state?: string,
+    @Query('error') error?: string,
+  ) {
+    return { url: await this.discordService.procesarVuelta(code, state, error), statusCode: 302 };
+  }
+
+  // POST /auth/discord -> 200. Igual que /auth/google: { nuevo: false, usuario, token }
+  // o { nuevo: true, datos } para completar el perfil.
+  @Post('discord')
+  @HttpCode(200)
+  loginDiscord(@Body() discordDto: DiscordDto) {
+    return this.authService.loginDiscord(discordDto);
+  }
+
+  // POST /auth/discord/registro -> 201 con { usuario, token }.
+  @Post('discord/registro')
+  registroDiscord(@Body() registroDiscordDto: RegistroDiscordDto) {
+    return this.authService.registroDiscord(registroDiscordDto);
+  }
+
+  // ---------- Cuentas vinculadas (extra) ----------
+  // Todas con token: trabajan SIEMPRE sobre el usuario del token (no hay :id en la URL).
+  // Todas devuelven { contraseña, google, discord } actualizado.
+
+  // GET /auth/cuentas
+  @Get('cuentas')
+  @UseGuards(TokenGuard)
+  cuentas(@Req() req: RequestConToken) {
+    return this.cuentasService.estado(req.usuario.id);
+  }
+
+  // POST /auth/cuentas/google { credential, nonce } -> 200
+  @Post('cuentas/google')
+  @HttpCode(200)
+  @UseGuards(TokenGuard)
+  vincularGoogle(@Req() req: RequestConToken, @Body() dto: VincularGoogleDto) {
+    return this.cuentasService.vincularGoogle(req.usuario.id, dto);
+  }
+
+  // POST /auth/cuentas/discord { ticket, nonce } -> 200
+  @Post('cuentas/discord')
+  @HttpCode(200)
+  @UseGuards(TokenGuard)
+  vincularDiscord(@Req() req: RequestConToken, @Body() dto: DiscordDto) {
+    return this.cuentasService.vincularDiscord(req.usuario.id, dto);
+  }
+
+  // PATCH /auth/cuentas/discord { mostrar } -> 200. Mostrar/ocultar en el perfil público.
+  @Patch('cuentas/discord')
+  @UseGuards(TokenGuard)
+  mostrarDiscord(@Req() req: RequestConToken, @Body() { mostrar }: MostrarDiscordDto) {
+    return this.cuentasService.mostrarDiscord(req.usuario.id, mostrar);
+  }
+
+  // DELETE /auth/cuentas/google o /auth/cuentas/discord -> 200 (desvincular).
+  @Delete('cuentas/:proveedor')
+  @UseGuards(TokenGuard)
+  desvincular(@Req() req: RequestConToken, @Param('proveedor') proveedor: string) {
+    if (proveedor !== 'google' && proveedor !== 'discord') {
+      throw new BadRequestException('Solo se puede desvincular "google" o "discord"'); // 400
+    }
+    return this.cuentasService.desvincular(req.usuario.id, proveedor as Proveedor);
   }
 
   // POST /auth/autorizar -> 200 con los datos del usuario, o 401.

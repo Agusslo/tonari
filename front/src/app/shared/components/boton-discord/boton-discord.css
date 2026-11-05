@@ -1,0 +1,61 @@
+:host {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Mismo tamaño, forma y tono que el botón oscuro de Google ("filled_black"),
+   así los dos se ven como una pareja y la acción principal (menta) sigue
+   siendo "Ingresar". El color de Discord ("blurple") queda en el logo y al pasar el mouse. */
+.boton-discord {
+  --color-discord: #5865f2;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: min(100%, 400px);
+  min-height: 40px;
+  padding: 0 1.25rem;
+  font: 500 0.92rem var(--fuente-texto);
+  color: #e3e3e3;
+  background: #131314;
+  border: 1px solid rgb(240 237 229 / 0.16);
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.boton-discord:hover {
+  color: #ffffff;
+  background: #1b1c2e;
+  border-color: rgb(88 101 242 / 0.7);
+}
+
+.boton-discord:active {
+  transform: translateY(1px);
+}
+
+.boton-discord:focus-visible {
+  outline: 2px solid var(--color-menta);
+  outline-offset: 3px;
+}
+
+.discord-logo {
+  flex: none;
+  fill: var(--color-discord);
+  transition: transform 0.2s ease;
+}
+
+.boton-discord:hover .discord-logo {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.boton-discord .spinner {
+  width: 1.1rem;
+  height: 1.1rem;
+}

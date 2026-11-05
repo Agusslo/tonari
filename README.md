@@ -48,6 +48,7 @@
    - `URL_FRONT`: URL del front (`http://localhost:4200`)
    - `CONTRASENA_DEL_SERVER`: secreto con el que se firman los JWT (cualquier texto largo y difícil de adivinar)
    - `GOOGLE_CLIENT_ID`: Client ID de Google Cloud, para el ingreso con Google (no es secreto)
+   - `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_REDIRECT_URI`: de la aplicación del [Discord Developer Portal](https://discord.com/developers/applications) (OAuth2), para el ingreso con Discord. El client secret **sí** es secreto
 3. `npm run start:dev` → queda en `http://localhost:3000`
 
 **Front** (`front/`):
@@ -90,6 +91,10 @@
 - **Banner de perfil** (como en Twitter): imagen ancha arriba del perfil, con la foto montada encima; se agrega, cambia o quita desde "Editar perfil" (se guarda en Cloudinary y se recorta en 3:1). También se ve en la tarjeta del muro.
 - **Seguir usuarios**: botón Seguir / Dejar de seguir en el perfil, contadores de seguidores y seguidos con su lista, aviso de "Te sigue" y pestaña **Siguiendo** en el muro (solo las publicaciones de la gente que seguís).
 - **Ingreso con Google**: botón "Continuar con Google" en el login y el registro. La primera vez se completa el perfil (usuario, fecha y descripción; nombre, correo y foto vienen de Google). El back verifica la credencial con Google y que sea para TONARI; si ya tenías cuenta con ese correo, se vincula. Con su [política de privacidad](https://tonari-front.vercel.app/privacidad) pública.
+- **Ingreso con Discord**: botón "Continuar con Discord" (OAuth2 con *authorization code*: el back cambia el código por un token con el client secret y le pide a Discord el usuario). El back le devuelve al front un ticket firmado por 10 minutos y un *nonce* guardado en el navegador evita que alguien te pase un ticket ajeno. La primera vez se completa el perfil, igual que con Google.
+- **Cuentas vinculadas** (Mi perfil): vincular y desvincular Google y Discord en cualquier combinación, sin quedarte nunca sin forma de ingresar. Las cuentas creadas con Google o Discord pueden **crear una contraseña** para entrar también con correo.
+- **Discord en el perfil**: si lo vinculaste (y lo dejás visible), tu perfil muestra tu usuario de Discord con **"Ver en Discord"** (abre tu perfil en Discord para agregarte) y **"Copiar usuario"**.
+- **Notificaciones**: campanita en la cabecera con el número de no leídas: "Me gusta", nuevos seguidores, comentarios y respuestas. Se actualizan cada 30 segundos y se borran solas a los 60 días (índice TTL de Mongo).
 - **PWA (se instala como app)**: manifiesto con íconos propios y service worker de Angular. Abre rápido, se puede instalar desde el navegador (botón "Instalar app" en el pie), muestra la app aunque se corte internet (con un aviso de "Sin conexión") y avisa cuando hay una versión nueva para actualizar con un toque.
 - **Respuestas a comentarios** (un nivel, como Instagram).
 - **Imágenes en Cloudinary** con recorte automático para los avatares.

@@ -27,9 +27,12 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
       // Consigna: si una petición devuelve 401, redirigir al login.
       // El login es la excepción: ahí un 401 es "contraseña incorrecta"
       // y lo muestra el propio formulario en su modal.
-      // Lo mismo con Google (/auth/google...): un 401 es "credencial de Google vencida",
-      // no "se te venció la sesión", y lo muestra su pantalla.
-      const esLogin = req.url.endsWith('/auth/login') || req.url.includes('/auth/google');
+      // Lo mismo con Google y Discord (/auth/google..., /auth/discord...): un 401 es
+      // "credencial vencida", no "se te venció la sesión", y lo muestra su pantalla.
+      const esLogin =
+        req.url.endsWith('/auth/login') ||
+        req.url.includes('/auth/google') ||
+        req.url.includes('/auth/discord');
       if (error.status === 401 && esNuestroBack && !esLogin) {
         auth.cerrarSesion(); // el token ya no sirve: lo borramos
         router.navigate(['/login']);

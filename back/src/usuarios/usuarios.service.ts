@@ -17,11 +17,16 @@
     async perfilPublico(nombreUsuario: string) {
         const usuario = await this.usuarioModel
         .findOne({ nombreUsuario, habilitado: true })
-        .select('nombre apellido nombreUsuario imagenPerfil banner descripcion perfil createdAt');
+        .select('nombre apellido nombreUsuario imagenPerfil banner descripcion perfil createdAt discordId discordUsuario mostrarDiscord');
         if (!usuario) {
         throw new NotFoundException('Ese usuario no existe'); // 404
         }
-        return usuario;
+        // Discord (extra): solo si lo vinculó Y eligió mostrarlo. Se arma como "discord"
+        // y se sacan los campos sueltos, así nunca sale el id si eligió ocultarlo.
+        const { discordId, discordUsuario, mostrarDiscord, ...publico } = usuario.toObject();
+        const discord =
+        discordId && mostrarDiscord !== false ? { id: discordId, usuario: discordUsuario } : null;
+        return { ...publico, discord };
     }
 
     // Editar mi perfil: cambia solo los campos que vinieron y, si mandaron

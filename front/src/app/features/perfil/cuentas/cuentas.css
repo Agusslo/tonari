@@ -1,0 +1,189 @@
+/* Separada de la contraseña con un poco más de aire */
+.cuentas {
+  margin-top: 1rem;
+}
+
+.cuentas > .esqueleto-linea {
+  display: block;
+  width: 60%;
+  margin-top: 0.75rem;
+}
+
+.lista-cuentas {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0.85rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Cada cuenta: una tarjetita como la de "Completá tu perfil" */
+.cuenta {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.8rem 0.9rem;
+  background: var(--color-campo);
+  border: 1px solid var(--linea-suave);
+  border-radius: 1rem;
+  transition: border-color 0.15s ease;
+}
+
+.cuenta:hover {
+  border-color: rgb(240 237 229 / 0.16);
+}
+
+.cuenta-datos {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.cuenta-datos > div {
+  min-width: 0;
+}
+
+.cuenta-icono {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+}
+
+.cuenta-icono-google {
+  background: #ffffff;
+}
+
+.cuenta-icono-discord {
+  background: #5865f2;
+}
+
+.cuenta-icono-discord img.imagen-rota {
+  display: none;
+}
+
+.cuenta-nombre,
+.cuenta-estado {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.cuenta-nombre {
+  font-weight: 700;
+}
+
+.cuenta-estado {
+  font-size: 0.85rem;
+}
+
+/* El botón de Google (o Discord) para vincular, a lo ancho de la tarjeta */
+.cuenta-boton {
+  display: block;
+  width: 100%;
+}
+
+/* El botón de Google trae margen arriba (en el login): acá no hace falta */
+.cuenta-boton ::ng-deep .google {
+  margin-top: 0;
+}
+
+.confirmar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* Botones chicos de texto, como "Reintentar" */
+.boton-texto,
+.boton-peligro {
+  padding: 0.35rem 0.8rem;
+  font: 700 0.82rem var(--fuente-texto);
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+}
+
+.boton-texto {
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 1px solid var(--linea-suave);
+}
+
+.boton-texto:hover:not(:disabled) {
+  color: var(--color-hueso);
+  background: var(--velo-hueso);
+}
+
+.boton-peligro {
+  color: var(--color-tinta);
+  background: var(--color-error);
+  border: 0;
+}
+
+.boton-texto:disabled,
+.boton-peligro:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* Interruptor (switch) para "Mostrar mi Discord en mi perfil" */
+.interruptor {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.interruptor input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.interruptor-pista {
+  position: relative;
+  flex: none;
+  width: 2.3rem;
+  height: 1.3rem;
+  background: var(--linea-suave);
+  border-radius: var(--radio-pildora);
+  transition: background-color 0.15s ease;
+}
+
+.interruptor-pista::after {
+  content: '';
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 1rem;
+  height: 1rem;
+  background: var(--color-hueso);
+  border-radius: 50%;
+  transition: transform 0.15s ease;
+}
+
+.interruptor input:checked + .interruptor-pista {
+  background: #5865f2;
+}
+
+.interruptor input:checked + .interruptor-pista::after {
+  transform: translateX(1rem);
+}
+
+.interruptor input:focus-visible + .interruptor-pista {
+  outline: 2px solid var(--color-menta);
+  outline-offset: 2px;
+}
+
+.interruptor input:disabled + .interruptor-pista {
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interruptor-pista,
+  .interruptor-pista::after {
+    transition: none;
+  }
+}

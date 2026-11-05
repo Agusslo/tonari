@@ -1,14 +1,22 @@
 <section class="panel ingreso-google" aria-labelledby="titulo-ingreso-google">
   <p class="kicker" lang="ja" aria-hidden="true">ログイン</p>
   @if (error(); as mensaje) {
-    <h1 id="titulo-ingreso-google">No se pudo entrar con Google</h1>
+    <h1 id="titulo-ingreso-google">
+      {{ vinculando() ? 'No se pudo vincular Google' : 'No se pudo entrar con Google' }}
+    </h1>
     <p class="texto-secundario" role="alert">{{ mensaje }}</p>
     <div class="acciones">
-      <a routerLink="/login" class="boton">Volver a ingresar</a>
-      <a routerLink="/registro" class="boton boton-secundario">Crear cuenta</a>
+      @if (vinculando()) {
+        <a routerLink="/mi-perfil" class="boton">Volver a Mi perfil</a>
+      } @else {
+        <a routerLink="/login" class="boton">Volver a ingresar</a>
+        <a routerLink="/registro" class="boton boton-secundario">Crear cuenta</a>
+      }
     </div>
   } @else {
-    <h1 id="titulo-ingreso-google">Entrando con Google…</h1>
+    <h1 id="titulo-ingreso-google">
+      {{ vinculando() ? 'Vinculando tu cuenta de Google…' : 'Entrando con Google…' }}
+    </h1>
     <p class="texto-secundario estado" role="status">
       <span class="spinner" aria-hidden="true"></span>
       Estamos verificando tu cuenta.

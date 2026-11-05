@@ -8,15 +8,26 @@
   @if (estado() === 'fallo') {
     <p class="google-fallo texto-secundario" role="status">
       No pudimos cargar el botón de Google (¿sin conexión o un bloqueador de anuncios?).
-      Podés usar tu correo igual.
+      @if (modo() === 'ingreso') {
+        Podés usar Discord o tu correo igual.
+      } @else {
+        Probá de nuevo en un rato.
+      }
     </p>
   }
 
-  <p class="google-aviso texto-secundario">
-    Al continuar con Google aceptás nuestra
-    <a routerLink="/privacidad">política de privacidad</a>.
-  </p>
+  @if (modo() === 'ingreso') {
+    <!-- Ingreso con Discord (extra), debajo del de Google -->
+    <app-boton-discord />
+
+    <p class="google-aviso texto-secundario">
+      Al continuar con Google o Discord aceptás nuestra
+      <a routerLink="/privacidad">política de privacidad</a>.
+    </p>
+  }
 </div>
 
-<!-- Separador entre Google y el formulario común -->
-<p class="separador texto-secundario"><span>o con tu correo</span></p>
+@if (modo() === 'ingreso') {
+  <!-- Separador entre Google/Discord y el formulario común -->
+  <p class="separador texto-secundario"><span>o con tu correo</span></p>
+}

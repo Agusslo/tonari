@@ -14,6 +14,17 @@
     habilitado: boolean;
     createdAt: string;
     updatedAt: string;
+    // Cuentas vinculadas (extra): solo están si las vinculó.
+    googleId?: string;
+    discordId?: string;
+    discordUsuario?: string;
+    mostrarDiscord?: boolean;
+    }
+
+    // Discord (extra) en un perfil público: solo si lo vinculó y eligió mostrarlo.
+    export interface IDiscordPublico {
+    id: string; // para el link "Ver en Discord" (discord.com/users/<id>)
+    usuario: string; // el nombre que se busca en "Agregar amigo"
     }
     // Lo que se ve del perfil de OTRO usuario (GET /usuarios/:nombreUsuario):
     // solo los datos públicos, sin correo ni fecha de nacimiento.
@@ -27,6 +38,7 @@
     descripcion: string;
     perfil: 'usuario' | 'administrador';
     createdAt: string;
+    discord: IDiscordPublico | null; // Discord (extra)
     // "Seguir" (extra)
     seguidores: number; // cuántos lo siguen
     siguiendo: number; // a cuántos sigue

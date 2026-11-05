@@ -13,11 +13,16 @@
         <h1 id="nombre-perfil">{{ usuario.nombre }} {{ usuario.apellido }}</h1>
         <p class="alias">
           &#64;{{ usuario.nombreUsuario }}
-          <span class="insignia">
+          <span class="insignia" [class.insignia-admin]="usuario.perfil === 'administrador'">
             {{ usuario.perfil === 'administrador' ? 'Administrador' : 'Usuario' }}
           </span>
         </p>
         <p class="descripcion">{{ usuario.descripcion }}</p>
+
+        <!-- Discord (extra): como lo ven los demás (si lo vinculaste y elegiste mostrarlo) -->
+        @if (discordPropio(); as discord) {
+          <app-insignia-discord [discord]="discord" />
+        }
 
         <!-- Seguidores / siguiendo (extra): al tocarlos se abre la lista -->
         @if (numerosSeguir(); as numeros) {
@@ -38,7 +43,10 @@
     <!-- Todos los datos del usuario (o el formulario para editarlos) -->
     <section class="panel datos" aria-labelledby="titulo-datos">
       <div class="datos-encabezado">
-        <h2 id="titulo-datos">{{ editando() ? 'Editar perfil' : 'Mis datos' }}</h2>
+        <div>
+          <p class="kicker" lang="ja" aria-hidden="true">データ</p>
+          <h2 id="titulo-datos">{{ editando() ? 'Editar perfil' : 'Mis datos' }}</h2>
+        </div>
         @if (!editando()) {
           <button type="button" class="boton-editar" (click)="editando.set(true)">
             <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
@@ -66,11 +74,11 @@
             <dt>Apellido</dt>
             <dd>{{ usuario.apellido }}</dd>
           </div>
-          <div>
+          <div class="dato-ancho">
             <dt>Correo</dt>
             <dd>{{ usuario.correo }}</dd>
           </div>
-          <div>
+          <div class="dato-ancho">
             <dt>Nombre de usuario</dt>
             <dd>&#64;{{ usuario.nombreUsuario }}</dd>
           </div>
@@ -88,11 +96,14 @@
         </dl>
         <!-- Crear (cuentas de Google) o cambiar la contraseña -->
         <app-contrasena [usuarioId]="usuario._id" />
+        <!-- Cuentas vinculadas (extra): Google y Discord -->
+        <app-cuentas />
       }
     </section>
 
     <!-- Mis últimas 3 publicaciones y sus comentarios (consigna, Sprint 2) -->
     <section class="panel publicaciones" aria-labelledby="titulo-mis-publicaciones">
+      <p class="kicker" lang="ja" aria-hidden="true">投稿</p>
       <h2 id="titulo-mis-publicaciones">Mis últimas publicaciones</h2>
 
       @if (cargando()) {
@@ -185,7 +196,10 @@
     @if (biblioteca(); as entradas) {
       <section class="panel mi-biblioteca" aria-labelledby="titulo-mi-biblioteca">
         <div class="biblioteca-encabezado">
-          <h2 id="titulo-mi-biblioteca">Mi Biblioteca</h2>
+          <div>
+            <p class="kicker" lang="ja" aria-hidden="true">ライブラリ</p>
+            <h2 id="titulo-mi-biblioteca">Mi Biblioteca</h2>
+          </div>
           <a routerLink="/biblioteca" class="ver-biblioteca">
             {{ entradas.length ? 'Ver toda' : 'Empezar' }} <span aria-hidden="true">→</span>
           </a>

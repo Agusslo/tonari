@@ -37,7 +37,19 @@
     imagenPerfil: string; // la foto de tu cuenta de Google
     }
 
-    // Lo que completás en "Completá tu perfil" (correo y foto los pone Google).
+    // Ingreso con Discord (extra): lo mismo, más un nombre de usuario sugerido.
+    // Discord no tiene apellido: llega vacío y lo completás vos.
+    export interface DatosDiscord extends DatosGoogle {
+    nombreUsuario: string;
+    }
+
+    // Registro con Google o Discord a medio hacer (hasta que completes el perfil).
+    // credencial: la credencial de Google o el ticket de Discord. nonce: solo Discord.
+    export type RegistroPendiente =
+    | { proveedor: 'google'; credencial: string; datos: DatosGoogle }
+    | { proveedor: 'discord'; credencial: string; nonce: string; datos: DatosDiscord };
+
+    // Lo que completás en "Completá tu perfil" (correo y foto los pone Google o Discord).
     export interface DatosRegistroGoogle {
     nombre: string;
     apellido: string;
@@ -50,6 +62,17 @@
     type RespuestaGoogle =
     | ({ nuevo: false } & RespuestaAuth) // ya tenías cuenta: entrás
     | { nuevo: true; datos: DatosGoogle }; // primera vez: falta completar el perfil
+
+    // POST /auth/discord: igual que Google.
+    type RespuestaDiscord =
+    | ({ nuevo: false } & RespuestaAuth)
+    | { nuevo: true; datos: DatosDiscord };
+
+    // Discord (extra): el "nonce" es un texto al azar que guardamos en ESTE navegador antes
+    // de ir a Discord, y vuelve adentro del ticket. El back revisa que coincidan: así nadie
+    // te puede mandar un link con SU ticket (por ejemplo, para vincular su Discord a tu cuenta).
+    // sessionStorage: dura lo que la pestaña abierta (no queda guardado para siempre).
+    const CLAVE_NONCE_DISCORD = 'tonari-nonce-discord';
 
     // Nombre con el que se guarda el token en el localStorage del navegador.
     const CLAVE_TOKEN = 'tonari-token';
@@ -78,12 +101,12 @@
     // cada vez que cambia el token (login, refrescar, salir).
     readonly vencimiento = computed(() => leerVencimiento(this.tokenGuardado()));
 
-    // Registro con Google a medio hacer: la credencial de Google y lo que nos dio,
-    // hasta que completes el perfil. Solo en memoria (no en localStorage): la
+    // Registro con Google o Discord a medio hacer: la credencial (o el ticket) y lo que
+    // nos dieron, hasta que completes el perfil. Solo en memoria (no en localStorage): la
     // credencial sirve para entrar como vos, así que no la dejamos guardada.
     // Si recargás "Completá tu perfil", se pierde y volvés a tocar el botón.
-    private readonly google = signal<{ credencial: string; datos: DatosGoogle } | null>(null);
-    readonly registroGooglePendiente = this.google.asReadonly();
+    private readonly pendiente = signal<RegistroPendiente | null>(null);
+    readonly registroPendiente = this.pendiente.asReadonly();
 
     // POST /auth/registro. Va como FormData (multipart/form-data) porque puede
     // llevar un archivo: con JSON no se puede mandar una imagen.
@@ -121,7 +144,9 @@
         .post<RespuestaGoogle>(`${this.url}/google`, { credential: credencial })
         .pipe(
             tap((respuesta) => {
-            if (respuesta.nuevo) this.google.set({ credencial, datos: respuesta.datos });
+            if (respuesta.nuevo) {
+                this.pendiente.set({ proveedor: 'google', credencial, datos: respuesta.datos });
+            }
             else this.iniciarSesion(respuesta);
             }),
             map((respuesta) => (respuesta.nuevo ? null : respuesta.usuario)),
@@ -135,7 +160,62 @@
         .post<RespuestaAuth>(`${this.url}/google/registro`, { credential: credencial, ...datos })
         .pipe(
             tap((respuesta) => {
-            this.google.set(null);
+            this.pendiente.set(null);
+            this.iniciarSesion(respuesta);
+            }),
+            map((respuesta) => respuesta.usuario),
+        );
+    }
+
+    // ---------- Discord (extra) ----------
+
+    // La dirección a la que va el botón "Continuar con Discord" (o "Vincular").
+    // Es un link común (no un pedido con HttpClient): el navegador va al back, el back
+    // lo manda a Discord y Discord lo devuelve a /ingreso-discord con el ticket.
+    urlDiscord(modo: 'ingreso' | 'vincular') {
+        const nonce = crypto.randomUUID();
+        try {
+        sessionStorage.setItem(CLAVE_NONCE_DISCORD, nonce);
+        } catch {
+        // sin sessionStorage (modo privado raro): el back lo va a rechazar y se avisa
+        }
+        const parametros = new URLSearchParams({ modo, nonce });
+        return `${this.url}/discord?${parametros}`;
+    }
+
+    // El nonce que guardamos antes de ir a Discord. Se borra al usarlo (sirve una vez).
+    tomarNonceDiscord() {
+        try {
+        const nonce = sessionStorage.getItem(CLAVE_NONCE_DISCORD);
+        sessionStorage.removeItem(CLAVE_NONCE_DISCORD);
+        return nonce;
+        } catch {
+        return null;
+        }
+    }
+
+    // POST /auth/discord: igual que loginGoogle. Devuelve el usuario si ya tenías cuenta,
+    // o null si es la primera vez (guardamos lo de Discord para "Completá tu perfil").
+    loginDiscord(ticket: string, nonce: string) {
+        return this.http.post<RespuestaDiscord>(`${this.url}/discord`, { ticket, nonce }).pipe(
+        tap((respuesta) => {
+            if (respuesta.nuevo) {
+            this.pendiente.set({ proveedor: 'discord', credencial: ticket, nonce, datos: respuesta.datos });
+            } else {
+            this.iniciarSesion(respuesta);
+            }
+        }),
+        map((respuesta) => (respuesta.nuevo ? null : respuesta.usuario)),
+        );
+    }
+
+    // POST /auth/discord/registro: completaste el perfil.
+    registroDiscord(ticket: string, nonce: string, datos: DatosRegistroGoogle) {
+        return this.http
+        .post<RespuestaAuth>(`${this.url}/discord/registro`, { ticket, nonce, ...datos })
+        .pipe(
+            tap((respuesta) => {
+            this.pendiente.set(null);
             this.iniciarSesion(respuesta);
             }),
             map((respuesta) => respuesta.usuario),
@@ -162,7 +242,7 @@
     // Cerrar sesión: se olvida quién estaba logueado y se borra el token.
     cerrarSesion() {
         this.usuario.set(null);
-        this.google.set(null);
+        this.pendiente.set(null);
         this.guardarToken(null);
     }
 

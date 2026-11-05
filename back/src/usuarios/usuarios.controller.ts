@@ -37,7 +37,7 @@
     async perfilPublico(@Param('nombreUsuario') nombreUsuario: string, @Req() req: RequestConToken) {
         const usuario = await this.usuariosService.perfilPublico(nombreUsuario);
         const numeros = await this.seguimientosService.resumen(usuario._id, req.usuario.id);
-        return { ...usuario.toObject(), ...numeros };
+        return { ...usuario, ...numeros };
     }
 
     // GET /usuarios/beto/seguidores y /usuarios/beto/siguiendo -> listas de personas

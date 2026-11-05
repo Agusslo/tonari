@@ -6,17 +6,17 @@
       <p class="kicker" lang="ja" aria-hidden="true">プロフィール</p>
       <h1 id="titulo-google">Completá tu perfil</h1>
       <p class="texto-secundario">
-        Google ya nos pasó tu nombre, tu correo y tu foto. Faltan unos datos y listo.
+        {{ proveedor }} ya nos pasó tu nombre, tu correo y tu foto. Faltan unos datos y listo.
       </p>
 
-      <!-- Lo que vino de Google -->
+      <!-- Lo que vino de Google o Discord -->
       <div class="cuenta-google">
         <app-avatar [usuario]="avatar()" class="cuenta-foto" />
         <div>
           <p class="cuenta-nombre">{{ pendiente.datos.nombre }} {{ pendiente.datos.apellido }}</p>
           <p class="texto-secundario cuenta-correo">{{ pendiente.datos.correo }}</p>
         </div>
-        <span class="insignia-google">Google</span>
+        <span class="insignia-google">{{ proveedor }}</span>
       </div>
 
       <form [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>

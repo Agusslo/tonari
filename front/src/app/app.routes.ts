@@ -38,6 +38,20 @@ export const routes: Routes = [
       import('./features/auth/registro-google/registro-google').then((m) => m.RegistroGoogle),
   },
   {
+    // Vuelta de Discord (extra): igual que Google, con el ticket en el "#".
+    path: 'ingreso-discord',
+    title: 'Entrando con Discord · TONARI',
+    loadComponent: () =>
+      import('./features/auth/ingreso-discord/ingreso-discord').then((m) => m.IngresoDiscord),
+  },
+  {
+    // Primera vez con Discord: el mismo "Completá tu perfil" que Google.
+    path: 'registro/discord',
+    title: 'Completá tu perfil · TONARI',
+    loadComponent: () =>
+      import('./features/auth/registro-google/registro-google').then((m) => m.RegistroGoogle),
+  },
+  {
     // Política de privacidad: pública (la pide Google para el ingreso con Google).
     path: 'privacidad',
     title: 'Privacidad · TONARI',

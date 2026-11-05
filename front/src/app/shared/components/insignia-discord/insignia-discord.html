@@ -1,0 +1,21 @@
+<div class="discord" role="group" aria-label="Discord">
+  <span class="discord-cuenta">
+    <img appImagenRespaldo src="discord.svg" alt="" width="18" height="18" />
+    <span class="solo-lector">Discord:</span>
+    <span class="discord-usuario">{{ discord().usuario }}</span>
+  </span>
+  <a
+    class="discord-accion"
+    [href]="'https://discord.com/users/' + discord().id"
+    target="_blank"
+    rel="noopener"
+  >
+    Ver en Discord
+    <svg class="icono" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
+      <path d="M7 17 17 7M8 7h9v9" />
+    </svg>
+  </a>
+  <button type="button" class="discord-accion" (click)="copiar()">
+    {{ copiado() ? 'Copiado' : 'Copiar usuario' }}
+  </button>
+</div>

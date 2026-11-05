@@ -13,8 +13,9 @@ import { AutoAlturaDirective } from '../../../shared/directives/auto-altura.dire
 
 const PATRON_USUARIO = /^[a-zA-Z0-9_.]+$/;
 
-// "Completá tu perfil" (extra): la primera vez que entrás con Google.
-// Google nos dio tu nombre, correo y foto; faltan los datos que pide la consigna
+// "Completá tu perfil" (extra): la primera vez que entrás con Google o con Discord
+// (rutas /registro/google y /registro/discord, las dos usan este componente).
+// Nos dieron tu nombre, correo y foto; faltan los datos que pide la consigna
 // para cualquier cuenta: nombre de usuario, fecha de nacimiento y descripción.
 // Mismas reglas que el registro común (y que el DTO del back).
 @Component({
@@ -31,9 +32,11 @@ export class RegistroGoogle {
 
   protected readonly hoy = fechaLocalHoy();
 
-  // Lo que dejó el botón de Google. Si no hay nada (recargaste la página o
+  // Lo que dejó el botón de Google o Discord. Si no hay nada (recargaste la página o
   // entraste escribiendo la dirección), no hay nada que completar: al registro.
-  protected readonly pendiente = this.auth.registroGooglePendiente();
+  protected readonly pendiente = this.auth.registroPendiente();
+  // Para los textos: "Google ya nos pasó..." / "Discord ya nos pasó...".
+  protected readonly proveedor = this.pendiente?.proveedor === 'discord' ? 'Discord' : 'Google';
 
   protected readonly formulario = this.formBuilder.nonNullable.group({
     nombre: [this.pendiente?.datos.nombre ?? '', [Validators.required, Validators.maxLength(50)]],
@@ -42,7 +45,8 @@ export class RegistroGoogle {
       [Validators.required, Validators.maxLength(50)],
     ],
     nombreUsuario: [
-      '',
+      // Con Discord sugerimos tu nombre de usuario de allá (si cumple las reglas de acá).
+      usuarioSugerido(this.pendiente?.proveedor === 'discord' ? this.pendiente.datos.nombreUsuario : ''),
       [
         Validators.required,
         Validators.minLength(3),
@@ -96,14 +100,19 @@ export class RegistroGoogle {
     if (!this.pendiente || this.formulario.invalid || this.enviando()) return;
 
     this.enviando.set(true);
-    this.auth.registroGoogle(this.pendiente.credencial, this.formulario.getRawValue()).subscribe({
+    const datos = this.formulario.getRawValue();
+    const pedido =
+      this.pendiente.proveedor === 'discord'
+        ? this.auth.registroDiscord(this.pendiente.credencial, this.pendiente.nonce, datos)
+        : this.auth.registroGoogle(this.pendiente.credencial, datos);
+    pedido.subscribe({
       next: (usuario) => {
         this.enviando.set(false);
         celebrar();
         this.resultado.set({
           tipo: 'exito',
           titulo: `¡Bienvenido, ${usuario.nombre}!`,
-          mensaje: 'Tu cuenta quedó creada con Google y ya iniciaste sesión.',
+          mensaje: `Tu cuenta quedó creada con ${this.proveedor} y ya iniciaste sesión.`,
         });
       },
       error: (error: HttpErrorResponse) => {
@@ -112,7 +121,7 @@ export class RegistroGoogle {
           tipo: 'error',
           titulo: 'No se pudo crear la cuenta',
           mensaje: mensajeDeError(error),
-          // 401 = la credencial de Google venció (dura 1 hora): hay que tocar el botón de nuevo.
+          // 401 = la credencial venció (Google: 1 hora; Discord: 10 minutos): hay que tocar el botón de nuevo.
           // 409 por el correo = ya tenía cuenta: que entre desde el login.
           volverAEmpezar: error.status === 401,
         });
@@ -133,4 +142,10 @@ interface Resultado {
   titulo: string;
   mensaje: string;
   volverAEmpezar?: boolean;
+}
+
+// Discord deja nombres de 2 a 32 letras, números, "_" y ".": acá son de 3 a 20.
+// Si el de Discord no entra, el campo arranca vacío.
+function usuarioSugerido(nombre: string) {
+  return PATRON_USUARIO.test(nombre) && nombre.length >= 3 && nombre.length <= 20 ? nombre : '';
 }

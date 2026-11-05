@@ -42,6 +42,11 @@
         </p>
         <p class="descripcion">{{ perfil.descripcion }}</p>
 
+        <!-- Discord (extra): "Ver en Discord" abre su perfil en Discord para agregarlo -->
+        @if (perfil.discord; as discord) {
+          <app-insignia-discord [discord]="discord" />
+        }
+
         <!-- Seguidores / siguiendo (abren la lista) y el botón Seguir -->
         <div class="fila-seguir">
           <button type="button" class="contador-seguir" (click)="lista.set('seguidores')">

@@ -19,13 +19,15 @@ import { UsuariosApi } from '../../core/services/usuarios-api';
 import { IResumenSeguir } from '../../core/interfaces/usuario';
 import { EditarPerfil } from './editar-perfil/editar-perfil';
 import { Contrasena } from './contrasena/contrasena';
+import { Cuentas } from './cuentas/cuentas';
+import { InsigniaDiscord } from '../../shared/components/insignia-discord/insignia-discord';
 import { EstadoObraPipe } from '../../shared/pipes/estado-obra.pipe';
 import { NumeroCortoPipe } from '../../shared/pipes/numero-corto.pipe';
 import { ImagenRespaldoDirective } from '../../shared/directives/imagen-respaldo.directive';
 
 @Component({
   selector: 'app-perfil',
-  imports: [DatePipe, RouterLink, Avatar, EditarPerfil, Contrasena, ModalPersonas, EstadoObraPipe, NumeroCortoPipe, ImagenRespaldoDirective],
+  imports: [DatePipe, RouterLink, Avatar, EditarPerfil, Contrasena, Cuentas, InsigniaDiscord, ModalPersonas, EstadoObraPipe, NumeroCortoPipe, ImagenRespaldoDirective],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
@@ -37,6 +39,15 @@ export class Perfil implements OnInit {
 
   // El usuario que ingresó (o null), el mismo que usa Publicaciones.
   protected readonly usuario = inject(Auth).usuarioActual;
+
+  // Tu Discord como lo ven los demás: solo si está vinculado y elegiste mostrarlo.
+  protected readonly discordPropio = computed(() => {
+    const usuario = this.usuario();
+    if (!usuario?.discordId || !usuario.discordUsuario || usuario.mostrarDiscord === false) {
+      return null;
+    }
+    return { id: usuario.discordId, usuario: usuario.discordUsuario };
+  });
 
   // Mis últimas 3 publicaciones (consigna, Sprint 2).
   protected readonly misPublicaciones = signal<IPublicacion[]>([]);

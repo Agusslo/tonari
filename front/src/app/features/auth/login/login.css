@@ -1,14 +1,42 @@
 /* El formulario de login es corto: lo centramos en su columna
    para que no quede pegado arriba al lado de la portada alta. */
 .formulario-acceso {
+  position: relative;
   align-self: center;
+  /* El botón de Google mide como mucho 400px (límite de Google). Le damos al
+     contenido ese mismo ancho: los botones, el separador y los inputs quedan
+     en la misma columna, sin bordes que "bailan". El padding en % se calcula
+     sobre el ancho del panel, así se adapta solo. */
+  padding-inline: max(clamp(1.5rem, 3vw, 2.5rem), calc((100% - 400px) / 2));
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Un brillo menta muy suave arriba a la derecha, como el de la portada */
+.formulario-acceso::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(22rem 14rem at 100% 0%, rgb(185 243 228 / 0.07), transparent 70%);
+  pointer-events: none;
 }
 
 form {
-  margin-top: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.boton-ancho {
+  margin-top: 0.5rem;
 }
 
 .pie {
   margin: 1.5rem 0 0;
+  padding-top: 1.25rem;
   text-align: center;
+  border-top: 1px solid var(--linea-suave);
+}
+
+.pie a {
+  font-weight: 700;
 }

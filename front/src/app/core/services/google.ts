@@ -9,6 +9,8 @@ export interface GoogleId {
     login_uri?: string;
     callback?: (respuesta: { credential: string }) => void;
     auto_select?: boolean;
+    // Un texto al azar que Google mete ADENTRO de la credencial (para vincular la cuenta).
+    nonce?: string;
   }): void;
   renderButton(elemento: HTMLElement, opciones: Record<string, string | number>): void;
 }
