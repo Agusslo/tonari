@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Body,
+  ServiceUnavailableException,
   Controller,
   Delete,
   Get,
@@ -24,7 +25,6 @@ import { RegistroGoogleDto } from './dto/registro-google.dto.js';
 import { DiscordDto, RegistroDiscordDto } from './dto/discord.dto.js';
 import { MostrarDiscordDto, VincularGoogleDto } from './dto/cuentas.dto.js';
 import { DiscordService } from './discord.service.js';
-import type { ModoDiscord } from './discord.service.js';
 import { CuentasService } from './cuentas.service.js';
 import type { Proveedor } from './cuentas.service.js';
 import { validarImagen } from '../common/imagenes.js';
@@ -97,13 +97,21 @@ export class AuthController {
   // GET /auth/discord?modo=ingreso|vincular&nonce=... -> 302 a Discord.
   // Es un GET porque el front no lo llama con HttpClient: el navegador VA a esta URL
   // (es un link), y nosotros lo mandamos a la página de Discord para aceptar.
+  // Como lo ve el navegador (no el front), si algo falla no respondemos un JSON de error:
+  // lo mandamos de vuelta a /ingreso-discord con #error=..., que muestra un mensaje claro.
   @Get('discord')
   @Redirect()
   irADiscord(@Query('modo') modo: string, @Query('nonce') nonce: string) {
     if (modo !== 'ingreso' && modo !== 'vincular') {
-      throw new BadRequestException('modo tiene que ser "ingreso" o "vincular"'); // 400
+      return { url: this.discordService.urlError('invalido'), statusCode: 302 };
     }
-    return { url: this.discordService.urlAutorizar(modo as ModoDiscord, nonce), statusCode: 302 };
+    try {
+      return { url: this.discordService.urlAutorizar(modo, nonce), statusCode: 302 };
+    } catch (error) {
+      // 503 = faltan las variables DISCORD_... en el .env (o en Vercel).
+      const codigo = error instanceof ServiceUnavailableException ? 'configuracion' : 'invalido';
+      return { url: this.discordService.urlError(codigo, modo), statusCode: 302 };
+    }
   }
 
   // GET /auth/discord/callback?code=...&state=... -> 302 de vuelta al front.

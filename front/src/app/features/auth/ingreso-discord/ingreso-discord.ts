@@ -12,6 +12,7 @@ const ERRORES: Record<string, string> = {
   cancelado: 'Cancelaste en Discord, así que no hicimos nada.',
   invalido: 'El ingreso con Discord venció o no es válido. Probá de nuevo.',
   discord: 'No pudimos comunicarnos con Discord. Probá de nuevo en un rato.',
+  configuracion: 'El ingreso con Discord todavía no está configurado. Probá más tarde o entrá con tu correo.',
 };
 
 // /ingreso-discord (extra): acá te devuelve el back después de Discord, con el ticket

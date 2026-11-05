@@ -114,6 +114,12 @@ export class DiscordService {
     }
   }
 
+  // Si algo falla ANTES de ir a Discord (falta configurar, modo raro), el navegador
+  // no tiene que ver un JSON pelado: lo devolvemos al front, que muestra el mensaje lindo.
+  urlError(codigo: string, modo?: ModoDiscord) {
+    return this.urlFront(modo ? { error: codigo, modo } : { error: codigo });
+  }
+
   // Valida un ticket: que lo hayamos firmado nosotros, que no haya vencido, que sea del
   // modo correcto y que el nonce coincida con el que guardó TU navegador.
   verificarTicket(ticket: string, nonce: string, modo: ModoDiscord): DatosDiscord {
