@@ -48,7 +48,14 @@
             <span>{{ anio }}</span>
           }
           @if (f?.estadoPublicacion; as estadoPub) {
-            <span class="estado-publicacion" [class.vivo]="f?.emitidos !== null || estadoPub.startsWith('En ')">
+            <!-- Píldora de color según el estado: sigue saliendo, terminó, cancelada o en pausa -->
+            <span
+              class="estado-publicacion"
+              [class.vivo]="f?.emitidos !== null || estadoPub === 'En emisión' || estadoPub === 'En publicación'"
+              [class.cancelado]="estadoPub === 'Cancelado'"
+              [class.en-espera]="estadoPub === 'En pausa' || estadoPub === 'Próximamente'"
+            >
+              <span class="punto" aria-hidden="true"></span>
               {{ estadoPub }}
             </span>
           }
