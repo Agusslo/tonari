@@ -1,0 +1,63 @@
+/* ---------- Botón (ícono de imagen) ---------- */
+.boton-imagen {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--color-menta);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.boton-imagen:hover,
+.boton-imagen.activo {
+  background: var(--velo-menta);
+}
+
+/* El input está oculto: el foco del teclado se dibuja en el label */
+.boton-imagen:has(input:focus-visible) {
+  outline: 2px solid var(--color-menta);
+  outline-offset: 2px;
+}
+
+/* ---------- Vista previa ---------- */
+.vista-imagen {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 0.5rem;
+  animation: aparecer 0.25s ease-out both;
+}
+
+.vista-imagen img {
+  display: block;
+  max-width: 100%;
+  max-height: 12rem;
+  border: 1px solid var(--linea-suave);
+  border-radius: 12px;
+}
+
+.quitar-imagen {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  color: var(--color-hueso);
+  background: rgb(17 17 22 / 0.75);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--linea-suave);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.quitar-imagen:hover {
+  background: rgb(17 17 22 / 0.95);
+}
+
+.mensaje-error {
+  margin: 0.4rem 0 0;
+}

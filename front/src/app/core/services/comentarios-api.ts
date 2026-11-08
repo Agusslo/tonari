@@ -19,10 +19,11 @@ export class ComentariosApi {
   }
 
   // POST /publicaciones/:id/comentarios -> devuelve el comentario creado
-  crear(publicacionId: string, mensaje: string) {
+  // Con imagen (extra) va como multipart/form-data; sin imagen, JSON como siempre.
+  crear(publicacionId: string, mensaje: string, imagen: File | null = null) {
     return this.http.post<IComentario>(
       `${this.url}/publicaciones/${publicacionId}/comentarios`,
-      { mensaje },
+      cuerpo(mensaje, imagen),
     );
   }
 
@@ -34,14 +35,24 @@ export class ComentariosApi {
   }
 
   // POST /comentarios/:id/respuestas -> devuelve la respuesta creada
-  responder(comentarioId: string, mensaje: string) {
-    return this.http.post<IComentario>(`${this.url}/comentarios/${comentarioId}/respuestas`, {
-      mensaje,
-    });
+  responder(comentarioId: string, mensaje: string, imagen: File | null = null) {
+    return this.http.post<IComentario>(
+      `${this.url}/comentarios/${comentarioId}/respuestas`,
+      cuerpo(mensaje, imagen),
+    );
   }
 
   // PUT /comentarios/:id -> devuelve el comentario editado (modificado: true)
   editar(id: string, mensaje: string) {
     return this.http.put<IComentario>(`${this.url}/comentarios/${id}`, { mensaje });
   }
+}
+
+// Sin imagen: { mensaje } en JSON. Con imagen: FormData (un archivo no viaja en JSON).
+function cuerpo(mensaje: string, imagen: File | null) {
+  if (!imagen) return { mensaje };
+  const formData = new FormData();
+  formData.append('mensaje', mensaje);
+  formData.append('imagen', imagen);
+  return formData;
 }

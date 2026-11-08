@@ -23,11 +23,12 @@ import { Cuentas } from './cuentas/cuentas';
 import { InsigniaDiscord } from '../../shared/components/insignia-discord/insignia-discord';
 import { EstadoObraPipe } from '../../shared/pipes/estado-obra.pipe';
 import { NumeroCortoPipe } from '../../shared/pipes/numero-corto.pipe';
+import { SinSpoilersPipe } from '../../shared/pipes/sin-spoilers.pipe';
 import { ImagenRespaldoDirective } from '../../shared/directives/imagen-respaldo.directive';
 
 @Component({
   selector: 'app-perfil',
-  imports: [DatePipe, RouterLink, Avatar, EditarPerfil, Contrasena, Cuentas, InsigniaDiscord, ModalPersonas, EstadoObraPipe, NumeroCortoPipe, ImagenRespaldoDirective],
+  imports: [DatePipe, RouterLink, Avatar, EditarPerfil, Contrasena, Cuentas, InsigniaDiscord, ModalPersonas, EstadoObraPipe, NumeroCortoPipe, SinSpoilersPipe, ImagenRespaldoDirective],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })

@@ -1,0 +1,52 @@
+/* Se comporta como texto común, dentro del párrafo del padre */
+:host {
+  display: inline;
+}
+
+/* Tapado: el texto existe pero es transparente con una sombra borrosa
+   (se ve "la mancha" del largo del spoiler, como en Discord). */
+.spoiler {
+  padding: 0.05em 0.25em;
+  color: transparent;
+  text-shadow: 0 0 0.55em rgb(240 237 229 / 0.75);
+  background: rgb(240 237 229 / 0.14);
+  border-radius: 5px;
+  /* si se corta en dos renglones, cada pedazo tiene sus bordes redondeados */
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  cursor: pointer;
+  user-select: none; /* que no se pueda "espiar" seleccionando y copiando */
+  transition: background-color 0.15s ease;
+}
+
+.spoiler:hover {
+  background: rgb(240 237 229 / 0.22);
+}
+
+.spoiler:focus-visible {
+  outline: 2px solid var(--color-menta);
+  outline-offset: 2px;
+}
+
+/* Destapado: queda marcado suave, para que se note qué parte era el spoiler */
+.spoiler.destapado {
+  color: inherit;
+  text-shadow: none;
+  background: var(--velo-menta);
+  cursor: auto;
+  user-select: auto;
+  animation: destapar 0.3s ease-out;
+}
+
+@keyframes destapar {
+  from {
+    color: transparent;
+    text-shadow: 0 0 0.55em rgb(240 237 229 / 0.75);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spoiler.destapado {
+    animation: none;
+  }
+}

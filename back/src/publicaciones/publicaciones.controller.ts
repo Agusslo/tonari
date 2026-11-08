@@ -15,6 +15,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { PublicacionesService } from './publicaciones.service.js';
 import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
 import { ListarPublicacionesDto } from './dto/listar-publicaciones.dto.js';
+import { VotarDto } from './dto/votar.dto.js';
 import { validarImagen } from '../common/imagenes.js';
 import { TokenGuard } from '../auth/token/token.guard.js';
 import type { RequestConToken } from '../auth/token/token.guard.js';
@@ -51,9 +52,10 @@ export class PublicacionesController {
   }
 
   // GET /publicaciones/:id -> 200 con una publicación (para la página Publicación).
+  // Necesita saber quién mira: según eso cambian la encuesta (tu voto) y el spoiler.
   @Get(':id')
-  obtener(@Param('id') id: string) {
-    return this.publicacionesService.obtener(id);
+  obtener(@Param('id') id: string, @Req() req: RequestConToken) {
+    return this.publicacionesService.obtener(id, req.usuario.id);
   }
 
   // DELETE /publicaciones/:id -> 200 OK (baja lógica)
@@ -73,5 +75,12 @@ export class PublicacionesController {
   @Delete(':id/me-gusta')
   quitarMeGusta(@Param('id') id: string, @Req() req: RequestConToken) {
     return this.publicacionesService.quitarMeGusta(id, req.usuario.id);
+  }
+
+  // POST /publicaciones/:id/votar { opcion } -> 201 con la publicación y los resultados
+  // (409 si ya votaste, 400 si cerró o no tiene encuesta)
+  @Post(':id/votar')
+  votar(@Param('id') id: string, @Req() req: RequestConToken, @Body() { opcion }: VotarDto) {
+    return this.publicacionesService.votar(id, req.usuario.id, opcion);
   }
 }

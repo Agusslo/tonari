@@ -58,10 +58,16 @@
           formControlName="mensaje"
           rows="3"
           maxlength="500"
-          placeholder="Escribí un comentario…"
+          placeholder="Escribí un comentario… (||así|| tapás un spoiler)"
+          (paste)="imagenNueva.pegar($event)"
         ></textarea>
+        <!-- Imagen opcional (extra): con el ícono o pegándola con Ctrl+V en el texto -->
+        <app-vista-imagen [adjunta]="imagenNueva" />
         <div class="nuevo-pie">
-          <span class="texto-secundario contador">{{ nuevo.value.length }}/500</span>
+          <span class="pie-izquierda">
+            <app-boton-imagen [adjunta]="imagenNueva" />
+            <span class="texto-secundario contador">{{ nuevo.value.length }}/500</span>
+          </span>
           <button type="submit" class="boton" [disabled]="enviando() || !nuevo.value.trim()">
             @if (enviando()) {
               <span class="spinner" aria-hidden="true"></span>

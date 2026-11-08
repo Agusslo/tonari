@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, computed, input, linkedSignal, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import IPublicacion from '../../../core/interfaces/publicacion';
@@ -6,12 +6,14 @@ import IUsuario from '../../../core/interfaces/usuario';
 import { Avatar } from '../../../shared/components/avatar/avatar';
 import { TiempoRelativoPipe } from '../../../shared/pipes/tiempo-relativo.pipe';
 import { NumeroCortoPipe } from '../../../shared/pipes/numero-corto.pipe';
+import { Encuesta } from '../../../shared/components/encuesta/encuesta';
+import { TextoSpoiler } from '../../../shared/components/texto-spoiler/texto-spoiler';
 
 // Una publicación del muro. La pantalla Publicaciones repite este componente
 // una vez por cada publicación (consigna: "cada publicación es un componente").
 @Component({
   selector: 'app-tarjeta-publicacion',
-  imports: [DatePipe, RouterLink, Avatar, TiempoRelativoPipe, NumeroCortoPipe],
+  imports: [DatePipe, RouterLink, Avatar, TiempoRelativoPipe, NumeroCortoPipe, Encuesta, TextoSpoiler],
   templateUrl: './tarjeta-publicacion.html',
   styleUrl: './tarjeta-publicacion.css',
 })
@@ -47,4 +49,23 @@ export class TarjetaPublicacion {
   // se oculta en vez de mostrar el ícono de imagen rota. La foto del autor
   // la resuelve <app-avatar> (blobatar o iniciales).
   protected readonly imagenRota = signal(false);
+
+  // ---------- Spoilers (extra) ----------
+  // ¿Tocaste "Mostrar igual"? Vuelve a false si la tarjeta pasa a mostrar otra publicación.
+  protected readonly mostrarIgual = linkedSignal({
+    source: () => this.publicacion()._id,
+    computation: () => false,
+  });
+
+  // Se tapa si tiene spoiler, el back dijo que a vos no te lo libera
+  // (no la terminaste ni vas por ese episodio) y no tocaste "Mostrar igual".
+  protected readonly tapada = computed(() => {
+    const spoiler = this.publicacion().spoiler;
+    return !!spoiler && spoiler.liberado === null && !this.mostrarIgual();
+  });
+
+  // "ep." para anime, "cap." para manga.
+  protected readonly unidad = computed(() =>
+    this.publicacion().spoiler?.tipo === 'manga' ? 'cap.' : 'ep.',
+  );
 }

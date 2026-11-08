@@ -11,6 +11,7 @@ import { Publicacion } from '../publicaciones/entities/publicacion.entity.js';
 import { MensajeComentarioDto } from './dto/mensaje-comentario.dto.js';
 import { ListarComentariosDto } from './dto/listar-comentarios.dto.js';
 import { NotificacionesService } from '../notificaciones/notificaciones.service.js';
+import { guardarImagen } from '../common/imagenes.js';
 
 // Los datos del autor que se muestran en cada comentario (nunca correo ni contraseña).
 const DATOS_AUTOR = 'nombre apellido nombreUsuario imagenPerfil';
@@ -24,13 +25,22 @@ export class ComentariosService {
   ) {}
 
   // POST: guarda el comentario con quién lo hizo (token) y la fecha (createdAt, automática).
-  async crear(publicacionId: string, usuarioId: string, { mensaje }: MensajeComentarioDto) {
+  // imagen: opcional (extra). Llega undefined si el comentario no tiene.
+  async crear(
+    publicacionId: string,
+    usuarioId: string,
+    { mensaje }: MensajeComentarioDto,
+    imagen?: Express.Multer.File,
+  ) {
     const publicacion = await this.verificarPublicacion(publicacionId);
 
+    // Primero validamos la publicación y DESPUÉS subimos la imagen:
+    // así no queda una imagen suelta en Cloudinary si la publicación no existe.
     const comentario = await this.comentarioModel.create({
       mensaje,
       publicacion: publicacionId,
       usuario: usuarioId,
+      imagen: imagen ? await guardarImagen(imagen, 'comentarios') : undefined,
     });
 
     // Contador en la publicación, para mostrar "💬 3" en la tarjeta sin contar cada vez.
@@ -51,7 +61,12 @@ export class ComentariosService {
 
   // POST de una respuesta: se guarda como un comentario más de la misma publicación,
   // pero con "respondeA" apuntando al comentario principal.
-  async responder(comentarioId: string, usuarioId: string, { mensaje }: MensajeComentarioDto) {
+  async responder(
+    comentarioId: string,
+    usuarioId: string,
+    { mensaje }: MensajeComentarioDto,
+    imagen?: Express.Multer.File,
+  ) {
     const comentario = await this.buscarComentario(comentarioId);
     // Un solo nivel: si responden a una respuesta, va al hilo de su comentario principal.
     const principalId = comentario.respondeA ?? comentario._id;
@@ -63,6 +78,7 @@ export class ComentariosService {
       publicacion: publicacionId,
       usuario: usuarioId,
       respondeA: principalId,
+      imagen: imagen ? await guardarImagen(imagen, 'comentarios') : undefined,
     });
 
     // Los dos contadores: las respuestas del comentario y los comentarios de la publicación.

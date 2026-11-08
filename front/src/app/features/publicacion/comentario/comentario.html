@@ -54,7 +54,14 @@
         }
       </form>
     } @else {
-      <p class="mensaje">{{ c.mensaje }}</p>
+      <!-- Los ||spoilers|| se tapan; tocás uno y se ve -->
+      <p class="mensaje"><app-texto-spoiler [texto]="c.mensaje" /></p>
+      <!-- Imagen del comentario (extra): tocándola se abre entera en otra pestaña -->
+      @if (c.imagen) {
+        <a class="imagen-comentario" [href]="c.imagen" target="_blank" rel="noopener">
+          <img [src]="c.imagen" [alt]="'Imagen del comentario de ' + c.usuario.nombre" loading="lazy" />
+        </a>
+      }
       <div class="acciones">
         <button type="button" class="boton-editar" (click)="responder()">
           <svg class="icono" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
@@ -136,9 +143,14 @@
             maxlength="500"
             [placeholder]="'Responder a ' + c.usuario.nombre + '…'"
             (keydown.escape)="cancelarRespuesta()"
+            (paste)="imagenRespuesta.pegar($event)"
           ></textarea>
+          <app-vista-imagen [adjunta]="imagenRespuesta" />
           <div class="editar-pie">
-            <span class="texto-secundario contador">{{ respuesta.value.length }}/500</span>
+            <span class="pie-izquierda">
+              <app-boton-imagen [adjunta]="imagenRespuesta" />
+              <span class="texto-secundario contador">{{ respuesta.value.length }}/500</span>
+            </span>
             <div class="editar-botones">
               <button type="button" class="boton boton-secundario boton-chico" (click)="cancelarRespuesta()">
                 Cancelar

@@ -33,18 +33,77 @@
         <a [routerLink]="['/publicaciones', pub._id]">{{ pub.titulo }}</a>
         }
     </h2>
-    <p class="descripcion">{{ pub.descripcion }}</p>
-
-    @if (pub.imagen && !imagenRota()) {
-        <img
-        [src]="pub.imagen"
-        [alt]="'Imagen de la publicación: ' + pub.titulo"
-        class="imagen"
-        [class.imagen-completa]="detalle()"
-        loading="lazy"
-        (error)="imagenRota.set(true)"
-        />
+    <!-- Aviso de spoilers (extra): una etiqueta arriba del contenido -->
+    @if (pub.spoiler; as spoiler) {
+        <p class="aviso-spoiler" [class.liberado]="spoiler.liberado">
+        <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M12 3 2 20h20L12 3zM12 10v4M12 17.5v.01" />
+        </svg>
+        <span>
+            Spoilers de <strong>{{ spoiler.titulo }}</strong>
+            @if (spoiler.hasta) {
+            hasta el {{ unidad() }} {{ spoiler.hasta }}
+            }
+            @switch (spoiler.liberado) {
+            @case ('autor') {
+                <span class="aviso-motivo">· lo marcaste vos</span>
+            }
+            @case ('completado') {
+                <span class="aviso-motivo">· no se tapa: ya la terminaste</span>
+            }
+            @case ('progreso') {
+                <span class="aviso-motivo">· no se tapa: vas por el {{ unidad() }} {{ spoiler.miProgreso }}</span>
+            }
+            }
+        </span>
+        </p>
     }
+
+    <!-- Descripción, imagen y encuesta. Si es spoiler para vos, se tapan (borrosas)
+         e "inert": no se pueden enfocar ni las lee el lector de pantalla. -->
+    <div class="zona-spoiler" [class.tapada]="tapada()">
+        <div class="cuerpo-publicacion" [attr.inert]="tapada() ? '' : null" [attr.aria-hidden]="tapada() || null">
+        <!-- <app-texto-spoiler>: los ||spoilers|| del texto se tapan uno por uno -->
+        <p class="descripcion"><app-texto-spoiler [texto]="pub.descripcion" /></p>
+
+        @if (pub.imagen && !imagenRota()) {
+            <img
+            [src]="pub.imagen"
+            [alt]="'Imagen de la publicación: ' + pub.titulo"
+            class="imagen"
+            [class.imagen-completa]="detalle()"
+            loading="lazy"
+            (error)="imagenRota.set(true)"
+            />
+        }
+
+        @if (pub.encuesta; as encuesta) {
+            <app-encuesta [publicacionId]="pub._id" [encuesta]="encuesta" [puedeVotar]="!!usuario()" />
+        }
+        </div>
+
+        @if (tapada()) {
+        @let spoiler = pub.spoiler!;
+        <div class="velo-spoiler">
+            <p class="velo-titulo">Puede tener spoilers de {{ spoiler.titulo }}</p>
+            <p class="velo-detalle">
+            @if (spoiler.hasta) {
+                Habla hasta el {{ unidad() }} {{ spoiler.hasta }}.
+            } @else {
+                Habla de toda la obra, final incluido.
+            }
+            @if (spoiler.miProgreso !== null) {
+                Vos vas por el {{ unidad() }} {{ spoiler.miProgreso }}.
+            } @else {
+                No la tenés en tu biblioteca.
+            }
+            </p>
+            <button type="button" class="boton boton-secundario boton-chico" (click)="mostrarIgual.set(true)">
+            Mostrar igual
+            </button>
+        </div>
+        }
+    </div>
 
     <footer class="pie">
         <div class="acciones">

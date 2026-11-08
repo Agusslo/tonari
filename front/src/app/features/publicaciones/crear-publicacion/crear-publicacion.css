@@ -118,6 +118,133 @@
   background: rgb(17 17 22 / 0.95);
 }
 
+/* ---------- Encuesta y spoiler (extras) ---------- */
+.extra {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  margin: 0.6rem 0 0.2rem;
+  padding: 0.85rem 0.9rem 0.9rem;
+  border: 1px solid var(--linea-suave);
+  border-radius: 16px;
+  animation: aparecer 0.3s ease-out both;
+}
+
+.extra legend {
+  padding: 0 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.extra legend .texto-secundario {
+  font-weight: 400;
+}
+
+.extra-spoiler {
+  border-color: rgb(255 210 122 / 0.3); /* ámbar, como la etiqueta de la tarjeta */
+}
+
+.ayuda-extra {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.fila-opcion {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.entrada-extra {
+  min-height: 2.5rem;
+  padding: 0.4rem 0.75rem;
+  font: inherit;
+  color: var(--color-hueso);
+  background: var(--color-campo);
+  border: 1px solid var(--linea-campo);
+  border-radius: var(--radio-campo);
+}
+
+.fila-opcion .entrada-extra {
+  flex: 1;
+  min-width: 0;
+}
+
+.entrada-extra:focus-visible {
+  outline: none;
+  border-color: var(--color-menta);
+  box-shadow: var(--halo-menta);
+}
+
+.entrada-numero {
+  width: 5.5rem;
+}
+
+.quitar-opcion {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.quitar-opcion:hover {
+  color: var(--color-hueso);
+  background: var(--velo-hueso);
+}
+
+.fila-extra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+}
+
+.agregar-opcion {
+  min-height: 2.25rem;
+  padding: 0 0.6rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-menta);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+}
+
+.agregar-opcion:hover {
+  background: var(--velo-menta);
+}
+
+.campo-extra {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  color: var(--color-texto-sec);
+}
+
+.campo-obra {
+  flex: 1;
+  min-width: 0;
+}
+
+.campo-obra .entrada-extra {
+  flex: 1;
+  min-width: 0;
+}
+
 /* ---------- Barra de herramientas ---------- */
 .herramientas {
   display: flex;
@@ -130,6 +257,12 @@
   /* arranca después del avatar, alineada con el texto */
   margin-left: 3.8rem;
   border-top: 1px solid var(--linea-suave);
+}
+
+.adjuntos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
 }
 
 .adjuntar {
@@ -149,6 +282,18 @@
 .adjuntar:hover,
 .adjuntar.activo {
   background: var(--velo-menta);
+}
+
+/* Los botones de Encuesta y Spoiler se ven igual que el de Imagen */
+button.adjuntar {
+  font-family: inherit;
+  background: transparent;
+  border: 0;
+}
+
+button.adjuntar:focus-visible {
+  outline: 2px solid var(--color-menta);
+  outline-offset: 3px;
 }
 
 /* Como el input está oculto, el foco del teclado se muestra en el label */
@@ -235,5 +380,14 @@
 
   .adjuntar span {
     display: none;
+  }
+
+  /* Con tres íconos, más justos para que Publicar entre en el mismo renglón */
+  .adjuntar {
+    padding: 0 0.6rem;
+  }
+
+  .enviar {
+    gap: 0.6rem;
   }
 }

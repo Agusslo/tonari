@@ -1,7 +1,13 @@
 <section class="panel crear" aria-labelledby="titulo-crear">
   <h2 id="titulo-crear" class="solo-lector">Crear publicación</h2>
 
-  <form [formGroup]="formulario" (ngSubmit)="publicar(entradaImagen)" novalidate>
+  <!-- (paste): si pegás una imagen (Ctrl+V) en el título o el mensaje, se adjunta -->
+  <form
+    [formGroup]="formulario"
+    (ngSubmit)="publicar(entradaImagen)"
+    (paste)="pegarImagen($event, entradaImagen)"
+    novalidate
+  >
     <!-- Como en cualquier red social: tu foto a la izquierda y el texto al lado -->
     <div class="redactar">
       <app-avatar [usuario]="usuario()" />
@@ -59,6 +65,102 @@
         @if (errorImagen()) {
           <p class="mensaje-error">{{ errorImagen() }}</p>
         }
+
+        <!-- ---------- Encuesta (extra) ---------- -->
+        @if (conEncuesta()) {
+          <fieldset class="extra">
+            <legend>Encuesta <span class="texto-secundario">· la pregunta es el título</span></legend>
+            @for (opcion of opciones(); track $index) {
+              <div class="fila-opcion">
+                <label class="solo-lector" [for]="'opcion-' + $index">Opción {{ $index + 1 }}</label>
+                <input
+                  [id]="'opcion-' + $index"
+                  type="text"
+                  class="entrada-extra"
+                  maxlength="80"
+                  autocomplete="off"
+                  [placeholder]="'Opción ' + ($index + 1)"
+                  [value]="opcion"
+                  (input)="cambiarOpcion($index, $any($event.target).value)"
+                />
+                @if (opciones().length > 2) {
+                  <button
+                    type="button"
+                    class="quitar-opcion"
+                    (click)="quitarOpcion($index)"
+                    [attr.aria-label]="'Quitar la opción ' + ($index + 1)"
+                  >
+                    <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                      <path d="M6 6l12 12M18 6L6 18" />
+                    </svg>
+                  </button>
+                }
+              </div>
+            }
+            <div class="fila-extra">
+              @if (opciones().length < 4) {
+                <button type="button" class="agregar-opcion" (click)="agregarOpcion()">+ Agregar opción</button>
+              }
+              <label class="campo-extra">
+                Dura
+                <select class="entrada-extra" (change)="duracion.set(+$any($event.target).value)">
+                  @for (opcion of DURACIONES; track opcion.horas) {
+                    <option [value]="opcion.horas" [selected]="opcion.horas === duracion()">{{ opcion.texto }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+          </fieldset>
+        }
+
+        <!-- ---------- Spoiler (extra) ---------- -->
+        @if (conSpoiler()) {
+          <fieldset class="extra extra-spoiler">
+            <legend>Aviso de spoilers</legend>
+            <p class="texto-secundario ayuda-extra">
+              La descripción, la imagen y la encuesta se tapan para quien todavía no llegó a esa
+              parte (lo sabemos por su biblioteca). ¿Es solo una frase? Escribila ||así|| en el
+              mensaje y se tapa solo eso.
+            </p>
+            @if (obras() === null) {
+              <p class="texto-secundario ayuda-extra"><span class="spinner" aria-hidden="true"></span> Cargando tu biblioteca…</p>
+            } @else if (errorObras(); as mensaje) {
+              <p class="mensaje-error">{{ mensaje }}</p>
+            } @else if (obras()!.length === 0) {
+              <p class="texto-secundario ayuda-extra">Agregá la obra a tu biblioteca para poder marcarla.</p>
+            } @else {
+              <div class="fila-extra">
+                <label class="campo-extra campo-obra">
+                  De
+                  <select class="entrada-extra" (change)="elegirObra($any($event.target).value)">
+                    <option value="" disabled [selected]="!obraElegida()">Elegí una obra</option>
+                    @for (obra of obras(); track obra._id) {
+                      <option [value]="obra._id" [selected]="obra._id === obraElegida()?._id">
+                        {{ obra.titulo }} ({{ obra.tipo }})
+                      </option>
+                    }
+                  </select>
+                </label>
+                <label class="campo-extra">
+                  hasta el {{ obraElegida()?.tipo === 'manga' ? 'cap.' : 'ep.' }}
+                  <input
+                    type="number"
+                    class="entrada-extra entrada-numero"
+                    min="1"
+                    [attr.max]="obraElegida()?.total ?? null"
+                    inputmode="numeric"
+                    placeholder="todo"
+                    [value]="hasta() ?? ''"
+                    (input)="cambiarHasta($any($event.target).value)"
+                  />
+                </label>
+              </div>
+            }
+          </fieldset>
+        }
+        @if (errorExtras(); as mensaje) {
+          <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+        }
         @if (error(); as mensaje) {
           <p class="mensaje-error" role="alert">{{ mensaje }}</p>
         }
@@ -67,6 +169,8 @@
 
     <!-- Barra de herramientas: adjuntar a la izquierda; contador y Publicar a la derecha -->
     <div class="herramientas">
+      <!-- Imagen, Encuesta y Spoiler, juntos a la izquierda -->
+      <div class="adjuntos">
       <!-- El input real queda oculto: el <label> hace de botón -->
       <label class="adjuntar" for="imagen-publicacion" [class.activo]="imagen()">
         <svg class="icono" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -84,6 +188,35 @@
         accept="image/jpeg,image/png,image/webp"
         (change)="elegirImagen($event)"
       />
+
+      <!-- Extras: abren y cierran su panel (aria-pressed: el lector anuncia si está activo) -->
+      <button
+        type="button"
+        class="adjuntar"
+        [class.activo]="conEncuesta()"
+        [attr.aria-pressed]="conEncuesta()"
+        aria-label="Encuesta"
+        (click)="alternarEncuesta()"
+      >
+        <svg class="icono" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M4 6h10M4 12h16M4 18h7" />
+        </svg>
+        <span>Encuesta</span>
+      </button>
+      <button
+        type="button"
+        class="adjuntar"
+        [class.activo]="conSpoiler()"
+        [attr.aria-pressed]="conSpoiler()"
+        aria-label="Aviso de spoilers"
+        (click)="alternarSpoiler()"
+      >
+        <svg class="icono" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M12 3 2 20h20L12 3zM12 10v4M12 17.5v.01" />
+        </svg>
+        <span>Spoiler</span>
+      </button>
+      </div>
 
       <div class="enviar">
         @if (publicado()) {

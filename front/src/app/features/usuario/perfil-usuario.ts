@@ -19,6 +19,7 @@ import { mensajeDeError } from '../../shared/utils/errores-http';
 import { urlBanner } from '../../shared/utils/cloudinary';
 import { EstadoObraPipe } from '../../shared/pipes/estado-obra.pipe';
 import { NumeroCortoPipe } from '../../shared/pipes/numero-corto.pipe';
+import { SinSpoilersPipe } from '../../shared/pipes/sin-spoilers.pipe';
 import { ImagenRespaldoDirective } from '../../shared/directives/imagen-respaldo.directive';
 
 // Perfil de OTRO usuario: /usuarios/beto (consigna, Sprint 5: "clic en el nombre o la
@@ -27,7 +28,7 @@ import { ImagenRespaldoDirective } from '../../shared/directives/imagen-respaldo
 // Usa los mismos estilos que Mi Perfil (perfil.css) para que se vean iguales.
 @Component({
   selector: 'app-perfil-usuario',
-  imports: [DatePipe, RouterLink, Avatar, ModalPersonas, Modal, InsigniaDiscord, EstadoObraPipe, NumeroCortoPipe, ImagenRespaldoDirective],
+  imports: [DatePipe, RouterLink, Avatar, ModalPersonas, Modal, InsigniaDiscord, EstadoObraPipe, NumeroCortoPipe, SinSpoilersPipe, ImagenRespaldoDirective],
   templateUrl: './perfil-usuario.html',
   styleUrls: ['../perfil/perfil.css', './perfil-usuario.css'],
 })

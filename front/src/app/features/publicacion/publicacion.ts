@@ -9,6 +9,9 @@ import IPublicacion from '../../core/interfaces/publicacion';
 import IComentario from '../../core/interfaces/comentario';
 import { TarjetaPublicacion } from '../publicaciones/tarjeta-publicacion/tarjeta-publicacion';
 import { Comentario } from './comentario/comentario';
+import { ImagenAdjunta } from '../../shared/utils/imagen-adjunta';
+import { BotonImagen } from '../../shared/components/imagen-adjunta/boton-imagen';
+import { VistaImagen } from '../../shared/components/imagen-adjunta/vista-imagen';
 import { Modal } from '../../shared/components/modal/modal';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 import { AutoAlturaDirective } from '../../shared/directives/auto-altura.directive';
@@ -19,7 +22,7 @@ const POR_TANDA = 5;
 // Página Publicación (/publicaciones/:id): la publicación en grande y sus comentarios.
 @Component({
   selector: 'app-publicacion',
-  imports: [ReactiveFormsModule, RouterLink, TarjetaPublicacion, Comentario, Modal, AutoAlturaDirective],
+  imports: [ReactiveFormsModule, RouterLink, TarjetaPublicacion, Comentario, Modal, AutoAlturaDirective, BotonImagen, VistaImagen],
   templateUrl: './publicacion.html',
   styleUrl: './publicacion.css',
 })
@@ -62,6 +65,8 @@ export class Publicacion implements OnInit {
   protected readonly nuevo = this.formulario.controls.mensaje;
   protected readonly enviando = signal(false);
   protected readonly errorEnvio = signal<string | null>(null);
+  // Imagen opcional del comentario (extra): con el botón o pegándola (Ctrl+V).
+  protected readonly imagenNueva = new ImagenAdjunta();
 
   ngOnInit() {
     this.cargarPublicacion();
@@ -129,11 +134,11 @@ export class Publicacion implements OnInit {
 
   comentar() {
     const mensaje = this.nuevo.value.trim();
-    if (!mensaje || this.nuevo.invalid || this.enviando()) return;
+    if (!mensaje || this.nuevo.invalid || this.enviando() || this.imagenNueva.procesando()) return;
 
     this.enviando.set(true);
     this.errorEnvio.set(null);
-    this.comentariosApi.crear(this.id, mensaje).subscribe({
+    this.comentariosApi.crear(this.id, mensaje, this.imagenNueva.archivo()).subscribe({
       next: (comentario) => {
         // El nuevo va arriba de todo (la lista va del más nuevo al más viejo).
         this.comentarios.update((actuales) => [comentario, ...actuales]);
@@ -143,6 +148,7 @@ export class Publicacion implements OnInit {
           p ? { ...p, cantidadComentarios: (p.cantidadComentarios ?? 0) + 1 } : p,
         );
         this.formulario.reset();
+        this.imagenNueva.quitar();
         this.enviando.set(false);
       },
       error: (error: HttpErrorResponse) => {

@@ -4,6 +4,7 @@ import { IAutor } from './publicacion';
 export default interface IComentario {
   _id: string;
   mensaje: string;
+  imagen?: string; // extra: URL de la imagen, si tiene
   publicacion: string; // _id de la publicación a la que pertenece
   usuario: IAutor; // el autor viene "populado", igual que en las publicaciones
   modificado: boolean; // true si el autor lo editó (el front muestra "editado")

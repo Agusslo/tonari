@@ -102,6 +102,12 @@
   font-size: 0.8rem;
 }
 
+.pie-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .nuevo-pie .boton {
   min-height: 2.6rem;
   padding: 0 1.3rem;

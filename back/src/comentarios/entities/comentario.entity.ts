@@ -10,6 +10,10 @@ export class Comentario {
   @Prop({ required: true, trim: true })
   mensaje: string;
 
+  // Imagen opcional (extra): la URL en Cloudinary. Se puede elegir o pegar con Ctrl+V.
+  @Prop()
+  imagen?: string;
+
   // A qué publicación pertenece (referencia, igual que "usuario" en Publicacion).
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: Publicacion.name, required: true })
   publicacion: Types.ObjectId;

@@ -3,13 +3,21 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PublicacionesService } from './publicaciones.service.js';
 import { PublicacionesController } from './publicaciones.controller.js';
 import { Publicacion, PublicacionSchema } from './entities/publicacion.entity.js';
+import { Voto, VotoSchema } from './entities/voto.entity.js';
+import { Entrada, EntradaSchema } from '../biblioteca/entities/entrada.entity.js';
 import { UsuariosModule } from '../usuarios/usuarios.module.js';
 import { NotificacionesModule } from '../notificaciones/notificaciones.module.js';
 
 @Module({
   imports: [
     // La colección de publicaciones, propia de este módulo.
-    MongooseModule.forFeature([{ name: Publicacion.name, schema: PublicacionSchema }]),
+    // Votos: quién votó qué en las encuestas (extra).
+    // Entradas de la biblioteca: para saber si a quien mira le tapamos un spoiler (extra).
+    MongooseModule.forFeature([
+      { name: Publicacion.name, schema: PublicacionSchema },
+      { name: Voto.name, schema: VotoSchema },
+      { name: Entrada.name, schema: EntradaSchema },
+    ]),
     // La colección de usuarios (para validar al autor y traer sus datos).
     UsuariosModule,
     // Para avisar "le gustó tu publicación".

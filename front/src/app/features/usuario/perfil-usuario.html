@@ -137,15 +137,22 @@
       } @else {
         <ul class="mis-publicaciones">
           @for (publicacion of publicaciones(); track publicacion._id) {
+            <!-- Spoiler (extra): si el back dice que a vos te lo tapa, acá no mostramos
+                 ni la imagen ni el texto; en la publicación está el botón "Mostrar igual". -->
+            @let tapada = publicacion.spoiler && publicacion.spoiler.liberado === null;
             <li class="mi-publicacion">
-              @if (publicacion.imagen) {
+              @if (publicacion.imagen && !tapada) {
                 <img [src]="publicacion.imagen" alt="" class="miniatura" loading="lazy" />
               }
               <div class="mi-publicacion-texto">
                 <h3>
                   <a [routerLink]="['/publicaciones', publicacion._id]">{{ publicacion.titulo }}</a>
                 </h3>
-                <p class="texto-secundario">{{ publicacion.descripcion }}</p>
+                @if (tapada) {
+                  <p class="texto-secundario">⚠ Tiene spoilers de {{ publicacion.spoiler!.titulo }}. Abrila para verla.</p>
+                } @else {
+                  <p class="texto-secundario">{{ publicacion.descripcion | sinSpoilers }}</p>
+                }
                 <p class="detalle texto-secundario">
                   <time [attr.datetime]="publicacion.createdAt">
                     {{ publicacion.createdAt | date: 'dd/MM/yyyy HH:mm' : '-0300' }}

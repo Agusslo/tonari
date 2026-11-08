@@ -1,0 +1,55 @@
+@let e = estado();
+
+<div class="encuesta" role="group" [attr.aria-label]="'Encuesta: ' + e.totalVotos + (e.totalVotos === 1 ? ' voto' : ' votos')">
+  @if (!e.verResultados) {
+    <!-- Todavía no votaste: las opciones son botones -->
+    <ul class="opciones">
+      @for (opcion of e.opciones; track $index) {
+        <li>
+          <button
+            type="button"
+            class="opcion"
+            [disabled]="!puedeVotar() || votando() !== null"
+            [attr.aria-busy]="votando() === $index"
+            (click)="votar($index)"
+          >
+            @if (votando() === $index) {
+              <span class="spinner" aria-hidden="true"></span>
+            }
+            {{ opcion.texto }}
+          </button>
+        </li>
+      }
+    </ul>
+  } @else {
+    <!-- Resultados: una barra por opción. La tuya lleva un tilde. -->
+    <ul class="resultados">
+      @for (opcion of e.opciones; track $index) {
+        <li class="resultado" [class.mia]="e.miVoto === $index" [class.ganadora]="ganadoras().has($index)">
+          <span class="barra" [style.width.%]="porcentaje(opcion.votos)" aria-hidden="true"></span>
+          <span class="resultado-texto">
+            {{ opcion.texto }}
+            @if (e.miVoto === $index) {
+              <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path d="M5 12.5l4.5 4.5L19 7.5" />
+              </svg>
+              <span class="solo-lector">(tu voto)</span>
+            }
+          </span>
+          <span class="resultado-porcentaje">{{ porcentaje(opcion.votos) }}%</span>
+        </li>
+      }
+    </ul>
+  }
+
+  <p class="pie-encuesta">
+    {{ e.totalVotos }} {{ e.totalVotos === 1 ? 'voto' : 'votos' }} · {{ tiempo() }}
+    @if (!puedeVotar() && !e.verResultados) {
+      · Ingresá para votar
+    }
+  </p>
+
+  @if (error(); as mensaje) {
+    <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+  }
+</div>

@@ -137,7 +137,7 @@
                 <h3>
                   <a [routerLink]="['/publicaciones', publicacion._id]">{{ publicacion.titulo }}</a>
                 </h3>
-                <p class="texto-secundario">{{ publicacion.descripcion }}</p>
+                <p class="texto-secundario">{{ publicacion.descripcion | sinSpoilers }}</p>
                 <p class="detalle texto-secundario">
                   <time [attr.datetime]="publicacion.createdAt">
                     {{ publicacion.createdAt | date: 'dd/MM/yyyy HH:mm' : '-0300' }}
@@ -153,7 +153,7 @@
                         <app-avatar [usuario]="comentario.usuario" />
                         <p>
                           <a class="mini-autor" [routerLink]="['/usuarios', comentario.usuario.nombreUsuario]">&#64;{{ comentario.usuario.nombreUsuario }}</a>
-                          {{ comentario.mensaje }}
+                          {{ comentario.mensaje | sinSpoilers }}
                           @if (comentario.modificado) {
                             <span class="mini-editado">(editado)</span>
                           }

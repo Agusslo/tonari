@@ -5,6 +5,7 @@ import { Notificaciones } from '../../../core/services/notificaciones';
 import { INotificacion } from '../../../core/interfaces/notificacion';
 import { Avatar } from '../avatar/avatar';
 import { TiempoRelativoPipe } from '../../pipes/tiempo-relativo.pipe';
+import { SinSpoilersPipe } from '../../pipes/sin-spoilers.pipe';
 import { ClickAfueraDirective } from '../../directives/click-afuera.directive';
 import { mensajeDeError } from '../../utils/errores-http';
 
@@ -14,7 +15,7 @@ const POR_PAGINA = 20;
 // el panel con la lista. Al abrirla, todas pasan a leídas.
 @Component({
   selector: 'app-campanita',
-  imports: [RouterLink, Avatar, TiempoRelativoPipe, ClickAfueraDirective],
+  imports: [RouterLink, Avatar, TiempoRelativoPipe, ClickAfueraDirective, SinSpoilersPipe],
   templateUrl: './campanita.html',
   styleUrl: './campanita.css',
   // Escape cierra el panel (como cualquier menú desplegable).

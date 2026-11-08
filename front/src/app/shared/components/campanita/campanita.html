@@ -94,7 +94,7 @@
                         }
                       </span>
                       @if (notificacion.comentario) {
-                        <span class="aviso-extracto">"{{ notificacion.comentario.mensaje }}"</span>
+                        <span class="aviso-extracto">"{{ notificacion.comentario.mensaje | sinSpoilers }}"</span>
                       }
                       <time class="aviso-fecha" [attr.datetime]="notificacion.createdAt">
                         {{ notificacion.createdAt | tiempoRelativo }}

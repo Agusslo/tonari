@@ -127,6 +127,29 @@
   font-size: 0.8rem;
 }
 
+.pie-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Imagen de un comentario (extra): chica, se abre entera al tocarla */
+.imagen-comentario {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 0.5rem;
+}
+
+.imagen-comentario img {
+  display: block;
+  max-width: min(100%, 22rem);
+  max-height: 16rem;
+  object-fit: cover;
+  border: 1px solid var(--linea-suave);
+  border-radius: 12px;
+}
+
 .editar-botones {
   display: flex;
   gap: 0.5rem;

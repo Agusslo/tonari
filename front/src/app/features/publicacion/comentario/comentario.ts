@@ -20,6 +20,10 @@ import { Avatar } from '../../../shared/components/avatar/avatar';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
 import { TiempoRelativoPipe } from '../../../shared/pipes/tiempo-relativo.pipe';
 import { AutoAlturaDirective } from '../../../shared/directives/auto-altura.directive';
+import { TextoSpoiler } from '../../../shared/components/texto-spoiler/texto-spoiler';
+import { ImagenAdjunta } from '../../../shared/utils/imagen-adjunta';
+import { BotonImagen } from '../../../shared/components/imagen-adjunta/boton-imagen';
+import { VistaImagen } from '../../../shared/components/imagen-adjunta/vista-imagen';
 
 // Cuántas respuestas se traen por vez ("Ver respuestas" y cada "Ver más").
 const RESPUESTAS_POR_TANDA = 5;
@@ -30,7 +34,7 @@ const RESPUESTAS_POR_TANDA = 5;
 // (este mismo componente se usa para cada respuesta, con esRespuesta = true).
 @Component({
   selector: 'app-comentario',
-  imports: [DatePipe, ReactiveFormsModule, RouterLink, Avatar, TiempoRelativoPipe, AutoAlturaDirective],
+  imports: [DatePipe, ReactiveFormsModule, RouterLink, Avatar, TiempoRelativoPipe, AutoAlturaDirective, TextoSpoiler, BotonImagen, VistaImagen],
   templateUrl: './comentario.html',
   styleUrl: './comentario.css',
 })
@@ -115,6 +119,8 @@ export class Comentario {
 
   protected readonly respondiendo = signal(false); // ¿está abierto el campo para responder?
   protected readonly enviandoRespuesta = signal(false);
+  // Imagen opcional de la respuesta (extra): con el botón o pegándola (Ctrl+V).
+  protected readonly imagenRespuesta = new ImagenAdjunta();
   protected readonly errorRespuesta = signal<string | null>(null);
   protected readonly formularioRespuesta = new FormGroup({
     mensaje: new FormControl('', {
@@ -155,19 +161,21 @@ export class Comentario {
   cancelarRespuesta() {
     this.respondiendo.set(false);
     this.formularioRespuesta.reset();
+    this.imagenRespuesta.quitar();
   }
 
   enviarRespuesta() {
     const texto = this.respuesta.value.trim();
-    if (!texto || this.respuesta.invalid || this.enviandoRespuesta()) return;
+    if (!texto || this.respuesta.invalid || this.enviandoRespuesta() || this.imagenRespuesta.procesando()) return;
 
     this.enviandoRespuesta.set(true);
     this.errorRespuesta.set(null);
-    this.api.responder(this.comentario()._id, texto).subscribe({
+    this.api.responder(this.comentario()._id, texto, this.imagenRespuesta.archivo()).subscribe({
       next: (nueva) => {
         this.enviandoRespuesta.set(false);
         this.respondiendo.set(false);
         this.formularioRespuesta.reset();
+        this.imagenRespuesta.quitar();
         this.totalRespuestas.update((total) => total + 1);
         this.respondido.emit();
         // Con el hilo abierto, la nueva va al final. Si estaba cerrado, se abre
