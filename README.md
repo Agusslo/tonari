@@ -97,6 +97,11 @@
 - **Notificaciones**: campanita en la cabecera con el número de no leídas: "Me gusta", nuevos seguidores, comentarios y respuestas. Se actualizan cada 30 segundos y se borran solas a los 60 días (índice TTL de Mongo).
 - **PWA (se instala como app)**: manifiesto con íconos propios y service worker de Angular. Abre rápido, se puede instalar desde el navegador (botón "Instalar app" en el pie), muestra la app aunque se corte internet (con un aviso de "Sin conexión") y avisa cuando hay una versión nueva para actualizar con un toque.
 - **Respuestas a comentarios** (un nivel, como Instagram).
+- **Encuestas**: una publicación puede llevar una encuesta de 2 a 4 opciones que dura 1 día, 3 días o 1 semana (la pregunta es el título). Un voto por persona, sin poder cambiarlo: los votos van en una colección aparte (`Votos`) con índice único publicación + usuario, y el conteo se suma con `$inc`. Los resultados se ven recién al votar o cuando cierra: antes, el back ni siquiera los manda.
+- **Spoilers inteligentes**: al publicar se marca "Spoilers de <obra> hasta el episodio/capítulo N" (la obra se elige de tu biblioteca). El back mira la biblioteca de quien la ve: si la terminó o ya pasó ese episodio, se muestra normal; si no, la descripción, la imagen y la encuesta quedan borrosas con "Mostrar igual". En descripciones y comentarios, lo escrito `||así||` queda tapado hasta tocarlo (como en Discord).
+- **Imágenes en comentarios y respuestas**, y **pegar imágenes con Ctrl+V** (capturas o "Copiar imagen") al publicar, comentar o responder.
+- **"Esta semana sale"** (columna del muro): de los animes que estás viendo, cuáles sacan episodio en los próximos 7 días y cuántos te faltan ver (AniList, un solo pedido para todos).
+- **Episodios que todavía no salieron**: en la ficha de un anime en emisión, los episodios futuros se ven apagados con "Sale vie 11:00" y no se pueden marcar.
 - **Imágenes en Cloudinary** con recorte automático para los avatares.
 - **Avatar generado** ([blobatar](https://blobatar.dev)) cuando el usuario no sube foto; si no carga, iniciales.
 - **Tarjeta "Tu actividad"** en el muro: "Me gusta" recibidos, promedio y tu publicación más querida.
@@ -224,6 +229,7 @@
   - [x] 3 directivas propias (`appAutoAltura`, `appImagenRespaldo`, `appClickAfuera`)
 
 ### Back
+- [x] Validar que el token sea de un administrador: `AdminGuard` (`back/src/auth/token/admin.guard.ts`), se usa como `@UseGuards(TokenGuard, AdminGuard)`. Consulta el perfil en la base (no el del token), así un admin al que le sacan el rol o lo deshabilitan pierde el acceso al instante (403 / 401)
 - **Usuarios controller** (validar que el token sea de un administrador)
   - [ ] GET: listado de usuarios
   - [ ] POST: alta de un usuario nuevo, eligiendo perfil administrador o usuario
