@@ -1,6 +1,7 @@
 import { Component, computed, input, output, signal } from '@angular/core';
 import { TipoObra } from '../../../../core/interfaces/biblioteca';
 import { TomoCapitulos } from '../../../../core/services/catalogo-api';
+import { cuandoSale } from '../../../../shared/utils/fechas';
 
 // Un grupo de la lista: un tomo (manga con datos de MangaDex) o un bloque de 25.
 interface Grupo {
@@ -31,6 +32,10 @@ export class ListaCapitulos {
   readonly tomos = input<TomoCapitulos[] | null>(null);
   readonly editable = input(true);
   readonly ocupada = input(false);
+  // Anime en emisión: hasta cuál salió y cuándo sale el próximo (null = salieron todos).
+  // Los que no salieron se ven apagados y no se pueden marcar.
+  readonly salidos = input<number | null>(null);
+  readonly proximo = input<{ episodio: number; fecha: Date } | null>(null);
 
   // El nuevo progreso que eligió el usuario.
   readonly marcar = output<number>();
@@ -81,9 +86,34 @@ export class ListaCapitulos {
     return numero <= this.progreso();
   }
 
+  // ¿Ya salió? (si no se sabe, se asume que sí, como antes)
+  protected salio(numero: number) {
+    const salidos = this.salidos();
+    return salidos === null || numero <= salidos;
+  }
+
+  // El próximo que sale (el único de los que no salieron que muestra la fecha).
+  protected esProximo(numero: number) {
+    return this.proximo()?.episodio === numero;
+  }
+
+  // "Sale vie 11:00" (en tu hora local).
+  protected textoSale() {
+    const proximo = this.proximo();
+    return proximo ? `Sale ${cuandoSale(proximo.fecha)}` : '';
+  }
+
+  // El último que se puede marcar en un grupo (los que no salieron no cuentan).
+  protected tope(grupo: Grupo) {
+    const salidos = this.salidos();
+    return salidos === null ? grupo.hasta : Math.min(grupo.hasta, salidos);
+  }
+
   // Ojito de un capítulo: si no lo viste, marca hasta ese; si ya lo viste,
   // lo desmarca a él y a los que siguen.
   protected tocarOjo(numero: number) {
+    // Uno que no salió no se puede marcar (sí desmarcar, por si quedó marcado de antes).
+    if (!this.leido(numero) && !this.salio(numero)) return;
     this.marcar.emit(this.leido(numero) ? numero - 1 : numero);
   }
 
@@ -92,9 +122,10 @@ export class ListaCapitulos {
   }
 
   // "Marcar tomo": todo leído hasta el último del grupo (o desmarcarlo si ya estaba).
+  // Si el grupo sigue saliendo, "todo" es hasta el último que salió.
   protected tocarGrupo(grupo: Grupo) {
-    const completo = this.progreso() >= grupo.hasta;
-    this.marcar.emit(completo ? grupo.desde - 1 : grupo.hasta);
+    const completo = this.progreso() >= this.tope(grupo);
+    this.marcar.emit(completo ? grupo.desde - 1 : this.tope(grupo));
   }
 }
 

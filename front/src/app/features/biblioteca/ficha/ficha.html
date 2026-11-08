@@ -147,7 +147,7 @@
               <button
                 type="button"
                 class="boton boton-secundario"
-                [disabled]="guardando() || (e.total !== null && e.progreso >= e.total)"
+                [disabled]="guardando() || (e.total !== null && e.progreso >= e.total) || (salidos() !== null && e.progreso >= salidos()!)"
                 (click)="sumarUno()"
               >+1 {{ unidad() === 'episodio' ? 'ep.' : 'cap.' }}</button>
             }
@@ -274,6 +274,8 @@
         [tomos]="capitulosManga()?.tomos ?? null"
         [editable]="esMia()"
         [ocupada]="guardando()"
+        [salidos]="salidos()"
+        [proximo]="f?.proximoEpisodio ?? null"
         (marcar)="marcarHasta($event)"
       />
     } @else {

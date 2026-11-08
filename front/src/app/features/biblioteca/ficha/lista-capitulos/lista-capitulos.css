@@ -214,6 +214,36 @@
   border-radius: var(--radio-pildora);
 }
 
+/* Anime en emisión: los episodios que todavía no salieron, apagados */
+.capitulos li.no-salio {
+  opacity: 0.45;
+  border-style: dashed;
+  border-color: var(--linea-suave);
+}
+
+/* El próximo que sale: menos apagado y con la fecha. "Ep. 7" corto para que entre. */
+.capitulos li.proximo {
+  opacity: 0.85;
+  border-color: rgb(199 184 255 / 0.4);
+}
+
+.capitulos li.proximo .unidad-larga {
+  display: none;
+}
+
+.capitulos li.proximo .unidad-corta {
+  display: inline;
+}
+
+.etiqueta-no-salio {
+  margin-left: auto;
+  padding-left: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--color-lila);
+}
+
 .unidad-corta {
   display: none;
 }

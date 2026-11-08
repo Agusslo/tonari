@@ -86,6 +86,12 @@ export class Ficha implements OnInit {
     () => this.total() ?? this.capitulosManga()?.ultimo ?? this.ficha()?.emitidos ?? null,
   );
 
+  // Anime en emisión: hasta qué episodio salió (null = salieron todos, o no se sabe).
+  // Ej.: temporada de 12 episodios que va por el 6 -> 6. No se pueden marcar los que no salieron.
+  protected readonly salidos = computed(() =>
+    this.entrada()?.tipo === 'anime' ? (this.ficha()?.emitidos ?? null) : null,
+  );
+
   // Cuántos muestra la lista de capítulos/episodios (nunca menos de los que ya marcaste).
   protected readonly cantidadLista = computed(() => {
     const total = this.total();
@@ -229,6 +235,12 @@ export class Ficha implements OnInit {
     const total = this.entrada()?.total;
     if (total != null && numero > total) {
       this.errorGuardar.set(`Tiene ${total} ${this.unidad()}s: no podés pasarte de ahí.`);
+      return;
+    }
+    // Sigue saliendo: no se puede marcar un episodio que todavía no salió.
+    const salidos = this.salidos();
+    if (salidos !== null && numero > salidos && numero > (this.entrada()?.progreso ?? 0)) {
+      this.errorGuardar.set(`Por ahora salieron ${salidos} episodios: el ${salidos + 1} todavía no salió.`);
       return;
     }
     if (!this.hayCambio()) return;

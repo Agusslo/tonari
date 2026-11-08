@@ -32,13 +32,15 @@
           </span>
         </button>
         @if (editable()) {
+          <!-- completo: viste todo lo que salió de este grupo (aunque falten episodios por salir) -->
+          @let completo = progreso() >= tope(grupo);
           <button
             type="button"
             class="marcar-grupo"
-            [disabled]="ocupada()"
+            [disabled]="ocupada() || tope(grupo) < grupo.desde"
             (click)="tocarGrupo(grupo)"
-            [attr.aria-label]="(leidos === grupo.numeros.length ? 'Desmarcar ' : 'Marcar como visto ') + grupo.nombre"
-          >{{ leidos === grupo.numeros.length ? 'Desmarcar' : 'Marcar todo' }}</button>
+            [attr.aria-label]="(completo ? 'Desmarcar ' : 'Marcar como visto ') + grupo.nombre"
+          >{{ completo ? 'Desmarcar' : 'Marcar todo' }}</button>
         }
       </div>
 
@@ -46,11 +48,18 @@
         <ul class="capitulos" [id]="'grupo-' + grupo.clave">
           @for (numero of grupo.numeros; track numero) {
             @let visto = leido(numero);
-            <li [class.visto]="visto" [class.siguiente]="numero === siguiente()">
+            @let salido = salio(numero);
+            <li
+              [class.visto]="visto"
+              [class.siguiente]="salido && numero === siguiente()"
+              [class.no-salio]="!salido"
+              [class.proximo]="!salido && esProximo(numero)"
+              [attr.title]="salido ? null : 'Todavía no salió'"
+            >
               <button
                 type="button"
                 class="ojo"
-                [disabled]="!editable() || ocupada()"
+                [disabled]="!editable() || ocupada() || (!visto && !salido)"
                 [attr.aria-pressed]="visto"
                 [attr.aria-label]="unidad() + ' ' + numero + (visto ? ': visto, tocá para desmarcar' : ': marcar como visto')"
                 (click)="tocarOjo(numero)"
@@ -70,7 +79,9 @@
                 <span class="unidad-larga">{{ unidad() }}</span><span class="unidad-corta" aria-hidden="true">{{ unidadCorta() }}</span>
                 {{ numero }}
               </span>
-              @if (numero === siguiente()) {
+              @if (!salido && esProximo(numero)) {
+                <span class="etiqueta-no-salio">{{ textoSale() }}</span>
+              } @else if (salido && numero === siguiente()) {
                 <span class="etiqueta-siguiente">Sigue</span>
               }
             </li>

@@ -75,7 +75,7 @@ const CONSULTA_FICHA = `
       bannerImage
       coverImage { extraLarge }
       siteUrl
-      nextAiringEpisode { episode }
+      nextAiringEpisode { episode airingAt }
     }
   }
 `;
@@ -95,7 +95,7 @@ interface FichaAnilist {
   bannerImage: string | null;
   coverImage: { extraLarge: string | null } | null;
   siteUrl: string;
-  nextAiringEpisode: { episode: number } | null; // solo si se está emitiendo
+  nextAiringEpisode: { episode: number; airingAt: number } | null; // solo si se está emitiendo
 }
 
 // "Esta semana sale" (extra): de VARIOS animes a la vez (id_in = "el id es alguno de
@@ -240,6 +240,10 @@ export class Anilist {
       total: (tipo === 'anime' ? m.episodes : m.chapters) ?? null,
       // Si el próximo episodio que sale es el 1150, ya salieron 1149.
       emitidos: m.nextAiringEpisode ? m.nextAiringEpisode.episode - 1 : null,
+      // airingAt viene en segundos (Unix); Date usa milisegundos.
+      proximoEpisodio: m.nextAiringEpisode
+        ? { episodio: m.nextAiringEpisode.episode, fecha: new Date(m.nextAiringEpisode.airingAt * 1000) }
+        : null,
       puntajeAnilist: m.averageScore !== null ? m.averageScore / 10 : null,
       banner: m.bannerImage,
       tapa: m.coverImage?.extraLarge ?? null,

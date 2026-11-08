@@ -6,6 +6,7 @@ import { BibliotecaApi } from '../../../core/services/biblioteca-api';
 import { Anilist } from '../../../core/services/anilist';
 import IEntrada from '../../../core/interfaces/biblioteca';
 import { rutaFicha } from '../../../shared/utils/rutas';
+import { cuandoSale } from '../../../shared/utils/fechas';
 
 const SEMANA = 7 * 24 * 60 * 60 * 1000; // 7 días en milisegundos
 
@@ -76,17 +77,6 @@ export class EstaSemana {
   }
 
   // "hoy 13:30", "mañana 22:00", "sáb 10:00" (en tu hora local).
-  cuando(fecha: Date) {
-    const hora = fecha.toLocaleTimeString('es-AR', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false, // 21:30 y no "09:30 p. m."
-    });
-    const hoy = new Date();
-    const manana = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 1);
-    if (fecha.toDateString() === hoy.toDateString()) return `hoy ${hora}`;
-    if (fecha.toDateString() === manana.toDateString()) return `mañana ${hora}`;
-    const dia = fecha.toLocaleDateString('es-AR', { weekday: 'short' }).replace('.', '');
-    return `${dia} ${hora}`;
-  }
+  protected readonly cuando = cuandoSale;
+
 }

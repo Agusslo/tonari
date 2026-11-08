@@ -41,6 +41,7 @@ export interface IFicha {
   anio: number | null;
   total: number | null;
   emitidos: number | null; // anime en emisión: episodios que ya salieron
+  proximoEpisodio: { episodio: number; fecha: Date } | null; // anime en emisión: cuándo sale el que sigue
   puntajeAnilist: number | null; // promedio de AniList, de 0 a 10
   banner: string | null; // imagen ancha para el fondo de la cabecera
   tapa: string | null; // tapa en alta calidad
