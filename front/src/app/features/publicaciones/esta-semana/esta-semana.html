@@ -1,0 +1,54 @@
+<section class="panel semana" aria-labelledby="titulo-semana">
+  <p class="kicker" lang="ja" aria-hidden="true">今週</p>
+  <h2 id="titulo-semana" class="semana-titulo">Esta semana sale</h2>
+
+  @switch (estado()) {
+    @case ('cargando') {
+      <ul class="lista" aria-hidden="true">
+        @for (n of [1, 2]; track n) {
+          <li class="estreno esqueleto">
+            <span class="tapa"></span>
+            <span class="esqueleto-linea" style="width: 70%"></span>
+          </li>
+        }
+      </ul>
+      <p class="solo-lector" role="status">Buscando los próximos episodios…</p>
+    }
+    @case ('sin-obras') {
+      <p class="texto-secundario vacio">
+        Marcá animes como <strong>Viendo</strong> en tu
+        <a routerLink="/biblioteca">biblioteca</a> y acá te avisamos cuándo sale el próximo episodio.
+      </p>
+    }
+    @case ('error') {
+      <p class="texto-secundario vacio">No pudimos consultar AniList. Probá más tarde.</p>
+    }
+    @default {
+      <ul class="lista">
+        @for (estreno of estrenos(); track estreno.entrada._id) {
+          <li class="estreno">
+            @if (estreno.entrada.imagen) {
+              <img class="tapa" [src]="estreno.entrada.imagen" alt="" loading="lazy" />
+            } @else {
+              <span class="tapa"></span>
+            }
+            <div class="datos">
+              <a class="obra" [routerLink]="rutaFicha(estreno.entrada)">{{ estreno.entrada.titulo }}</a>
+              <p class="cuando">
+                Ep. {{ estreno.episodio }} ·
+                <time [attr.datetime]="estreno.fecha.toISOString()">{{ cuando(estreno.fecha) }}</time>
+              </p>
+              @if (estreno.sinVer > 0) {
+                <p class="sin-ver">
+                  {{ estreno.sinVer }} {{ estreno.sinVer === 1 ? 'episodio' : 'episodios' }} sin ver
+                </p>
+              }
+            </div>
+          </li>
+        } @empty {
+          <li class="texto-secundario vacio">Nada de lo que estás viendo sale esta semana.</li>
+        }
+      </ul>
+    }
+  }
+</section>

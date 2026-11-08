@@ -98,6 +98,26 @@ interface FichaAnilist {
   nextAiringEpisode: { episode: number } | null; // solo si se está emitiendo
 }
 
+// "Esta semana sale" (extra): de VARIOS animes a la vez (id_in = "el id es alguno de
+// esta lista"), cuándo sale el próximo episodio. Un solo pedido para todos.
+// airingAt viene en SEGUNDOS desde 1970 (Unix); JavaScript usa milisegundos.
+const CONSULTA_PROXIMOS = `
+  query ($ids: [Int]) {
+    Page(perPage: 50) {
+      media(id_in: $ids, type: ANIME) {
+        id
+        nextAiringEpisode { episode airingAt }
+      }
+    }
+  }
+`;
+
+// El próximo episodio de un anime que se está emitiendo.
+export interface ProximoEpisodio {
+  episodio: number;
+  fecha: Date;
+}
+
 // El estado de publicación, según sea anime (se emite) o manga (se publica).
 const ESTADOS_PUBLICACION: Record<string, [string, string]> = {
   RELEASING: ['En emisión', 'En publicación'],
@@ -176,6 +196,34 @@ export class Anilist {
           delay: (error) => (error?.status === 429 ? throwError(() => error) : timer(1000)),
         }),
         map(({ data }) => this.aFicha(data.Media, tipo)),
+      );
+  }
+
+  // Devuelve un Map: id de AniList -> su próximo episodio. Los que no se están
+  // emitiendo (terminados, en pausa) no aparecen en el Map. Máximo 50 ids por pedido.
+  proximosEpisodios(ids: number[]) {
+    return this.http
+      .post<{
+        data: { Page: { media: { id: number; nextAiringEpisode: { episode: number; airingAt: number } | null }[] } };
+      }>(URL_ANILIST, { query: CONSULTA_PROXIMOS, variables: { ids: ids.slice(0, 50) } })
+      .pipe(
+        timeout(8000),
+        retry({
+          count: 1,
+          delay: (error) => (error?.status === 429 ? throwError(() => error) : timer(1000)),
+        }),
+        map(({ data }) => {
+          const proximos = new Map<number, ProximoEpisodio>();
+          for (const m of data.Page.media) {
+            if (m.nextAiringEpisode) {
+              proximos.set(m.id, {
+                episodio: m.nextAiringEpisode.episode,
+                fecha: new Date(m.nextAiringEpisode.airingAt * 1000),
+              });
+            }
+          }
+          return proximos;
+        }),
       );
   }
 

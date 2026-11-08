@@ -1,0 +1,98 @@
+:host {
+  display: block;
+}
+
+/* Mismo formato que las otras tarjetas de la columna */
+.semana {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+}
+
+.semana .kicker,
+.semana-titulo {
+  margin: 0;
+}
+
+.semana-titulo {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.estreno {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+/* Tapa chiquita, con la proporción de un póster */
+.tapa {
+  flex: none;
+  width: 2.6rem;
+  height: 3.7rem;
+  object-fit: cover;
+  background: var(--velo-hueso);
+  border-radius: 8px;
+}
+
+.datos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.datos p {
+  margin: 0;
+}
+
+.obra {
+  overflow: hidden;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-hueso);
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.obra:hover {
+  color: var(--color-menta);
+}
+
+.cuando {
+  font-size: 0.82rem;
+  color: var(--color-menta);
+}
+
+.sin-ver {
+  font-size: 0.75rem;
+  color: var(--color-lila);
+}
+
+.vacio {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.vacio a {
+  color: var(--color-menta);
+}
+
+.esqueleto {
+  padding: 0;
+  background: none;
+  border: 0;
+}

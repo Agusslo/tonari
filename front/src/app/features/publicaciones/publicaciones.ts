@@ -18,12 +18,13 @@ import { TarjetaPublicacion } from './tarjeta-publicacion/tarjeta-publicacion';
 import { Modal } from '../../shared/components/modal/modal';
 import { CrearPublicacion } from './crear-publicacion/crear-publicacion';
 import { TarjetaPerfil } from './tarjeta-perfil/tarjeta-perfil';
+import { EstaSemana } from './esta-semana/esta-semana';
 import { entrarEnCascada } from '../../shared/utils/animaciones';
 import { mensajeDeError } from '../../shared/utils/errores-http';
 
 @Component({
   selector: 'app-publicaciones',
-  imports: [TarjetaPublicacion, Modal, CrearPublicacion, TarjetaPerfil],
+  imports: [TarjetaPublicacion, Modal, CrearPublicacion, TarjetaPerfil, EstaSemana],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
 })
