@@ -2,6 +2,7 @@ import {
   afterRenderEffect,
   Component,
   computed,
+  DestroyRef,
   effect,
   ElementRef,
   inject,
@@ -85,7 +86,17 @@ export class Publicaciones implements OnInit {
   // Las tarjetas que hay en pantalla (como elementos del DOM, para animarlas).
   private readonly tarjetas = viewChildren(TarjetaPublicacion, { read: ElementRef });
 
+  // ¿Pantalla chica? (el mismo corte que el CSS). En el celular la columna lateral
+  // se oculta, así que "Esta semana sale" se muestra arriba del muro. Se dibuja en un
+  // solo lugar a la vez para no pedirle dos veces lo mismo a AniList.
+  private readonly pantallaChica = matchMedia('(max-width: 860px)');
+  protected readonly esCelular = signal(this.pantallaChica.matches);
+
   constructor() {
+    const alCambiar = (evento: MediaQueryListEvent) => this.esCelular.set(evento.matches);
+    this.pantallaChica.addEventListener('change', alCambiar);
+    inject(DestroyRef).onDestroy(() => this.pantallaChica.removeEventListener('change', alCambiar));
+
     // Después de dibujar la lista, las tarjetas nuevas entran en cascada (GSAP).
     // Las que ya estaban no se vuelven a animar: al cargar más, solo entran las nuevas.
     afterRenderEffect(() => {

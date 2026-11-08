@@ -15,6 +15,11 @@
     <!-- Formulario para publicar (solo con sesión iniciada) -->
     @if (usuario(); as usuario) {
       <app-crear-publicacion [usuario]="usuario" (creada)="alCrear()" />
+
+      <!-- En el celular la columna lateral no se ve: "Esta semana sale" va acá -->
+      @if (esCelular()) {
+        <app-esta-semana class="semana-celular" />
+      }
     }
 
     <!-- Pestañas (extra): todas las publicaciones o solo las de la gente que seguís -->
@@ -199,7 +204,9 @@
       </section>
 
       <!-- Esta semana sale (extra): los próximos episodios de lo que estás viendo -->
-      <app-esta-semana />
+      @if (!esCelular()) {
+        <app-esta-semana />
+      }
     }
   </aside>
 </div>

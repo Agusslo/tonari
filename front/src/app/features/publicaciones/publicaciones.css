@@ -324,3 +324,9 @@
     display: none;
   }
 }
+
+/* "Esta semana sale" en el celular: arriba del muro, separado de las pestañas */
+.semana-celular {
+  margin-bottom: 1.75rem;
+  animation: aparecer 0.5s 0.05s ease-out both;
+}

@@ -96,3 +96,24 @@
   background: none;
   border: 0;
 }
+
+/* En el celular (arriba del muro): más compacta, para no empujar tanto las publicaciones */
+@media (max-width: 860px) {
+  .semana {
+    gap: 0.6rem;
+    padding: 1.1rem 1.25rem;
+  }
+
+  .semana-titulo {
+    font-size: 1rem;
+  }
+
+  .lista {
+    gap: 0.6rem;
+  }
+
+  .tapa {
+    width: 2.3rem;
+    height: 3.3rem;
+  }
+}
