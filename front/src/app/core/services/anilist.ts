@@ -285,6 +285,9 @@ export class Anilist {
   // va una sola vez.
   // También devuelve sus PRECUELAS (lo que viene antes): si tenés la temporada 3,
   // su precuela es la 2 -> ya la viste, aunque no esté en tu biblioteca.
+  //   idsPrecuelas: todas (para no recomendarte como "nueva" algo que ya pasaste).
+  //   precuelas: solo las que son SERIES ya terminadas (TV, TV corto, ONA), con sus datos,
+  //   para "Completá tu biblioteca". Películas y especiales no: esos no se dan por vistos.
   secuelas(ids: number[]) {
     return this.http
       .post<{
@@ -302,37 +305,26 @@ export class Anilist {
         }),
         map(({ data }) => {
           const porId = new Map<number, Secuela>();
-          const precuelas = new Set<number>();
+          const idsPrecuelas = new Set<number>();
+          const precuelas = new Map<number, Secuela>();
           for (const m of data.Page.media) {
             for (const { relationType, node } of m.relations?.edges ?? []) {
-              if (relationType === 'PREQUEL') precuelas.add(node.id);
+              if (relationType === 'PREQUEL' && node.type === 'ANIME') {
+                idsPrecuelas.add(node.id);
+                const esSerie = ['TV', 'TV_SHORT', 'ONA'].includes(node.format ?? '');
+                if (esSerie && node.status === 'FINISHED' && !precuelas.has(node.id)) {
+                  precuelas.set(node.id, aSecuela(m.id, node));
+                }
+                continue;
+              }
               const estado = node.status as EstadoSecuela;
               if (relationType !== 'SEQUEL' || node.type !== 'ANIME') continue;
               if (!['RELEASING', 'NOT_YET_RELEASED', 'FINISHED'].includes(estado)) continue;
               if (porId.has(node.id)) continue;
-              porId.set(node.id, {
-                origen: m.id,
-                estado,
-                estreno: node.startDate,
-                proximo: node.nextAiringEpisode
-                  ? {
-                      episodio: node.nextAiringEpisode.episode,
-                      fecha: new Date(node.nextAiringEpisode.airingAt * 1000),
-                    }
-                  : null,
-                obra: {
-                  idAnilist: node.id,
-                  tipo: 'anime',
-                  titulo: node.title.romaji ?? node.title.english ?? 'Sin título',
-                  imagen: node.coverImage?.large ?? undefined,
-                  total: node.episodes,
-                  anio: node.startDate?.year ?? null,
-                  formato: node.format ? (FORMATOS[node.format] ?? node.format) : null,
-                },
-              });
+              porId.set(node.id, aSecuela(m.id, node));
             }
           }
-          return { secuelas: [...porId.values()], precuelas };
+          return { secuelas: [...porId.values()], idsPrecuelas, precuelas: [...precuelas.values()] };
         }),
       );
   }
@@ -385,4 +377,26 @@ function textoPlano(html: string): string {
   const conSaltos = html.replace(/<br\s*\/?>/gi, '\n');
   const texto = new DOMParser().parseFromString(conSaltos, 'text/html').body.textContent ?? '';
   return texto.replace(/\n{3,}/g, '\n\n').trim();
+}
+
+// Una obra relacionada de AniList (secuela o precuela) en el formato que usa TONARI.
+// origen: el anime TUYO del que es secuela/precuela.
+function aSecuela(origen: number, node: NodoSecuela): Secuela {
+  return {
+    origen,
+    estado: node.status as EstadoSecuela,
+    estreno: node.startDate,
+    proximo: node.nextAiringEpisode
+      ? { episodio: node.nextAiringEpisode.episode, fecha: new Date(node.nextAiringEpisode.airingAt * 1000) }
+      : null,
+    obra: {
+      idAnilist: node.id,
+      tipo: 'anime',
+      titulo: node.title.romaji ?? node.title.english ?? 'Sin título',
+      imagen: node.coverImage?.large ?? undefined,
+      total: node.episodes,
+      anio: node.startDate?.year ?? null,
+      formato: node.format ? (FORMATOS[node.format] ?? node.format) : null,
+    },
+  };
 }

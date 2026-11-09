@@ -40,6 +40,9 @@ type Estado = 'cargando' | 'listo' | 'error';
 //  2. Temporadas nuevas: secuelas de tus animes que no tenés en la biblioteca (AniList),
 //     para enterarte de la temporada 3 sin buscarla. Botón para agregarla.
 //  3. Manga: capítulos nuevos de lo que estás leyendo (MangaDex, a través de nuestro back).
+//  4. Completá tu biblioteca: si estás viendo la temporada 3 y no tenés la 2, te pregunta
+//     si ya la viste ("Sí, la vi" la agrega como Completado). No la marca sola: podés
+//     haberla salteado, y tu biblioteca la llenás vos.
 // Todo arranca de tu biblioteca: un solo pedido a nuestro back, y de ahí cada bloque
 // hace lo suyo por separado (si uno tarda o falla, los otros se ven igual).
 @Component({
@@ -67,11 +70,23 @@ export class EstaSemana {
   protected readonly agregando = signal<number | null>(null); // id de la que se está agregando
   protected readonly errorAgregar = signal<string | null>(null);
 
+  // Precuelas que te faltan registrar (series ya terminadas de lo que estás viendo o completaste).
+  private readonly precuelas = signal<Secuela[]>([]);
+  protected readonly marcandoTodas = signal(false);
+
   protected readonly mangas = signal<MangaNuevo[]>([]);
   protected readonly estadoMangas = signal<Estado>('cargando');
 
-  // Título de tu anime de cada secuela ("secuela de Kusuriya no Hitorigoto").
+  // Título y estado de cada anime tuyo ("Sigue a Kusuriya", "Estás viendo Kusuriya 3rd Season").
   private readonly titulos = new Map<number, string>();
+  private readonly estados = new Map<number, IEntrada['estado']>();
+
+  // "Completá tu biblioteca": las que no ocultaste, hasta 4.
+  protected readonly faltantes = computed(() =>
+    this.precuelas()
+      .filter((s) => !this.ocultas().has(s.obra.idAnilist))
+      .slice(0, MAX_TEMPORADAS),
+  );
 
   // Las secuelas para mostrar: sin las que ocultaste, primero las que están saliendo,
   // después las anunciadas y al final las que ya terminaron y te faltan.
@@ -91,6 +106,7 @@ export class EstaSemana {
       this.estadoMangas() !== 'cargando' &&
       !this.estrenos().length &&
       !this.temporadas().length &&
+      !this.faltantes().length &&
       !this.mangas().length,
   );
 
@@ -108,7 +124,10 @@ export class EstaSemana {
           const viendo = animes.filter((e) => e.estado === 'en-curso');
           const completados = animes.filter((e) => e.estado === 'completado');
           const leyendo = lista.filter((e) => e.tipo === 'manga' && e.estado === 'en-curso');
-          for (const e of animes) this.titulos.set(e.idAnilist, e.titulo);
+          for (const e of animes) {
+            this.titulos.set(e.idAnilist, e.titulo);
+            this.estados.set(e.idAnilist, e.estado);
+          }
 
           if (!viendo.length && !completados.length && !leyendo.length) {
             this.general.set('sin-obras');
@@ -165,14 +184,16 @@ export class EstaSemana {
       .secuelas(origenes.map((e) => e.idAnilist))
       .pipe(takeUntilDestroyed(this.destruir))
       .subscribe({
-        next: ({ secuelas, precuelas }) => {
+        next: ({ secuelas, idsPrecuelas, precuelas }) => {
+          // Las precuelas que no tenés: "¿ya viste esta?"
+          this.precuelas.set(precuelas.filter((p) => !tengo.has(p.obra.idAnilist)));
           this.secuelas.set(
             secuelas.filter(
               (s) =>
                 !tengo.has(s.obra.idAnilist) && // si ya la tenés (en cualquier estado), no hace falta avisar
                 // Si algo tuyo viene DESPUÉS de esta (es su precuela), ya la viste:
                 // estás en la temporada 3, no te recomendamos la 2.
-                !precuelas.has(s.obra.idAnilist) &&
+                !idsPrecuelas.has(s.obra.idAnilist) &&
                 (s.estado !== 'FINISHED' || completadas.has(s.origen)),
             ),
           );
@@ -224,6 +245,67 @@ export class EstaSemana {
 
   private quitarSecuela(id: number) {
     this.secuelas.update((lista) => lista.filter((s) => s.obra.idAnilist !== id));
+  }
+
+  // ---------- 4. Completá tu biblioteca ----------
+  // "Sí, la vi": la agrega como Completado. El back pone el progreso en el total
+  // (regla de siempre: Completado = viste todos los episodios).
+  marcarVista(precuela: Secuela) {
+    if (this.agregando() !== null || this.marcandoTodas()) return;
+    this.agregando.set(precuela.obra.idAnilist);
+    this.errorAgregar.set(null);
+    this.bibliotecaApi.agregar(precuela.obra, 'completado').subscribe({
+      next: () => {
+        this.agregando.set(null);
+        this.quitarPrecuela(precuela.obra.idAnilist);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.agregando.set(null);
+        if (error.status === 409) this.quitarPrecuela(precuela.obra.idAnilist);
+        else this.errorAgregar.set('No pudimos marcarla. Probá de nuevo.');
+      },
+    });
+  }
+
+  // "Marcar todas como vistas": de a una (concatMap), así si una falla las demás siguen.
+  marcarTodas() {
+    if (this.agregando() !== null || this.marcandoTodas()) return;
+    this.marcandoTodas.set(true);
+    this.errorAgregar.set(null);
+    let fallaron = 0;
+    from(this.faltantes())
+      .pipe(
+        concatMap((precuela) =>
+          this.bibliotecaApi.agregar(precuela.obra, 'completado').pipe(
+            concatMap(() => of(precuela.obra.idAnilist)),
+            catchError((error: HttpErrorResponse) => {
+              if (error.status === 409) return of(precuela.obra.idAnilist); // ya estaba: igual se saca
+              fallaron++;
+              return of(null);
+            }),
+          ),
+        ),
+        takeUntilDestroyed(this.destruir),
+      )
+      .subscribe({
+        next: (id) => {
+          if (id !== null) this.quitarPrecuela(id);
+        },
+        complete: () => {
+          this.marcandoTodas.set(false);
+          if (fallaron) this.errorAgregar.set(`No pudimos marcar ${fallaron}. Probá de nuevo.`);
+        },
+      });
+  }
+
+  private quitarPrecuela(id: number) {
+    this.precuelas.update((lista) => lista.filter((p) => p.obra.idAnilist !== id));
+  }
+
+  // "Estás viendo Kusuriya 3rd Season" / "Completaste Kusuriya 3rd Season"
+  textoFaltante(p: Secuela) {
+    const titulo = this.titulos.get(p.origen) ?? 'la que sigue';
+    return this.estados.get(p.origen) === 'completado' ? `Completaste ${titulo}` : `Estás viendo ${titulo}`;
   }
 
   // ---------- 3. Manga: capítulos nuevos ----------

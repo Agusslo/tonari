@@ -103,6 +103,8 @@
 - **Novedades** (columna del muro; arriba del muro en el celular), en tres bloques:
   - **Esta semana sale**: de los animes que estás viendo, cuáles sacan episodio en los próximos 7 días y cuántos te faltan ver (AniList, un solo pedido para todos).
   - **Temporadas nuevas**: en AniList cada temporada es una obra distinta; con sus relaciones `SEQUEL` avisa las secuelas de tus animes que no tenés (saliendo, anunciadas o ya terminadas), con botón para agregarlas y "No me interesa".
+  - **Completá tu biblioteca**: si estás viendo (o completaste) la temporada 3 y no tenés registrada la 2, pregunta "¿ya la viste?" con relaciones `PREQUEL` de AniList. "Sí, la vi" la agrega como Completado (o "Marcar todas"); no la marca sola, porque podés haberla salteado. Solo series ya terminadas (nunca películas ni especiales). Tampoco recomienda como "temporada nueva" algo que ya pasaste.
+  - Al tocar una obra que todavía no está en tu biblioteca se abre su **ficha en vista previa** (info de AniList + "Agregar como…").
   - **Manga: capítulos nuevos**: de los mangas que estás leyendo, cuántos capítulos salieron que no leíste (MangaDex a través de nuestro back, de a uno por vez y con caché de 6 horas).
 - **Episodios que todavía no salieron**: en la ficha de un anime en emisión, los episodios futuros se ven apagados con "Sale vie 11:00" y no se pueden marcar.
 - **Imágenes en Cloudinary** con recorte automático para los avatares.

@@ -401,3 +401,14 @@
     font-size: 0.72rem;
   }
 }
+
+/* "Marcar todas como vistas" (Completá tu biblioteca): mismo botón, a todo el ancho */
+.marcar-todas {
+  justify-content: center;
+  width: 100%;
+}
+
+/* La pregunta de "Completá tu biblioteca" se lee entera (pasa de renglón) */
+.origen.pregunta {
+  white-space: normal;
+}

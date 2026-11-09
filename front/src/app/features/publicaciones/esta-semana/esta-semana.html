@@ -114,6 +114,69 @@
         </div>
       }
 
+      <!-- ---------- 4. Completá tu biblioteca ---------- -->
+      <!-- (va antes del manga en el HTML para quedar junto a "Temporadas nuevas", que es lo mismo:
+           obras relacionadas con las tuyas) -->
+      @if (faltantes().length) {
+        <div class="bloque">
+          <h3 class="bloque-titulo">Completá tu biblioteca</h3>
+          <ul class="lista">
+            @for (precuela of faltantes(); track precuela.obra.idAnilist) {
+              <li class="estreno">
+                @if (precuela.obra.imagen) {
+                  <img appImagenRespaldo class="tapa" [src]="precuela.obra.imagen" alt="" loading="lazy" />
+                } @else {
+                  <span class="tapa"></span>
+                }
+                <div class="datos">
+                  <a class="obra" [routerLink]="rutaFicha(precuela.obra)">{{ precuela.obra.titulo }}</a>
+                  <p class="origen pregunta">{{ textoFaltante(precuela) }}: ¿ya viste esta?</p>
+                  <div class="acciones">
+                    <button
+                      type="button"
+                      class="agregar"
+                      [disabled]="agregando() !== null || marcandoTodas()"
+                      [attr.aria-busy]="agregando() === precuela.obra.idAnilist"
+                      (click)="marcarVista(precuela)"
+                    >
+                      @if (agregando() === precuela.obra.idAnilist) {
+                        <span class="spinner" aria-hidden="true"></span>
+                      }
+                      Sí, la vi
+                    </button>
+                    <button
+                      type="button"
+                      class="ocultar"
+                      (click)="ocultar(precuela)"
+                      [attr.aria-label]="'No la vi: ocultar ' + precuela.obra.titulo"
+                      title="No la vi / no me interesa"
+                    >
+                      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                        <path d="M6 6l12 12M18 6L6 18" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+          @if (faltantes().length > 1) {
+            <button
+              type="button"
+              class="agregar marcar-todas"
+              [disabled]="agregando() !== null || marcandoTodas()"
+              [attr.aria-busy]="marcandoTodas()"
+              (click)="marcarTodas()"
+            >
+              @if (marcandoTodas()) {
+                <span class="spinner" aria-hidden="true"></span>
+              }
+              Marcar todas como vistas
+            </button>
+          }
+        </div>
+      }
+
       <!-- ---------- 3. Manga: capítulos nuevos ---------- -->
       @if (mangas().length) {
         <div class="bloque">
