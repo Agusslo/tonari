@@ -105,6 +105,7 @@
 }
 
 .cuenta-leidos {
+  flex: none; /* nunca se achica ni se encima con "Marcar" */
   margin-left: auto;
   padding: 0.1rem 0.5rem;
   font-size: 0.75rem;
@@ -285,6 +286,25 @@
 
   .unidad-corta {
     display: inline;
+  }
+}
+
+/* Celulares angostos: "Episodios" / "Capítulos" ya está en el título de la sección,
+   así que en cada grupo queda solo el rango ("1101–1180"). El lector de pantalla
+   lo sigue leyendo completo. */
+@media (max-width: 420px) {
+  .nombre-grupo {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .rango {
+    font-weight: 700;
+    color: var(--color-hueso);
   }
 }
 

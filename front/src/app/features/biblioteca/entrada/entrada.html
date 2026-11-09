@@ -32,7 +32,7 @@
           >−</button>
         }
         <span class="numeros">
-          <strong>{{ e.progreso }}</strong> / {{ e.total ?? '?' }} {{ unidad() }}
+          <strong>{{ e.progreso }}</strong> / {{ e.total ?? '?' }} <span class="unidad">{{ unidad() }}</span>
         </span>
         @if (editable()) {
           <button

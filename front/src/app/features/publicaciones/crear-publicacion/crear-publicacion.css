@@ -374,6 +374,13 @@ button.adjuntar:focus-visible {
 
 /* En el celular la barra ocupa todo el ancho */
 @media (max-width: 520px) {
+  /* El título un poco más chico y, si el placeholder no entra, termina en "…"
+     en vez de cortarse a la mitad de una letra */
+  .entrada-titulo {
+    font-size: 1.05rem;
+    text-overflow: ellipsis;
+  }
+
   .herramientas {
     margin-left: 0;
   }

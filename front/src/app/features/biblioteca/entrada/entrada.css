@@ -407,3 +407,47 @@ a.tapa-entrada:hover img {
 .mensaje-error {
   font-size: 0.78rem;
 }
+
+/* Celulares: la grilla es de dos columnas angostas (~140px por tarjeta).
+   Todo un poco más justo para que "−  1180 / ?  +" entre sin salirse del borde. */
+@media (max-width: 420px) {
+  .cuerpo {
+    gap: 0.5rem;
+    padding: 0.6rem;
+  }
+
+  .titulo {
+    font-size: 0.85rem;
+  }
+
+  .contador {
+    gap: 0.25rem;
+  }
+
+  .paso {
+    flex: none;
+    width: 1.65rem;
+    height: 1.65rem;
+  }
+
+  .numeros {
+    font-size: 0.76rem;
+  }
+
+  /* "ep." / "cap." se cae: el número ya se entiende con la barra de arriba */
+  .unidad {
+    display: none;
+  }
+
+  .nota-boton {
+    gap: 0.25rem;
+    padding: 0 0.45rem;
+  }
+}
+
+/* Los más angostos (~280px): la flechita de "Sin nota" se cae para que no toque el tacho */
+@media (max-width: 340px) {
+  .nota-boton .chevron {
+    display: none;
+  }
+}

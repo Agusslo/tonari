@@ -301,3 +301,27 @@
             font-size: clamp(1.8rem, 7vw, 2.4rem);
         }
     }
+
+    /* Celulares angostos: el kicker ("となり · al lado") va arriba a todo el ancho;
+       al lado del abanico no entraba y se partía en vertical, letra por letra */
+    @media (max-width: 420px) {
+        .portada {
+            grid-template-areas:
+                'kicker kicker'
+                'pie ilustracion';
+            align-items: center;
+        }
+
+        .portada > .kicker {
+            white-space: nowrap;
+        }
+
+        .abanico {
+            width: 6rem;
+            height: 6.5rem;
+        }
+
+        .tapa {
+            width: 3.6rem;
+        }
+    }

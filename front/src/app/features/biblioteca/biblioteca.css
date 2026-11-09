@@ -265,6 +265,16 @@
   }
 }
 
+/* A 340px o menos el margen de la página es 0.75rem (styles.css): la fila de
+   filtros se estira lo mismo hasta los bordes, sin pasarse */
+@media (max-width: 340px) {
+  .filtros {
+    width: calc(100% + 1.5rem);
+    margin-inline: -0.75rem;
+    padding-inline: 0.75rem;
+  }
+}
+
 /* La grilla de tapas: tantas columnas como entren (mínimo 11.5rem cada una) */
 .grilla {
   display: grid;

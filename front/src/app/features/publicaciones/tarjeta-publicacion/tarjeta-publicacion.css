@@ -342,9 +342,31 @@ a.comentarios:hover {
   cursor: not-allowed;
 }
 
-/* En celulares angostos, "comentarios" se oculta y queda solo el ícono con el número */
+/* Los botones del pie nunca se parten en dos renglones ("3 Me / gusta") */
+.me-gusta,
+.comentarios,
+.eliminar {
+  white-space: nowrap;
+}
+
+/* En celulares angostos, "comentarios" se oculta y queda solo el ícono con el número.
+   "Eliminar" también queda solo con el ícono (el botón ya tiene aria-label). */
 @media (max-width: 400px) {
-  .comentarios-texto {
+  .comentarios-texto,
+  .eliminar-texto {
     display: none;
+  }
+
+  .pie {
+    gap: 0.5rem;
+  }
+
+  .me-gusta,
+  .comentarios {
+    padding-inline: 0.7rem;
+  }
+
+  .eliminar {
+    padding-inline: 0.65rem;
   }
 }

@@ -600,6 +600,19 @@
   }
 }
 
+/* Celulares: al lado de la tapa quedaban ~130px y el título se partía letra por
+   letra. Acá la tapa va arriba (más chica) y los datos abajo, a todo el ancho. */
+@media (max-width: 480px) {
+  .cabecera-contenido {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .tapa-grande {
+    width: 7.5rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .barra span,
   .seguimiento {

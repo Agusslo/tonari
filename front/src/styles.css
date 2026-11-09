@@ -270,9 +270,59 @@ app-root {
     justify-content: center;
   }
 
+  /* Pie: todo centrado y, si no entra, baja ordenado al renglón de abajo */
+  .pie-sitio p {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 0.75rem;
+    text-align: center;
+  }
+
   .navegacion a {
     padding: 0.4rem 0.6rem;
     font-size: 0.875rem;
+    white-space: nowrap;
+  }
+}
+
+/* Celulares angostos (320–400px): el menú ocupa todo el ancho, en un solo renglón,
+   con los links repartidos y un poco más chicos */
+@media (max-width: 400px) {
+  .cabecera {
+    padding-inline: 0.75rem;
+  }
+
+  .navegacion {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0;
+  }
+
+  .navegacion a {
+    padding: 0.4rem 0.55rem;
+    font-size: 0.8rem;
+  }
+
+  /* Los paneles respiran un poco menos: más lugar para el contenido */
+  .panel {
+    padding: 1.15rem;
+  }
+}
+
+/* Los más angostos (celulares plegables, ~280px): el menú todavía más justo */
+@media (max-width: 340px) {
+  .cabecera {
+    padding-inline: 0.5rem;
+  }
+
+  .navegacion a {
+    padding: 0.35rem 0.4rem;
+    font-size: 0.74rem;
+  }
+
+  .contenido {
+    padding-inline: 0.75rem;
   }
 }
 

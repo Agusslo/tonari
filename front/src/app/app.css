@@ -41,6 +41,16 @@
     padding-inline: 0.35rem;
   }
 }
+
+@media (max-width: 400px) {
+  .nav-salir {
+    padding-inline: 0.45rem;
+  }
+
+  .navegacion a.nav-perfil {
+    padding-inline: 0.25rem;
+  }
+}
 /* Link a la política de privacidad, en el pie */
 .pie-enlace {
   color: inherit;
