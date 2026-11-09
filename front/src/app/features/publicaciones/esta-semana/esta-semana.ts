@@ -7,6 +7,7 @@ import { Anilist } from '../../../core/services/anilist';
 import IEntrada from '../../../core/interfaces/biblioteca';
 import { rutaFicha } from '../../../shared/utils/rutas';
 import { cuandoSale } from '../../../shared/utils/fechas';
+import { ImagenRespaldoDirective } from '../../../shared/directives/imagen-respaldo.directive';
 
 const SEMANA = 7 * 24 * 60 * 60 * 1000; // 7 días en milisegundos
 
@@ -24,7 +25,7 @@ interface Estreno {
 //  3. Muestra los que salen en los próximos 7 días, el más cercano primero.
 @Component({
   selector: 'app-esta-semana',
-  imports: [RouterLink],
+  imports: [RouterLink, ImagenRespaldoDirective],
   templateUrl: './esta-semana.html',
   styleUrl: './esta-semana.css',
 })

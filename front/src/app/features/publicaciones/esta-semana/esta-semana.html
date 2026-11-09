@@ -28,7 +28,8 @@
         @for (estreno of estrenos(); track estreno.entrada._id) {
           <li class="estreno">
             @if (estreno.entrada.imagen) {
-              <img class="tapa" [src]="estreno.entrada.imagen" alt="" loading="lazy" />
+              <!-- appImagenRespaldo: si la tapa no carga, se esconde y queda el fondo gris -->
+              <img appImagenRespaldo class="tapa" [src]="estreno.entrada.imagen" alt="" loading="lazy" />
             } @else {
               <span class="tapa"></span>
             }

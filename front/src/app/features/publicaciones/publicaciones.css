@@ -351,6 +351,13 @@
   }
 }
 
+/* Los más angostos (~280px): sin el ícono, para que 'Más "Me gusta"' no toque el borde */
+@media (max-width: 320px) {
+  .orden button .icono {
+    display: none;
+  }
+}
+
 /* "Esta semana sale" en el celular: arriba del muro, separado de las pestañas */
 .semana-celular {
   margin-bottom: 1.75rem;
