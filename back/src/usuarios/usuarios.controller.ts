@@ -8,17 +8,20 @@
     Patch,
     Post,
     Req,
+    UploadedFile,
     UploadedFiles,
     UseGuards,
     UseInterceptors,
     } from '@nestjs/common';
-    import { FileFieldsInterceptor } from '@nestjs/platform-express';
+    import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
     import { UsuariosService } from './usuarios.service.js';
     import { SeguimientosService } from './seguimientos.service.js';
     import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto.js';
     import { CambiarContrasenaDto } from './dto/cambiar-contrasena.dto.js';
+    import { CrearUsuarioDto } from './dto/crear-usuario.dto.js';
     import { validarImagen } from '../common/imagenes.js';
     import { TokenGuard } from '../auth/token/token.guard.js';
+    import { AdminGuard } from '../auth/token/admin.guard.js';
     import type { RequestConToken } from '../auth/token/token.guard.js';
 
     // Todas las rutas de usuarios piden token (sin token -> 401).
@@ -29,6 +32,49 @@
         private readonly usuariosService: UsuariosService,
         private readonly seguimientosService: SeguimientosService,
     ) {}
+
+    // ---------- Administración (Sprint 4) ----------
+    // @UseGuards(AdminGuard) en cada ruta: se SUMA al TokenGuard de la clase.
+    // Nest corre primero el de la clase (¿quién sos? -> 401) y después este
+    // (¿sos administrador AHORA, según la base? -> 403). Si uno corta, no llega al método.
+
+    // GET /usuarios -> 200 con el listado de usuarios (habilitados y deshabilitados).
+    @Get()
+    @UseGuards(AdminGuard)
+    listar() {
+        return this.usuariosService.listar();
+    }
+
+    // POST /usuarios -> 201 con el usuario creado (409 si el correo o el usuario ya existen).
+    // Igual que el registro: multipart/form-data con los datos + la foto "imagenPerfil"
+    // (obligatoria), y además "perfil": "usuario" o "administrador".
+    @Post()
+    @UseGuards(AdminGuard)
+    @UseInterceptors(FileInterceptor('imagenPerfil', { defParamCharset: 'utf8' }))
+    crear(
+        @Body() crearUsuarioDto: CrearUsuarioDto,
+        @UploadedFile(validarImagen('La imagen de perfil', true)) imagenPerfil: Express.Multer.File,
+    ) {
+        return this.usuariosService.crear(crearUsuarioDto, imagenPerfil);
+    }
+
+    // DELETE /usuarios/:id -> 200 con el usuario deshabilitado (baja lógica).
+    // 400 si te querés deshabilitar a vos mismo; 409 si ya estaba deshabilitado.
+    @Delete(':id')
+    @UseGuards(AdminGuard)
+    deshabilitar(@Param('id') id: string, @Req() req: RequestConToken) {
+        return this.usuariosService.deshabilitar(id, req.usuario.id);
+    }
+
+    // POST /usuarios/:id/habilitar -> 201 con el usuario habilitado (alta lógica).
+    // 409 si ya estaba habilitado.
+    @Post(':id/habilitar')
+    @UseGuards(AdminGuard)
+    habilitar(@Param('id') id: string) {
+        return this.usuariosService.habilitar(id);
+    }
+
+    // ---------- Perfiles y seguir ----------
 
     // GET /usuarios/beto -> el perfil PÚBLICO de otro usuario (para verlo desde una
     // publicación o un comentario). Solo datos públicos: sin correo ni fecha de nacimiento.

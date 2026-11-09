@@ -231,10 +231,10 @@
 ### Back
 - [x] Validar que el token sea de un administrador: `AdminGuard` (`back/src/auth/token/admin.guard.ts`), se usa como `@UseGuards(TokenGuard, AdminGuard)`. Consulta el perfil en la base (no el del token), así un admin al que le sacan el rol o lo deshabilitan pierde el acceso al instante (403 / 401)
 - **Usuarios controller** (validar que el token sea de un administrador)
-  - [ ] GET: listado de usuarios
-  - [ ] POST: alta de un usuario nuevo, eligiendo perfil administrador o usuario
-  - [ ] DELETE: deshabilitar un usuario (al intentar ingresar se le notifica que no está autorizado)
-  - [ ] POST: alta lógica, rehabilita a un usuario deshabilitado
+  - [x] GET: listado de usuarios (`GET /usuarios`: habilitados y deshabilitados, sin contraseñas)
+  - [x] POST: alta de un usuario nuevo, eligiendo perfil administrador o usuario (`POST /usuarios`, mismos datos que el registro + `perfil`)
+  - [x] DELETE: deshabilitar un usuario (al intentar ingresar se le notifica que no está autorizado) (`DELETE /usuarios/:id`; un admin no se puede deshabilitar a sí mismo)
+  - [x] POST: alta lógica, rehabilita a un usuario deshabilitado (`POST /usuarios/:id/habilitar`)
 - **Estadísticas controller** (validar que el token sea de un administrador)
   - [ ] Rutas GET necesarias para los gráficos
 
