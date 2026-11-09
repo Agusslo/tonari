@@ -6,6 +6,11 @@
         <h1 id="titulo-login">Ingresar</h1>
         <p class="texto-secundario">Usá tu correo o tu nombre de usuario.</p>
 
+        <!-- Aviso al volver de "Elegí tu contraseña nueva" -->
+        @if (aviso(); as mensaje) {
+        <p class="aviso-listo" role="status">{{ mensaje }}</p>
+        }
+
         <!-- Ingreso con Google (extra) -->
         <app-boton-google />
 
@@ -55,6 +60,8 @@
             @if (mostrarError('contraseña')) {
             <p id="error-contraseña" class="mensaje-error">{{ mensajeError('contraseña') }}</p>
             }
+            <!-- Olvidé mi contraseña (extra). Si ya escribiste tu correo, lo lleva (en el state, no en la URL). -->
+            <a routerLink="/recuperar" [state]="{ correo: correoEscrito() }" class="olvide">¿Olvidaste tu contraseña?</a>
         </div>
 
         <button

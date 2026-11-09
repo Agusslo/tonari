@@ -136,6 +136,28 @@
         );
     }
 
+    // ---------- Olvidé mi contraseña (extra) ----------
+
+    // POST /auth/recuperar: el back manda un mail con el link (si hay una cuenta con
+    // ese correo). Responde lo mismo exista o no, así que no hay nada que guardar.
+    recuperar(correo: string) {
+        return this.http.post<{ mensaje: string }>(`${this.url}/recuperar`, { correo });
+    }
+
+    // POST /auth/restablecer/verificar: ¿el link del mail todavía sirve? (400 si no)
+    verificarRecuperacion(token: string) {
+        return this.http.post<{ valido: true }>(`${this.url}/restablecer/verificar`, { token });
+    }
+
+    // POST /auth/restablecer: guarda la contraseña nueva. No inicia sesión:
+    // después de esto vas al login y entrás con ella.
+    restablecer(token: string, contraseña: string) {
+        return this.http.post<{ mensaje: string }>(`${this.url}/restablecer`, {
+        token,
+        contraseña,
+        });
+    }
+
     // POST /auth/google: tocaste "Continuar con Google" y Google nos dio la credencial.
     // Devuelve el usuario si ya tenías cuenta (y queda la sesión iniciada),
     // o null si es la primera vez (guardamos lo de Google para completar el perfil).

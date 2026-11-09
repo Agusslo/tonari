@@ -24,6 +24,7 @@ import { GoogleDto } from './dto/google.dto.js';
 import { RegistroGoogleDto } from './dto/registro-google.dto.js';
 import { DiscordDto, RegistroDiscordDto } from './dto/discord.dto.js';
 import { MostrarDiscordDto, VincularGoogleDto } from './dto/cuentas.dto.js';
+import { RecuperarDto, RestablecerDto, TokenRecuperacionDto } from './dto/recuperar.dto.js';
 import { DiscordService } from './discord.service.js';
 import { CuentasService } from './cuentas.service.js';
 import type { Proveedor } from './cuentas.service.js';
@@ -61,6 +62,30 @@ export class AuthController {
   @HttpCode(200)
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  // ---------- Olvidé mi contraseña (extra) ----------
+  // Sin token: justamente no podés iniciar sesión.
+
+  // POST /auth/recuperar { correo } -> 200 siempre (exista o no la cuenta).
+  @Post('recuperar')
+  @HttpCode(200)
+  recuperar(@Body() recuperarDto: RecuperarDto) {
+    return this.authService.recuperar(recuperarDto);
+  }
+
+  // POST /auth/restablecer/verificar { token } -> 200 si el link sirve, 400 si no.
+  @Post('restablecer/verificar')
+  @HttpCode(200)
+  verificarRecuperacion(@Body() { token }: TokenRecuperacionDto) {
+    return this.authService.verificarRecuperacion(token);
+  }
+
+  // POST /auth/restablecer { token, contraseña } -> 200, o 400 si el link no sirve.
+  @Post('restablecer')
+  @HttpCode(200)
+  restablecer(@Body() restablecerDto: RestablecerDto) {
+    return this.authService.restablecer(restablecerDto);
   }
 
   // POST /auth/google -> 200. Ingreso con Google (extra).

@@ -1,0 +1,84 @@
+/* "¿Olvidaste tu contraseña?" y "Elegí tu contraseña nueva" usan este mismo CSS.
+   Igual que el login: formulario corto, centrado en su columna y del ancho del
+   botón de Google (400px), para que las tres pantallas se vean iguales. */
+.formulario-acceso {
+  align-self: center;
+  padding-inline: max(clamp(1.5rem, 3vw, 2.5rem), calc((100% - 400px) / 2));
+}
+
+form {
+  margin-top: 1.5rem;
+}
+
+.boton-ancho {
+  margin-top: 0.5rem;
+}
+
+.error-envio {
+  margin-bottom: 0.75rem;
+}
+
+/* Salió bien: el mensaje con el sobrecito */
+.aviso-listo {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 1.5rem 0 0;
+  padding: 0.85rem 1rem;
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-radius: var(--radio-campo);
+}
+
+.aviso-listo .icono {
+  flex: none;
+  margin-top: 0.1rem;
+}
+
+.aviso-listo p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.detalle {
+  margin: 1rem 0 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Un botón que se ve como link */
+.enlace {
+  padding: 0;
+  font: inherit;
+  color: var(--color-menta);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.otro-correo {
+  display: block;
+  margin: 1rem auto 0;
+  font-size: 0.9rem;
+}
+
+/* Mientras revisamos el link */
+.estado {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.pie {
+  margin: 1.5rem 0 0;
+  padding-top: 1.25rem;
+  text-align: center;
+  border-top: 1px solid var(--linea-suave);
+}
+
+.pie a {
+  font-weight: 700;
+}

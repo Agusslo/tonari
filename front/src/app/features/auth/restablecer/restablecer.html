@@ -1,0 +1,115 @@
+<div class="acceso">
+  <app-portada />
+
+  <section class="panel formulario-acceso" aria-labelledby="titulo-restablecer">
+    <p class="kicker" lang="ja" aria-hidden="true">パスワード</p>
+
+    @switch (estado()) {
+      @case ('verificando') {
+        <h1 id="titulo-restablecer">Elegí tu contraseña nueva</h1>
+        <p class="texto-secundario estado" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          Revisando el link…
+        </p>
+      }
+
+      @case ('invalido') {
+        <h1 id="titulo-restablecer">El link ya no sirve</h1>
+        <p class="texto-secundario detalle" role="alert">
+          Puede que haya vencido (dura 30 minutos), que ya lo hayas usado o que hayas pedido otro
+          después. Pedí uno nuevo y usá el último que te llegue.
+        </p>
+        <a routerLink="/recuperar" class="boton boton-ancho">Pedir un link nuevo</a>
+      }
+
+      @case ('sin-conexion') {
+        <h1 id="titulo-restablecer">Elegí tu contraseña nueva</h1>
+        <p class="texto-secundario detalle" role="alert">
+          No se pudo conectar con el servidor. Revisá tu conexión e intentá de nuevo.
+        </p>
+        <button type="button" class="boton boton-ancho" (click)="verificar()">Reintentar</button>
+      }
+
+      @case ('formulario') {
+        <h1 id="titulo-restablecer">Elegí tu contraseña nueva</h1>
+        <p class="texto-secundario">Después vas a ingresar con ella.</p>
+
+        <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+          <div class="campo">
+            <label for="contrasena-nueva">Contraseña nueva</label>
+            <div class="campo-contraseña">
+              <input
+                id="contrasena-nueva"
+                [type]="verContrasenas() ? 'text' : 'password'"
+                formControlName="nueva"
+                autocomplete="new-password"
+                [attr.aria-invalid]="mostrarError('nueva')"
+                aria-describedby="ayuda-contrasena-nueva error-contrasena-nueva"
+              />
+              <button
+                type="button"
+                class="boton-ojo"
+                (click)="verContrasenas.set(!verContrasenas())"
+                [attr.aria-label]="verContrasenas() ? 'Ocultar contraseñas' : 'Mostrar contraseñas'"
+                aria-controls="contrasena-nueva contrasena-repetir"
+              >
+                <svg class="icono" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+                  <circle cx="12" cy="12" r="3" />
+                  @if (verContrasenas()) {
+                    <line x1="3" y1="3" x2="21" y2="21" />
+                  }
+                </svg>
+              </button>
+            </div>
+            <p id="ayuda-contrasena-nueva" class="ayuda texto-secundario">
+              Mínimo 8 caracteres, una mayúscula y un número.
+            </p>
+            @if (mostrarError('nueva')) {
+              <p id="error-contrasena-nueva" class="mensaje-error">{{ mensajeError('nueva') }}</p>
+            }
+          </div>
+
+          <div class="campo">
+            <label for="contrasena-repetir">Repetir contraseña</label>
+            <input
+              id="contrasena-repetir"
+              [type]="verContrasenas() ? 'text' : 'password'"
+              formControlName="repetir"
+              autocomplete="new-password"
+              [attr.aria-invalid]="mostrarError('repetir')"
+              aria-describedby="error-contrasena-repetir"
+            />
+            @if (mostrarError('repetir')) {
+              <p id="error-contrasena-repetir" class="mensaje-error">
+                {{ mensajeError('repetir') }}
+              </p>
+            }
+          </div>
+
+          @if (error(); as mensaje) {
+            <p class="mensaje-error error-envio" role="alert">{{ mensaje }}</p>
+          }
+
+          <button
+            type="submit"
+            class="boton boton-ancho"
+            [attr.aria-disabled]="enviando()"
+            [attr.aria-busy]="enviando()"
+          >
+            @if (enviando()) {
+              <span class="spinner" aria-hidden="true"></span>
+              Guardando…
+            } @else {
+              Guardar contraseña
+            }
+          </button>
+        </form>
+      }
+    }
+
+    <p class="pie texto-secundario">
+      <a routerLink="/login">Volver a ingresar</a>
+    </p>
+  </section>
+</div>

@@ -32,6 +32,14 @@ export class Login {
   protected readonly verContrasena = signal(false);
   // Mensaje del modal de error (null = modal cerrado)
   protected readonly error = signal<string | null>(null);
+  // "Listo, tu contraseña quedó cambiada" (viene en el state desde /restablecer).
+  protected readonly aviso = signal<string | null>(avisoRecibido());
+
+  // Para "¿Olvidaste tu contraseña?": si lo que escribiste parece un correo, lo pasamos.
+  protected correoEscrito(): string {
+    const valor = this.formulario.controls.usuario.value.trim();
+    return valor.includes('@') ? valor : '';
+  }
 
   mostrarError(campo: keyof typeof this.formulario.controls): boolean {
     const control = this.formulario.controls[campo];
@@ -65,4 +73,10 @@ export class Login {
       },
     });
   }
+}
+
+// history.state: lo que mandó la pantalla anterior al navegar (router.navigate con state).
+function avisoRecibido(): string | null {
+  const aviso = (history.state as { aviso?: unknown } | null)?.aviso;
+  return typeof aviso === 'string' ? aviso : null;
 }

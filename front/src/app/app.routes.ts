@@ -23,6 +23,19 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/registro/registro').then((m) => m.Registro),
   },
   {
+    // "¿Olvidaste tu contraseña?" (extra): pedís el link por mail. Sin guard (no tenés sesión).
+    path: 'recuperar',
+    title: 'Recuperar contraseña · TONARI',
+    loadComponent: () => import('./features/auth/recuperar/recuperar').then((m) => m.Recuperar),
+  },
+  {
+    // El link del mail (extra): /restablecer#token=... para elegir la contraseña nueva.
+    path: 'restablecer',
+    title: 'Contraseña nueva · TONARI',
+    loadComponent: () =>
+      import('./features/auth/restablecer/restablecer').then((m) => m.Restablecer),
+  },
+  {
     // Vuelta de Google (extra): el back te trae acá con la credencial en el "#".
     path: 'ingreso-google',
     title: 'Entrando con Google · TONARI',

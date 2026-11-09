@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { createHash, randomBytes } from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Usuario } from '../usuarios/entities/usuario.entity.js';
@@ -20,13 +21,22 @@ import { DiscordDto, RegistroDiscordDto } from './dto/discord.dto.js';
 import { DiscordService } from './discord.service.js';
 import { guardarImagen } from '../common/imagenes.js';
 import { PayloadToken } from './token/token.guard.js';
+import { Recuperacion } from './entities/recuperacion.entity.js';
+import { RecuperarDto, RestablecerDto } from './dto/recuperar.dto.js';
+import { CorreoService } from './correo.service.js';
+
+// "Olvidé mi contraseña": cuánto dura el link y cada cuánto se puede pedir otro.
+const DURACION_LINK_MS = 30 * 60 * 1000; // 30 minutos
+const ESPERA_REENVIO_MS = 2 * 60 * 1000; // 2 minutos
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
+    @InjectModel(Recuperacion.name) private recuperacionModel: Model<Recuperacion>,
     private readonly config: ConfigService,
     private readonly discordService: DiscordService,
+    private readonly correoService: CorreoService,
   ) {}
 
   async registro(registroDto: RegistroDto, imagen: Express.Multer.File) {
@@ -109,6 +119,97 @@ export class AuthService {
 
     // 4. Devolver los datos del usuario (menos la contraseña) y el token.
     return this.respuestaConToken(usuario);
+  }
+
+  // ---------- Olvidé mi contraseña (extra) ----------
+
+  // POST /auth/recuperar { correo }. Si hay una cuenta con ese correo, le manda un link.
+  // Responde SIEMPRE lo mismo, exista o no la cuenta: si dijera "ese correo no existe",
+  // cualquiera podría probar correos para saber quién usa TONARI (igual que en el login).
+  async recuperar({ correo }: RecuperarDto) {
+    const respuesta = {
+      mensaje:
+        'Si hay una cuenta con ese correo, te mandamos un link para elegir una contraseña nueva.',
+    };
+
+    const usuario = await this.usuarioModel.findOne({ correo: correo.toLowerCase() });
+    // Sin cuenta, o deshabilitada (no podría entrar igual): no mandamos nada.
+    if (!usuario || !usuario.habilitado) return respuesta;
+
+    // Si pidió otro hace menos de 2 minutos, no mandamos de nuevo: así nadie puede
+    // llenarle la casilla de mails a otra persona tocando el botón muchas veces.
+    const reciente = await this.recuperacionModel.exists({
+      usuario: usuario._id,
+      createdAt: { $gt: new Date(Date.now() - ESPERA_REENVIO_MS) },
+    });
+    if (reciente) return respuesta;
+
+    // 32 bytes al azar (criptográficamente seguros) = 64 caracteres hexadecimales.
+    // Imposible de adivinar. Este texto va en el link; en la base guardamos su hash.
+    const token = randomBytes(32).toString('hex');
+
+    // Solo sirve el ÚLTIMO link que pediste: borramos los anteriores.
+    await this.recuperacionModel.deleteMany({ usuario: usuario._id });
+    await this.recuperacionModel.create({
+      usuario: usuario._id,
+      hash: hashToken(token),
+      vence: new Date(Date.now() + DURACION_LINK_MS),
+    });
+
+    // El token va en el "#" del link, igual que la credencial de Google: lo que va
+    // después del # no se manda a ningún servidor (ni queda en sus registros).
+    const link = `${this.urlFront()}/restablecer#token=${token}`;
+    try {
+      await this.correoService.enviarRecuperacion(usuario.correo, usuario.nombre, link);
+    } catch (error) {
+      // Si el mail no salió, borramos el link: así puede pedir otro enseguida
+      // (si no, tendría que esperar los 2 minutos por un mail que nunca le llegó).
+      await this.recuperacionModel.deleteMany({ usuario: usuario._id });
+      throw error;
+    }
+    return respuesta;
+  }
+
+  // POST /auth/restablecer/verificar { token }. El front lo llama al abrir el link,
+  // para avisarte ANTES de que escribas la contraseña si el link ya no sirve.
+  async verificarRecuperacion(token: string) {
+    await this.buscarRecuperacion(token);
+    return { valido: true };
+  }
+
+  // POST /auth/restablecer { token, contraseña }. Guarda la contraseña nueva.
+  async restablecer({ token, contraseña }: RestablecerDto) {
+    const recuperacion = await this.buscarRecuperacion(token);
+
+    const usuario = await this.usuarioModel.findById(recuperacion.usuario);
+    if (!usuario || !usuario.habilitado) {
+      await this.recuperacionModel.deleteMany({ usuario: recuperacion.usuario });
+      throw new BadRequestException('El link no es válido o ya venció. Pedí uno nuevo'); // 400
+    }
+
+    // Igual que en el registro: guardamos el HASH. Si la cuenta era solo de Google o
+    // Discord (sin contraseña), desde ahora también puede entrar con correo y contraseña.
+    usuario.contraseña = await bcrypt.hash(contraseña, 10);
+    await usuario.save();
+
+    // El link ya se usó: lo borramos (y cualquier otro que hubiera), así sirve UNA vez.
+    await this.recuperacionModel.deleteMany({ usuario: usuario._id });
+
+    return { mensaje: 'Listo, tu contraseña quedó cambiada. Ya podés ingresar con ella.' };
+  }
+
+  // Busca el link por el hash del token y revisa que no haya vencido.
+  // 400 (y no 401) a propósito: el interceptor del front trata cualquier 401 como
+  // "se te venció la sesión" y te manda al login.
+  private async buscarRecuperacion(token: string) {
+    const recuperacion = await this.recuperacionModel.findOne({
+      hash: hashToken(token),
+      vence: { $gt: new Date() },
+    });
+    if (!recuperacion) {
+      throw new BadRequestException('El link no es válido o ya venció. Pedí uno nuevo'); // 400
+    }
+    return recuperacion;
   }
 
   // ---------- Ingreso con Google (extra) ----------
@@ -211,13 +312,17 @@ export class AuthService {
   // La credencial va en el "#" (fragmento) a propósito: lo que está después del #
   // nunca se manda a ningún servidor, solo lo lee el front. Y el front lo borra enseguida.
   urlVueltaDeGoogle(credential?: string) {
+    const fragmento = credential ? `credential=${encodeURIComponent(credential)}` : 'error=1';
+    return `${this.urlFront()}/ingreso-google#${fragmento}`;
+  }
+
+  // La URL del front para armar links (la vuelta de Google, el link del mail).
+  private urlFront() {
     const fronts = this.config
       .get<string>('URL_FRONT', 'http://localhost:4200')
       .split(',')
       .map((url) => url.trim());
-    const front = fronts.find((url) => url.startsWith('https://')) ?? fronts[0];
-    const fragmento = credential ? `credential=${encodeURIComponent(credential)}` : 'error=1';
-    return `${front}/ingreso-google#${fragmento}`;
+    return fronts.find((url) => url.startsWith('https://')) ?? fronts[0];
   }
 
   // Le pregunta a Google si la credencial es real (tokeninfo revisa la firma y
@@ -415,6 +520,11 @@ export interface DatosGoogle {
   given_name?: string;
   family_name?: string;
   picture?: string;
+}
+
+// sha256 del token del link: lo que se guarda y se busca en la base.
+function hashToken(token: string) {
+  return createHash('sha256').update(token).digest('hex');
 }
 
 // Google manda la foto chiquita (96px, "=s96-c" al final de la URL).

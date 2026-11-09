@@ -40,3 +40,25 @@ form {
 .pie a {
   font-weight: 700;
 }
+
+/* "¿Olvidaste tu contraseña?" (extra): chiquito, a la derecha abajo del campo */
+.olvide {
+  align-self: flex-end;
+  font-size: 0.85rem;
+  color: var(--color-texto-sec);
+  text-underline-offset: 3px;
+}
+
+.olvide:hover {
+  color: var(--color-menta);
+}
+
+/* Al volver de elegir la contraseña nueva */
+.aviso-listo {
+  margin: 1rem 0 0;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.9rem;
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-radius: var(--radio-campo);
+}
