@@ -32,6 +32,7 @@ export interface IObra {
 
 // Lo que muestra la ficha de una obra (sale de AniList, no se guarda en nuestra base).
 export interface IFicha {
+  titulo: string; // el título original en letras latinas (romaji), como el de la biblioteca
   tituloIngles: string | null;
   tituloNativo: string | null; // en japonés
   sinopsis: string | null; // en inglés (AniList no la tiene en español)

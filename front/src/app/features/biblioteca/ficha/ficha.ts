@@ -16,6 +16,8 @@ import { EstadoObraPipe } from '../../../shared/pipes/estado-obra.pipe';
 import { ImagenRespaldoDirective } from '../../../shared/directives/imagen-respaldo.directive';
 
 // Ficha de una obra de la biblioteca (estilo MangaDex): /biblioteca/:id
+// Si la obra NO está en tu biblioteca (por ejemplo, entraste desde "Temporadas nuevas"),
+// se muestra en modo vista previa: la info de AniList y "Agregar como…" en vez de tu seguimiento.
 // Junta dos fuentes:
 //  - NUESTRO back: tu seguimiento (estado, por qué capítulo vas, tu nota).
 //  - AniList: la info de la obra (sinopsis, géneros, banner). Si AniList no responde,
@@ -45,6 +47,9 @@ export class Ficha implements OnInit {
   private readonly idAnilist = parseInt(this.parametros.get('obra') ?? '', 10);
 
   protected readonly entrada = signal<IEntrada | null>(null);
+  // false = vista previa: la obra no está en tu biblioteca (la "entrada" es armada con AniList).
+  protected readonly enBiblioteca = signal(true);
+  protected readonly agregando = signal<EstadoEntrada | null>(null);
   protected readonly ficha = signal<IFicha | null>(null);
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
@@ -135,8 +140,80 @@ export class Ficha implements OnInit {
         this.cargarFicha(entrada);
       },
       error: (error: HttpErrorResponse) => {
+        // 404 = no está en tu biblioteca: en vez de un error, la mostramos en vista previa.
+        if (error.status === 404) {
+          this.cargarVistaPrevia();
+          return;
+        }
         this.error.set(mensajeDeError(error));
         this.cargando.set(false);
+      },
+    });
+  }
+
+  // Vista previa: todo sale de AniList. Armamos una "entrada" con progreso 0 para que la
+  // misma página la pueda dibujar (cabecera, sinopsis, lista de episodios sin poder marcar).
+  // No es tuya (usuario vacío), así que esMia() da false y nada se puede editar.
+  private cargarVistaPrevia() {
+    const tipo = this.tipo as TipoObra;
+    this.anilist.detalle(this.idAnilist, tipo).subscribe({
+      next: (ficha) => {
+        const previa: IEntrada = {
+          _id: '',
+          usuario: '',
+          tipo,
+          idAnilist: this.idAnilist,
+          titulo: ficha.titulo,
+          imagen: ficha.tapa ?? undefined,
+          total: ficha.total,
+          estado: 'pendiente',
+          progreso: 0,
+          puntuacion: null,
+          createdAt: '',
+          updatedAt: '',
+        };
+        this.enBiblioteca.set(false);
+        this.mostrar(previa);
+        this.ficha.set(ficha);
+        this.cargando.set(false);
+        this.titulo.setTitle(`${ficha.titulo} · TONARI`);
+        this.corregirUrl(previa);
+        this.cargarCapitulos(previa, ficha);
+        if (ficha.sinopsis) this.cargarSinopsis(this.idAnilist);
+      },
+      error: () => {
+        this.error.set('No encontramos esa obra. Revisá la dirección o buscala en tu biblioteca.');
+        this.cargando.set(false);
+      },
+    });
+  }
+
+  // "Agregar como…" (vista previa): la suma a tu biblioteca con el estado elegido.
+  // El back aplica sus reglas (Completado -> progreso al total) y devuelve la entrada
+  // real: desde ahí es tu ficha normal, sin recargar.
+  protected agregarComo(estado: EstadoEntrada) {
+    const ficha = this.ficha();
+    if (!ficha || this.agregando()) return;
+    this.agregando.set(estado);
+    this.errorGuardar.set(null);
+    const obra = {
+      idAnilist: this.idAnilist,
+      tipo: this.tipo as TipoObra,
+      titulo: ficha.titulo,
+      imagen: ficha.tapa ?? undefined,
+      total: ficha.total,
+      anio: ficha.anio,
+      formato: ficha.formato,
+    };
+    this.api.agregar(obra, estado).subscribe({
+      next: (entrada) => {
+        this.agregando.set(null);
+        this.enBiblioteca.set(true);
+        this.mostrar(entrada);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.agregando.set(null);
+        this.errorGuardar.set(mensajeDeError(error));
       },
     });
   }

@@ -100,7 +100,10 @@
 - **Encuestas**: una publicación puede llevar una encuesta de 2 a 4 opciones que dura 1 día, 3 días o 1 semana (la pregunta es el título). Un voto por persona, sin poder cambiarlo: los votos van en una colección aparte (`Votos`) con índice único publicación + usuario, y el conteo se suma con `$inc`. Los resultados se ven recién al votar o cuando cierra: antes, el back ni siquiera los manda.
 - **Spoilers inteligentes**: al publicar se marca "Spoilers de <obra> hasta el episodio/capítulo N" (la obra se elige de tu biblioteca). El back mira la biblioteca de quien la ve: si la terminó o ya pasó ese episodio, se muestra normal; si no, la descripción, la imagen y la encuesta quedan borrosas con "Mostrar igual". En descripciones y comentarios, lo escrito `||así||` queda tapado hasta tocarlo (como en Discord).
 - **Imágenes en comentarios y respuestas**, y **pegar imágenes con Ctrl+V** (capturas o "Copiar imagen") al publicar, comentar o responder.
-- **"Esta semana sale"** (columna del muro): de los animes que estás viendo, cuáles sacan episodio en los próximos 7 días y cuántos te faltan ver (AniList, un solo pedido para todos).
+- **Novedades** (columna del muro; arriba del muro en el celular), en tres bloques:
+  - **Esta semana sale**: de los animes que estás viendo, cuáles sacan episodio en los próximos 7 días y cuántos te faltan ver (AniList, un solo pedido para todos).
+  - **Temporadas nuevas**: en AniList cada temporada es una obra distinta; con sus relaciones `SEQUEL` avisa las secuelas de tus animes que no tenés (saliendo, anunciadas o ya terminadas), con botón para agregarlas y "No me interesa".
+  - **Manga: capítulos nuevos**: de los mangas que estás leyendo, cuántos capítulos salieron que no leíste (MangaDex a través de nuestro back, de a uno por vez y con caché de 6 horas).
 - **Episodios que todavía no salieron**: en la ficha de un anime en emisión, los episodios futuros se ven apagados con "Sale vie 11:00" y no se pueden marcar.
 - **Imágenes en Cloudinary** con recorte automático para los avatares.
 - **Avatar generado** ([blobatar](https://blobatar.dev)) cuando el usuario no sube foto; si no carga, iniciales.

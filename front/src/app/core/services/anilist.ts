@@ -118,6 +118,59 @@ export interface ProximoEpisodio {
   fecha: Date;
 }
 
+// "Temporadas nuevas" (extra): en AniList cada temporada es una obra distinta,
+// conectada con la anterior por una relación SEQUEL ("secuela").
+// De tus animes, pedimos sus relaciones y nos quedamos con las secuelas. Un solo pedido.
+const CONSULTA_SECUELAS = `
+  query ($ids: [Int]) {
+    Page(perPage: 50) {
+      media(id_in: $ids, type: ANIME) {
+        id
+        relations {
+          edges {
+            relationType
+            node {
+              id
+              type
+              format
+              status
+              title { romaji english }
+              coverImage { large }
+              episodes
+              startDate { year month day }
+              nextAiringEpisode { episode airingAt }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+// RELEASING = está saliendo · NOT_YET_RELEASED = anunciada · FINISHED = ya terminó
+export type EstadoSecuela = 'RELEASING' | 'NOT_YET_RELEASED' | 'FINISHED';
+
+// Una secuela de un anime que tenés (la temporada que sigue, una película que continúa...).
+export interface Secuela {
+  origen: number; // id de AniList de TU anime (del que es secuela)
+  obra: IObra; // lo necesario para agregarla a la biblioteca
+  estado: EstadoSecuela;
+  estreno: { year: number | null; month: number | null; day: number | null } | null;
+  proximo: ProximoEpisodio | null; // si está saliendo
+}
+
+interface NodoSecuela {
+  id: number;
+  type: string;
+  format: string | null;
+  status: string | null;
+  title: { romaji: string | null; english: string | null };
+  coverImage: { large: string | null } | null;
+  episodes: number | null;
+  startDate: { year: number | null; month: number | null; day: number | null } | null;
+  nextAiringEpisode: { episode: number; airingAt: number } | null;
+}
+
 // El estado de publicación, según sea anime (se emite) o manga (se publica).
 const ESTADOS_PUBLICACION: Record<string, [string, string]> = {
   RELEASING: ['En emisión', 'En publicación'],
@@ -227,9 +280,67 @@ export class Anilist {
       );
   }
 
+  // Las secuelas (anime) de esos animes. Solo las que están saliendo, anunciadas o
+  // terminadas (no las canceladas). Si dos de tus animes apuntan a la misma secuela,
+  // va una sola vez.
+  // También devuelve sus PRECUELAS (lo que viene antes): si tenés la temporada 3,
+  // su precuela es la 2 -> ya la viste, aunque no esté en tu biblioteca.
+  secuelas(ids: number[]) {
+    return this.http
+      .post<{
+        data: {
+          Page: {
+            media: { id: number; relations: { edges: { relationType: string; node: NodoSecuela }[] } | null }[];
+          };
+        };
+      }>(URL_ANILIST, { query: CONSULTA_SECUELAS, variables: { ids: ids.slice(0, 50) } })
+      .pipe(
+        timeout(8000),
+        retry({
+          count: 1,
+          delay: (error) => (error?.status === 429 ? throwError(() => error) : timer(1000)),
+        }),
+        map(({ data }) => {
+          const porId = new Map<number, Secuela>();
+          const precuelas = new Set<number>();
+          for (const m of data.Page.media) {
+            for (const { relationType, node } of m.relations?.edges ?? []) {
+              if (relationType === 'PREQUEL') precuelas.add(node.id);
+              const estado = node.status as EstadoSecuela;
+              if (relationType !== 'SEQUEL' || node.type !== 'ANIME') continue;
+              if (!['RELEASING', 'NOT_YET_RELEASED', 'FINISHED'].includes(estado)) continue;
+              if (porId.has(node.id)) continue;
+              porId.set(node.id, {
+                origen: m.id,
+                estado,
+                estreno: node.startDate,
+                proximo: node.nextAiringEpisode
+                  ? {
+                      episodio: node.nextAiringEpisode.episode,
+                      fecha: new Date(node.nextAiringEpisode.airingAt * 1000),
+                    }
+                  : null,
+                obra: {
+                  idAnilist: node.id,
+                  tipo: 'anime',
+                  titulo: node.title.romaji ?? node.title.english ?? 'Sin título',
+                  imagen: node.coverImage?.large ?? undefined,
+                  total: node.episodes,
+                  anio: node.startDate?.year ?? null,
+                  formato: node.format ? (FORMATOS[node.format] ?? node.format) : null,
+                },
+              });
+            }
+          }
+          return { secuelas: [...porId.values()], precuelas };
+        }),
+      );
+  }
+
   private aFicha(m: FichaAnilist, tipo: TipoObra): IFicha {
     const estado = m.status ? ESTADOS_PUBLICACION[m.status] : undefined;
     return {
+      titulo: m.title.romaji ?? m.title.english ?? 'Sin título',
       tituloIngles: m.title.english,
       tituloNativo: m.title.native,
       sinopsis: m.description ? textoPlano(m.description) : null,

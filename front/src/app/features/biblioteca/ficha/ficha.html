@@ -108,7 +108,29 @@
     <section class="panel seguimiento" aria-labelledby="titulo-seguimiento" [class.ocupada]="guardando()">
       <h2 id="titulo-seguimiento">Tu seguimiento</h2>
 
-      @if (esMia()) {
+      @if (!enBiblioteca()) {
+        <!-- Vista previa: todavía no la tenés. Los mismos botones de estado, pero agregan. -->
+        <p class="ayuda">Todavía no está en tu biblioteca. Agregala como:</p>
+        <div class="estados" role="group" aria-label="Agregar a mi biblioteca como">
+          @for (estado of estados; track estado) {
+            <button
+              type="button"
+              [attr.data-estado]="estado"
+              [attr.aria-busy]="agregando() === estado"
+              [disabled]="agregando() !== null"
+              (click)="agregarComo(estado)"
+            >
+              @if (agregando() === estado) {
+                <span class="spinner spinner-chico" aria-hidden="true"></span>
+              }
+              {{ estado | estadoObra: e.tipo }}
+            </button>
+          }
+        </div>
+        @if (errorGuardar(); as mensaje) {
+          <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+        }
+      } @else if (esMia()) {
         <!-- Estado: botones (como "Reading" en MangaDex) -->
         <div class="estados" role="group" aria-label="Estado">
           @for (estado of estados; track estado) {
@@ -287,8 +309,10 @@
       />
     } @else {
       <p class="texto-secundario">
-        Todavía no sabemos cuántos {{ unidad() }}s tiene. Anotá por dónde vas con el contador de arriba
-        y la lista se arma sola.
+        Todavía no sabemos cuántos {{ unidad() }}s tiene.
+        @if (enBiblioteca()) {
+          Anotá por dónde vas con el contador de arriba y la lista se arma sola.
+        }
       </p>
     }
     @if (errorCapitulos()) {

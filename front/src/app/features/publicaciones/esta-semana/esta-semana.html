@@ -1,8 +1,8 @@
 <section class="panel semana" aria-labelledby="titulo-semana">
-  <p class="kicker" lang="ja" aria-hidden="true">今週</p>
-  <h2 id="titulo-semana" class="semana-titulo">Esta semana sale</h2>
+  <p class="kicker" lang="ja" aria-hidden="true">新着</p>
+  <h2 id="titulo-semana" class="semana-titulo">Novedades</h2>
 
-  @switch (estado()) {
+  @switch (general()) {
     @case ('cargando') {
       <ul class="lista" aria-hidden="true">
         @for (n of [1, 2]; track n) {
@@ -12,44 +12,147 @@
           </li>
         }
       </ul>
-      <p class="solo-lector" role="status">Buscando los próximos episodios…</p>
+      <p class="solo-lector" role="status">Buscando novedades…</p>
     }
     @case ('sin-obras') {
       <p class="texto-secundario vacio">
-        Marcá animes como <strong>Viendo</strong> en tu
-        <a routerLink="/biblioteca">biblioteca</a> y acá te avisamos cuándo sale el próximo episodio.
+        Marcá animes como <strong>Viendo</strong> (o mangas como <strong>Leyendo</strong>) en tu
+        <a routerLink="/biblioteca">biblioteca</a> y acá te avisamos qué sale.
       </p>
     }
     @case ('error') {
-      <p class="texto-secundario vacio">No pudimos consultar AniList. Probá más tarde.</p>
+      <p class="texto-secundario vacio">No pudimos cargar tu biblioteca. Probá más tarde.</p>
     }
     @default {
-      <ul class="lista">
-        @for (estreno of estrenos(); track estreno.entrada._id) {
-          <li class="estreno">
-            @if (estreno.entrada.imagen) {
-              <!-- appImagenRespaldo: si la tapa no carga, se esconde y queda el fondo gris -->
-              <img appImagenRespaldo class="tapa" [src]="estreno.entrada.imagen" alt="" loading="lazy" />
-            } @else {
-              <span class="tapa"></span>
+      <!-- ---------- 1. Esta semana sale ---------- -->
+      @if (estrenos().length) {
+        <div class="bloque">
+          <h3 class="bloque-titulo">Esta semana sale</h3>
+          <ul class="lista">
+            @for (estreno of estrenos(); track estreno.entrada._id) {
+              <li class="estreno">
+                @if (estreno.entrada.imagen) {
+                  <!-- appImagenRespaldo: si la tapa no carga, se esconde y queda el fondo gris -->
+                  <img appImagenRespaldo class="tapa" [src]="estreno.entrada.imagen" alt="" loading="lazy" />
+                } @else {
+                  <span class="tapa"></span>
+                }
+                <div class="datos">
+                  <a class="obra" [routerLink]="rutaFicha(estreno.entrada)">{{ estreno.entrada.titulo }}</a>
+                  <p class="cuando">
+                    Ep. {{ estreno.episodio }} ·
+                    <time [attr.datetime]="estreno.fecha.toISOString()">{{ cuando(estreno.fecha) }}</time>
+                  </p>
+                  @if (estreno.sinVer > 0) {
+                    <p class="sin-ver">
+                      {{ estreno.sinVer }} {{ estreno.sinVer === 1 ? 'episodio' : 'episodios' }} sin ver
+                    </p>
+                  }
+                </div>
+              </li>
             }
-            <div class="datos">
-              <a class="obra" [routerLink]="rutaFicha(estreno.entrada)">{{ estreno.entrada.titulo }}</a>
-              <p class="cuando">
-                Ep. {{ estreno.episodio }} ·
-                <time [attr.datetime]="estreno.fecha.toISOString()">{{ cuando(estreno.fecha) }}</time>
-              </p>
-              @if (estreno.sinVer > 0) {
-                <p class="sin-ver">
-                  {{ estreno.sinVer }} {{ estreno.sinVer === 1 ? 'episodio' : 'episodios' }} sin ver
-                </p>
-              }
-            </div>
-          </li>
-        } @empty {
-          <li class="texto-secundario vacio">Nada de lo que estás viendo sale esta semana.</li>
-        }
-      </ul>
+          </ul>
+        </div>
+      }
+
+      <!-- ---------- 2. Temporadas nuevas ---------- -->
+      @if (temporadas().length) {
+        <div class="bloque">
+          <h3 class="bloque-titulo">Temporadas nuevas</h3>
+          <ul class="lista">
+            @for (secuela of temporadas(); track secuela.obra.idAnilist) {
+              <li class="estreno">
+                @if (secuela.obra.imagen) {
+                  <img appImagenRespaldo class="tapa" [src]="secuela.obra.imagen" alt="" loading="lazy" />
+                } @else {
+                  <span class="tapa"></span>
+                }
+                <div class="datos">
+                  <!-- Lleva a NUESTRA ficha: aunque no esté en tu biblioteca, la ficha la muestra
+                       en modo vista previa (con la info de AniList y "Agregar como…") -->
+                  <a class="obra" [routerLink]="rutaFicha(secuela.obra)">{{ secuela.obra.titulo }}</a>
+                  <p class="cuando">
+                    <span [class]="'chip chip-' + secuela.estado">{{ etiquetaSecuela(secuela) }}</span>
+                    {{ textoSecuela(secuela) }}
+                  </p>
+                  @if (tituloOrigen(secuela); as origen) {
+                    <p class="origen">Sigue a {{ origen }}</p>
+                  }
+                  <div class="acciones">
+                    <button
+                      type="button"
+                      class="agregar"
+                      [disabled]="agregando() !== null"
+                      [attr.aria-busy]="agregando() === secuela.obra.idAnilist"
+                      (click)="agregar(secuela)"
+                    >
+                      @if (agregando() === secuela.obra.idAnilist) {
+                        <span class="spinner" aria-hidden="true"></span>
+                      }
+                      {{ secuela.estado === 'RELEASING' ? 'Agregar a Viendo' : 'Agregar a Pendiente' }}
+                    </button>
+                    <button
+                      type="button"
+                      class="ocultar"
+                      (click)="ocultar(secuela)"
+                      [attr.aria-label]="'No me interesa ' + secuela.obra.titulo"
+                      title="No me interesa"
+                    >
+                      <!-- Una ✕ redonda: así entra al lado de "Agregar" en un solo renglón -->
+                      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                        <path d="M6 6l12 12M18 6L6 18" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+          @if (errorAgregar(); as mensaje) {
+            <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+          }
+        </div>
+      }
+
+      <!-- ---------- 3. Manga: capítulos nuevos ---------- -->
+      @if (mangas().length) {
+        <div class="bloque">
+          <h3 class="bloque-titulo">Manga: capítulos nuevos</h3>
+          <ul class="lista">
+            @for (manga of mangas(); track manga.entrada._id) {
+              <li class="estreno">
+                @if (manga.entrada.imagen) {
+                  <img appImagenRespaldo class="tapa" [src]="manga.entrada.imagen" alt="" loading="lazy" />
+                } @else {
+                  <span class="tapa"></span>
+                }
+                <div class="datos">
+                  <a class="obra" [routerLink]="rutaFicha(manga.entrada)">{{ manga.entrada.titulo }}</a>
+                  <p class="cuando">
+                    {{ manga.nuevos }} {{ manga.nuevos === 1 ? 'capítulo nuevo' : 'capítulos nuevos' }}
+                  </p>
+                  <p class="sin-ver">Vas por el {{ manga.entrada.progreso }} · último: cap. {{ manga.ultimo }}</p>
+                </div>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <!-- Mientras siguen llegando (los mangas van de a uno) -->
+      @if (estadoEstrenos() === 'cargando' || estadoTemporadas() === 'cargando' || estadoMangas() === 'cargando') {
+        <p class="texto-secundario buscando">
+          <span class="spinner" aria-hidden="true"></span> Buscando novedades…
+        </p>
+      } @else if (nadaNuevo()) {
+        <p class="texto-secundario vacio">
+          @if (estadoEstrenos() === 'error' && estadoTemporadas() === 'error') {
+            No pudimos consultar AniList. Probá más tarde.
+          } @else {
+            Nada nuevo por ahora: estás al día con todo.
+          }
+        </p>
+      }
     }
   }
 </section>

@@ -1,7 +1,8 @@
 /* Dos columnas: el muro de publicaciones y, al costado, la tarjeta del usuario */
 .muro {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 18rem;
+  /* 20rem: con "Novedades" en la columna, a 18rem los textos quedaban muy apretados */
+  grid-template-columns: minmax(0, 1fr) 20rem;
   gap: clamp(1.5rem, 3vw, 2.5rem);
   align-items: start;
 }
