@@ -41,9 +41,14 @@
             [disabled]="guardando() || !puedeSumar()"
             (click)="mover(1)"
             [attr.aria-label]="'Sumar un ' + (e.tipo === 'anime' ? 'episodio' : 'capítulo')"
+            [attr.title]="salidos() !== null && e.progreso >= salidos()! ? 'El próximo episodio todavía no salió' : null"
           >+</button>
         }
       </div>
+      <!-- Anime en emisión: cuándo sale el que sigue (por eso el "+" se frena ahí) -->
+      @if (textoProximo(); as texto) {
+        <p class="proximo">{{ texto }}</p>
+      }
     </div>
 
     @if (editable()) {

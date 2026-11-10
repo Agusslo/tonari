@@ -93,6 +93,12 @@
   background: var(--velo-menta);
 }
 
+/* "Eliminar": igual de discreto, pero rojo al pasar */
+.boton-eliminar:hover {
+  color: var(--color-error);
+  background: rgb(255 155 143 / 0.1);
+}
+
 /* ---------- Edición ---------- */
 .editar {
   display: flex;

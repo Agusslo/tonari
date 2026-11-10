@@ -97,7 +97,7 @@
 } @else {
   <div class="grilla">
     @for (entrada of visibles(); track entrada._id) {
-      <app-entrada [entrada]="entrada" (actualizada)="alActualizar($event)" (quitar)="aQuitar.set($event)" />
+      <app-entrada [entrada]="entrada" [proximo]="proximos().get(entrada.idAnilist) ?? null" (actualizada)="alActualizar($event)" (quitar)="aQuitar.set($event)" />
     } @empty {
       <div class="panel estado-vacio">
         <div class="vacio-icono" aria-hidden="true">

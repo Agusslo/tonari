@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BibliotecaApi } from '../../core/services/biblioteca-api';
+import { Anilist, ProximoEpisodio } from '../../core/services/anilist';
 import IEntrada, { ESTADOS, EstadoEntrada, IObra, TipoObra } from '../../core/interfaces/biblioteca';
 import { Entrada } from './entrada/entrada';
 import { Buscador } from './buscador/buscador';
@@ -20,6 +21,7 @@ import { ClickAfueraDirective } from '../../shared/directives/click-afuera.direc
 })
 export class Biblioteca implements OnInit {
   private readonly api = inject(BibliotecaApi);
+  private readonly anilist = inject(Anilist);
 
   // Todas mis obras (anime y manga). Lo demás se calcula a partir de esta lista.
   protected readonly entradas = signal<IEntrada[]>([]);
@@ -36,6 +38,11 @@ export class Biblioteca implements OnInit {
   protected readonly errorAccion = signal<string | null>(null);
 
   protected readonly estados = ESTADOS;
+
+  // Animes en emisión: idAnilist -> su próximo episodio (lo pregunta a AniList).
+  // Sirve para que el "+" de cada tarjeta no deje pasar del último episodio que salió
+  // (lo mismo que ya hace la ficha). Si AniList falla, queda vacío y no se limita nada.
+  protected readonly proximos = signal(new Map<number, ProximoEpisodio>());
 
   // computed: se recalculan solos cuando cambian entradas, tipo o filtro.
   protected readonly delTipo = computed(() => this.entradas().filter((e) => e.tipo === this.tipo()));
@@ -84,11 +91,25 @@ export class Biblioteca implements OnInit {
       next: (entradas) => {
         this.entradas.set(entradas);
         this.cargando.set(false);
+        this.cargarProximos();
       },
       error: (error: HttpErrorResponse) => {
         this.error.set(mensajeDeError(error));
         this.cargando.set(false);
       },
+    });
+  }
+
+  // Un solo pedido a AniList con todos los animes que no terminaste (hasta 50).
+  // Los terminados no hace falta: ahí el tope ya es el total de episodios.
+  private cargarProximos() {
+    const ids = this.entradas()
+      .filter((e) => e.tipo === 'anime' && e.estado !== 'completado')
+      .map((e) => e.idAnilist);
+    if (!ids.length) return;
+    this.anilist.proximosEpisodios(ids).subscribe({
+      next: (proximos) => this.proximos.set(proximos),
+      error: () => this.proximos.set(new Map()),
     });
   }
 
@@ -105,6 +126,7 @@ export class Biblioteca implements OnInit {
       next: (entrada) => {
         this.entradas.update((lista) => [entrada, ...lista]);
         this.agregando.set(null);
+        if (entrada.tipo === 'anime') this.cargarProximos(); // por si la nueva está en emisión
         this.buscadorAbierto.set(false);
         this.filtro.set(null); // que se vea, aunque hubiera un filtro puesto
       },

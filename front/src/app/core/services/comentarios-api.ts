@@ -46,6 +46,11 @@ export class ComentariosApi {
   editar(id: string, mensaje: string) {
     return this.http.put<IComentario>(`${this.url}/comentarios/${id}`, { mensaje });
   }
+
+  // DELETE /comentarios/:id -> { mensaje, eliminados } (un principal se lleva sus respuestas)
+  eliminar(id: string) {
+    return this.http.delete<{ mensaje: string; eliminados: number }>(`${this.url}/comentarios/${id}`);
+  }
 }
 
 // Sin imagen: { mensaje } en JSON. Con imagen: FormData (un archivo no viaja en JSON).

@@ -4,6 +4,8 @@ import { RouterLink } from '@angular/router';
 import { rutaFicha } from '../../../shared/utils/rutas';
 import IEntrada, { ESTADOS, EstadoEntrada } from '../../../core/interfaces/biblioteca';
 import { BibliotecaApi, CambiosEntrada } from '../../../core/services/biblioteca-api';
+import { ProximoEpisodio } from '../../../core/services/anilist';
+import { cuandoSale } from '../../../shared/utils/fechas';
 import { mensajeDeError } from '../../../shared/utils/errores-http';
 import { EstadoObraPipe } from '../../../shared/pipes/estado-obra.pipe';
 import { ImagenRespaldoDirective } from '../../../shared/directives/imagen-respaldo.directive';
@@ -29,6 +31,8 @@ export class Entrada {
   readonly entrada = input.required<IEntrada>();
   // false cuando mirás la biblioteca de otro: solo lectura.
   readonly editable = input(true);
+  // Anime en emisión: cuál es el próximo episodio y cuándo sale (null = no se está emitiendo).
+  readonly proximo = input<ProximoEpisodio | null>(null);
 
   readonly actualizada = output<IEntrada>();
   readonly quitar = output<IEntrada>();
@@ -50,9 +54,24 @@ export class Entrada {
     return total ? Math.min(100, Math.round((progreso / total) * 100)) : null;
   });
 
+  // Hasta qué episodio salió: si el próximo es el 7, salieron 6 (null = no se sabe / todos).
+  protected readonly salidos = computed(() => {
+    const proximo = this.proximo();
+    return proximo ? proximo.episodio - 1 : null;
+  });
+
+  // El "+" se apaga al llegar al total... o al último episodio que salió.
   protected readonly puedeSumar = computed(() => {
     const { progreso, total } = this.entrada();
+    const salidos = this.salidos();
+    if (salidos !== null && progreso >= salidos) return false;
     return total === null || progreso < total;
+  });
+
+  // "Ep. 7 sale vie 11:00" debajo del contador.
+  protected readonly textoProximo = computed(() => {
+    const proximo = this.proximo();
+    return proximo ? `Ep. ${proximo.episodio} sale ${cuandoSale(proximo.fecha)}` : null;
   });
 
   protected cambiarEstado(evento: Event) {
@@ -75,6 +94,7 @@ export class Entrada {
   protected mover(paso: 1 | -1) {
     const nuevo = this.entrada().progreso + paso;
     if (nuevo < 0 || this.guardando()) return;
+    if (paso === 1 && !this.puedeSumar()) return;
     this.guardar({ progreso: nuevo });
   }
 

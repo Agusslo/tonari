@@ -24,6 +24,7 @@ import { TextoSpoiler } from '../../../shared/components/texto-spoiler/texto-spo
 import { ImagenAdjunta } from '../../../shared/utils/imagen-adjunta';
 import { BotonImagen } from '../../../shared/components/imagen-adjunta/boton-imagen';
 import { VistaImagen } from '../../../shared/components/imagen-adjunta/vista-imagen';
+import { Modal } from '../../../shared/components/modal/modal';
 
 // Cuántas respuestas se traen por vez ("Ver respuestas" y cada "Ver más").
 const RESPUESTAS_POR_TANDA = 5;
@@ -34,7 +35,7 @@ const RESPUESTAS_POR_TANDA = 5;
 // (este mismo componente se usa para cada respuesta, con esRespuesta = true).
 @Component({
   selector: 'app-comentario',
-  imports: [DatePipe, ReactiveFormsModule, RouterLink, Avatar, TiempoRelativoPipe, AutoAlturaDirective, TextoSpoiler, BotonImagen, VistaImagen],
+  imports: [DatePipe, ReactiveFormsModule, RouterLink, Avatar, TiempoRelativoPipe, AutoAlturaDirective, TextoSpoiler, BotonImagen, VistaImagen, Modal],
   templateUrl: './comentario.html',
   styleUrl: './comentario.css',
 })
@@ -52,11 +53,51 @@ export class Comentario {
   readonly pideResponder = output<IComentario>();
   // Avisa a la página que se sumó una respuesta (para el contador de la publicación).
   readonly respondido = output<void>();
+  // Avisa al padre que este comentario se borró, con cuántos se fueron
+  // (un principal se lleva sus respuestas), para sacarlo de la lista y bajar contadores.
+  readonly eliminado = output<number>();
+  // Avisa a la página que se borró una respuesta de este hilo (contador de la publicación).
+  readonly respuestaEliminada = output<void>();
 
   // Solo el autor puede editarlo (el back lo valida igual: si no, 403).
   protected readonly esMio = computed(
     () => this.usuario()?._id === this.comentario().usuario._id,
   );
+  // Borrar: el autor o un administrador (igual que con las publicaciones).
+  protected readonly puedeEliminar = computed(
+    () => this.esMio() || this.usuario()?.perfil === 'administrador',
+  );
+
+  // ---------- Eliminar ----------
+  protected readonly aEliminar = signal(false); // abre el modal de confirmación
+  protected readonly eliminando = signal(false);
+  protected readonly errorEliminar = signal<string | null>(null);
+
+  pedirEliminar() {
+    this.errorEliminar.set(null);
+    this.aEliminar.set(true);
+  }
+
+  cerrarEliminar() {
+    if (!this.eliminando()) this.aEliminar.set(false);
+  }
+
+  confirmarEliminar() {
+    if (this.eliminando()) return;
+    this.eliminando.set(true);
+    this.errorEliminar.set(null);
+    this.api.eliminar(this.comentario()._id).subscribe({
+      next: ({ eliminados }) => {
+        this.eliminando.set(false);
+        this.aEliminar.set(false);
+        this.eliminado.emit(eliminados); // el padre lo saca de la lista
+      },
+      error: (error: HttpErrorResponse) => {
+        this.eliminando.set(false);
+        this.errorEliminar.set(mensajeDeError(error)); // queda abierto, con el error
+      },
+    });
+  }
 
   protected readonly editando = signal(false);
   protected readonly guardando = signal(false);
@@ -241,5 +282,13 @@ export class Comentario {
   // Una respuesta se editó: la reemplazamos en el hilo.
   alEditarRespuesta(editada: IComentario) {
     this.respuestas.update((lista) => lista.map((r) => (r._id === editada._id ? editada : r)));
+  }
+
+  // Una respuesta se borró: sale del hilo, baja el "Ver N respuestas" y le avisamos a la página.
+  alEliminarRespuesta(id: string) {
+    this.respuestas.update((lista) => lista.filter((r) => r._id !== id));
+    this.totalRespuestas.update((total) => Math.max(total - 1, 0));
+    if (this.totalRespuestas() === 0) this.abiertas.set(false);
+    this.respuestaEliminada.emit();
   }
 }

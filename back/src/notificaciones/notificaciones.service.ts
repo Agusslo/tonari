@@ -50,6 +50,15 @@ export class NotificacionesService {
     }
   }
 
+  // Si se borran comentarios (o respuestas), sus avisos también se van.
+  async retirarDeComentarios(comentarios: Id[]) {
+    try {
+      await this.notificacionModel.deleteMany({ comentario: { $in: comentarios } });
+    } catch (error) {
+      this.logger.warn(`No se pudieron borrar las notificaciones: ${(error as Error).message}`);
+    }
+  }
+
   // Si se da de baja una publicación, sus avisos también se van.
   async retirarDePublicacion(publicacion: Id) {
     try {

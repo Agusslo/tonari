@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -77,5 +78,12 @@ export class ComentariosController {
     @Body() mensajeComentarioDto: MensajeComentarioDto,
   ) {
     return this.comentariosService.editar(id, req.usuario.id, mensajeComentarioDto);
+  }
+
+  // DELETE /comentarios/:id -> 200 con { mensaje, eliminados }.
+  // Un comentario principal se lleva sus respuestas; "eliminados" dice cuántos fueron.
+  @Delete('comentarios/:id')
+  eliminar(@Param('id') id: string, @Req() req: RequestConToken) {
+    return this.comentariosService.eliminar(id, req.usuario);
   }
 }

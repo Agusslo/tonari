@@ -451,3 +451,12 @@ a.tapa-entrada:hover img {
     display: none;
   }
 }
+
+/* "Ep. 7 sale vie 11:00": anime en emisión (lila, como en la lista de episodios) */
+.proximo {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-lila);
+}

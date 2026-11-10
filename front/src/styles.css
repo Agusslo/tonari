@@ -785,6 +785,13 @@ app-root {
     transition: none !important;
     animation: none !important;
   }
+
+  /* La ruedita es la excepción: no es decoración, avisa que algo está cargando.
+     Quieta parece un ícono roto ("C"). Gira, pero más despacio.
+     (.spinner le gana a * por especificidad, los dos con !important.) */
+  .spinner {
+    animation: girar 1.4s linear infinite !important;
+  }
 }
 
 /* Directiva appImagenRespaldo: la imagen no cargó. Se esconde pero sigue ocupando

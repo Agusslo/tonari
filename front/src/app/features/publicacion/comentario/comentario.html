@@ -78,6 +78,16 @@
             Editar
           </button>
         }
+        @if (puedeEliminar()) {
+          <button type="button" class="boton-editar boton-eliminar" (click)="pedirEliminar()">
+            <svg class="icono" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+              <path d="M3 6h18" />
+              <path d="M8 6V4h8v2" />
+              <path d="M19 6l-1 14H6L5 6" />
+            </svg>
+            Eliminar
+          </button>
+        }
       </div>
     }
 
@@ -109,6 +119,7 @@
                 [esRespuesta]="true"
                 (actualizado)="alEditarRespuesta($event)"
                 (pideResponder)="abrirRespuesta($event)"
+                (eliminado)="alEliminarRespuesta(r._id)"
               />
             </li>
           }
@@ -175,3 +186,31 @@
     }
   </div>
 </article>
+
+<!-- Confirmar eliminación (nada de confirm() del navegador) -->
+<app-modal
+  [abierto]="aEliminar()"
+  [titulo]="esRespuesta() ? '¿Eliminar respuesta?' : '¿Eliminar comentario?'"
+  tipo="error"
+  (cerrar)="cerrarEliminar()"
+>
+  <p>
+    @if (!esRespuesta() && totalRespuestas() > 0) {
+      Se borran también sus {{ totalRespuestas() }}
+      {{ totalRespuestas() === 1 ? 'respuesta' : 'respuestas' }}.
+    }
+    No se puede deshacer.
+  </p>
+  @if (errorEliminar(); as mensajeError) {
+    <p class="mensaje-error" role="alert">{{ mensajeError }}</p>
+  }
+  <button acciones type="button" class="boton boton-secundario" [disabled]="eliminando()" (click)="cerrarEliminar()">
+    Cancelar
+  </button>
+  <button acciones type="button" class="boton boton-peligro" [disabled]="eliminando()" (click)="confirmarEliminar()">
+    @if (eliminando()) {
+      <span class="spinner" aria-hidden="true"></span>
+    }
+    Eliminar
+  </button>
+</app-modal>

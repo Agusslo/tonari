@@ -170,6 +170,25 @@ export class Publicacion implements OnInit {
     );
   }
 
+  // Se borró un comentario principal (con sus respuestas): sale de la lista y
+  // el "3 comentarios" de la publicación baja todo lo que se fue.
+  alEliminar(id: string, eliminados: number) {
+    this.comentarios.update((lista) => lista.filter((c) => c._id !== id));
+    this.totalComentarios.update((total) => Math.max(total - 1, 0));
+    this.sumarAlContador(-eliminados);
+  }
+
+  // Se borró una respuesta: el hilo ya se arregló solo, acá baja el contador.
+  alEliminarRespuesta() {
+    this.sumarAlContador(-1);
+  }
+
+  private sumarAlContador(cuanto: number) {
+    this.publicacion.update((p) =>
+      p ? { ...p, cantidadComentarios: Math.max((p.cantidadComentarios ?? 0) + cuanto, 0) } : p,
+    );
+  }
+
   // ---- "Me gusta" y eliminar (lo mismo que en el muro) ----
   alternarMeGusta(publicacion: IPublicacion) {
     const usuario = this.usuario();

@@ -108,6 +108,8 @@
                 [usuario]="usuario()"
                 (actualizado)="alEditar($event)"
                 (respondido)="alResponder()"
+                (eliminado)="alEliminar(comentario._id, $event)"
+                (respuestaEliminada)="alEliminarRespuesta()"
               />
             </li>
           } @empty {

@@ -5,13 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { isValidObjectId, Model } from 'mongoose';
+import { isValidObjectId, Model, Types } from 'mongoose';
 import { Comentario } from './entities/comentario.entity.js';
 import { Publicacion } from '../publicaciones/entities/publicacion.entity.js';
 import { MensajeComentarioDto } from './dto/mensaje-comentario.dto.js';
 import { ListarComentariosDto } from './dto/listar-comentarios.dto.js';
 import { NotificacionesService } from '../notificaciones/notificaciones.service.js';
 import { guardarImagen } from '../common/imagenes.js';
+import type { PayloadToken } from '../auth/token/token.guard.js';
 
 // Los datos del autor que se muestran en cada comentario (nunca correo ni contraseña).
 const DATOS_AUTOR = 'nombre apellido nombreUsuario imagenPerfil';
@@ -154,6 +155,46 @@ export class ComentariosService {
     comentario.modificado = true;
     await comentario.save();
     return comentario.populate('usuario', DATOS_AUTOR);
+  }
+
+  // DELETE: borra el comentario. Solo el autor o un administrador (si no, 403).
+  // Si es un comentario principal, se van también sus respuestas (quedarían colgadas).
+  // Devuelve cuántos se borraron, para que el front baje el contador de la publicación.
+  async eliminar(id: string, usuario: PayloadToken) {
+    const comentario = await this.buscarComentario(id);
+    await this.verificarPublicacion(comentario.publicacion.toString());
+
+    const esAutor = comentario.usuario.equals(usuario.id);
+    const esAdministrador = usuario.perfil === 'administrador';
+    if (!esAutor && !esAdministrador) {
+      throw new ForbiddenException('Solo podés eliminar tus propios comentarios'); // 403
+    }
+
+    const ids: Types.ObjectId[] = [comentario._id];
+    if (!comentario.respondeA) {
+      const respuestas = await this.comentarioModel.find({ respondeA: comentario._id }).select('_id');
+      ids.push(...respuestas.map((r) => r._id));
+    }
+
+    await this.comentarioModel.deleteMany({ _id: { $in: ids } });
+    await Promise.all([
+      // Los contadores bajan lo mismo que subieron al crear.
+      this.publicacionModel.updateOne(
+        { _id: comentario.publicacion },
+        { $inc: { cantidadComentarios: -ids.length } },
+      ),
+      // Si era una respuesta, su comentario principal tiene una menos.
+      comentario.respondeA
+        ? this.comentarioModel.updateOne(
+            { _id: comentario.respondeA },
+            { $inc: { cantidadRespuestas: -1 } },
+          )
+        : null,
+      // "beto comentó tu publicación" ya no apunta a nada: se borra.
+      this.notificacionesService.retirarDeComentarios(ids),
+    ]);
+
+    return { mensaje: 'Comentario eliminado', eliminados: ids.length };
   }
 
   // El comentario tiene que existir (400 si el id no es válido, 404 si no está).
