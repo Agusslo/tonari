@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { sesionGuard } from './core/guards/sesion-guard';
+import { adminGuard } from './core/guards/admin-guard';
 
 // Cada pantalla se carga recién cuando se visita (lazy loading con loadComponent).
 // "title" cambia el título de la pestaña del navegador.
@@ -112,6 +113,30 @@ export const routes: Routes = [
     title: 'Mi perfil · TONARI',
     canActivate: [sesionGuard],
     loadComponent: () => import('./features/perfil/perfil').then((m) => m.Perfil),
+  },
+  {
+    // Dashboard del administrador (Sprint 4). Los guards van en orden:
+    // primero sesionGuard (¿hay sesión?) y después adminGuard (¿sos administrador?).
+    // "children": las dos pantallas comparten los guards del padre.
+    path: 'dashboard',
+    canActivate: [sesionGuard, adminGuard],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'usuarios' },
+      {
+        path: 'usuarios',
+        title: 'Dashboard · Usuarios · TONARI',
+        loadComponent: () =>
+          import('./features/dashboard/usuarios/usuarios').then((m) => m.DashboardUsuarios),
+      },
+      {
+        path: 'estadisticas',
+        title: 'Dashboard · Estadísticas · TONARI',
+        loadComponent: () =>
+          import('./features/dashboard/estadisticas/estadisticas').then(
+            (m) => m.DashboardEstadisticas,
+          ),
+      },
+    ],
   },
   // Cualquier ruta que no exista: página 404 (sin guard: se ve con o sin sesión).
   {

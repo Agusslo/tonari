@@ -1,0 +1,43 @@
+<header class="panel encabezado">
+  <p class="kicker" lang="ja" aria-hidden="true">管理</p>
+  <h1>Dashboard</h1>
+  <p class="texto-secundario">Solo lo ven los administradores.</p>
+
+  <nav class="pestanas" aria-label="Secciones del dashboard">
+    <a
+      routerLink="/dashboard/usuarios"
+      routerLinkActive="activa"
+      ariaCurrentWhenActive="page"
+    >
+      <svg
+        class="icono"
+        viewBox="0 0 24 24"
+        width="16"
+        height="16"
+        aria-hidden="true"
+      >
+        <circle cx="9" cy="8" r="3.5" />
+        <path
+          d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.5a3.5 3.5 0 0 1 0 7M18 14c2.2.6 3.5 2.8 3.5 6"
+        />
+      </svg>
+      Usuarios
+    </a>
+    <a
+      routerLink="/dashboard/estadisticas"
+      routerLinkActive="activa"
+      ariaCurrentWhenActive="page"
+    >
+      <svg
+        class="icono"
+        viewBox="0 0 24 24"
+        width="16"
+        height="16"
+        aria-hidden="true"
+      >
+        <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
+      </svg>
+      Estadísticas
+    </a>
+  </nav>
+</header>

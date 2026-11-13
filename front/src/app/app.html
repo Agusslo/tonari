@@ -12,6 +12,10 @@
     <!-- Con sesión: acceso al perfil con tu foto. Sin sesión: ingresar o crear cuenta -->
     @if (usuario(); as usuario) {
       <a routerLink="/biblioteca" routerLinkActive="activo" ariaCurrentWhenActive="page">Biblioteca</a>
+      <!-- Dashboard (Sprint 4): solo lo ven los administradores -->
+      @if (usuario.perfil === 'administrador') {
+        <a routerLink="/dashboard" routerLinkActive="activo" ariaCurrentWhenActive="page">Dashboard</a>
+      }
       <!-- Notificaciones (extra): la campanita con el numerito de no leídas -->
       <app-campanita />
       <a routerLink="/mi-perfil" routerLinkActive="activo" ariaCurrentWhenActive="page" class="nav-perfil">

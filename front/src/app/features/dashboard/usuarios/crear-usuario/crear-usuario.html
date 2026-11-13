@@ -1,0 +1,311 @@
+<!-- Sprint 4: el formulario del registro + el tipo de perfil -->
+<form [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+  <!-- Los campos van agrupados en tres partes para que el formulario no sea una lista eterna -->
+  <fieldset class="grupo">
+    <legend>
+      <span class="grupo-numero" aria-hidden="true">01</span> Datos personales
+    </legend>
+
+    <div class="fila">
+      <div class="campo">
+        <label for="cu-nombre">Nombre</label>
+        <input
+          id="cu-nombre"
+          type="text"
+          formControlName="nombre"
+          autocomplete="off"
+          [attr.aria-invalid]="mostrarError('nombre')"
+          aria-describedby="cu-error-nombre"
+        />
+        @if (mostrarError('nombre')) {
+        <p id="cu-error-nombre" class="mensaje-error">
+          {{ mensajeError('nombre') }}
+        </p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="cu-apellido">Apellido</label>
+        <input
+          id="cu-apellido"
+          type="text"
+          formControlName="apellido"
+          autocomplete="off"
+          [attr.aria-invalid]="mostrarError('apellido')"
+          aria-describedby="cu-error-apellido"
+        />
+        @if (mostrarError('apellido')) {
+        <p id="cu-error-apellido" class="mensaje-error">
+          {{ mensajeError('apellido') }}
+        </p>
+        }
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="cu-fechaNacimiento">Fecha de nacimiento</label>
+      <input
+        id="cu-fechaNacimiento"
+        type="date"
+        formControlName="fechaNacimiento"
+        autocomplete="off"
+        [max]="hoy"
+        [attr.aria-invalid]="mostrarError('fechaNacimiento')"
+        aria-describedby="cu-error-fechaNacimiento"
+      />
+      @if (mostrarError('fechaNacimiento')) {
+      <p id="cu-error-fechaNacimiento" class="mensaje-error">
+        {{ mensajeError('fechaNacimiento') }}
+      </p>
+      }
+    </div>
+  </fieldset>
+
+  <fieldset class="grupo">
+    <legend>
+      <span class="grupo-numero" aria-hidden="true">02</span> Cuenta
+    </legend>
+
+    <div class="fila">
+      <div class="campo">
+        <label for="cu-correo">Correo</label>
+        <input
+          id="cu-correo"
+          type="email"
+          formControlName="correo"
+          autocomplete="off"
+          [attr.aria-invalid]="mostrarError('correo')"
+          aria-describedby="cu-error-correo"
+        />
+        @if (mostrarError('correo')) {
+        <p id="cu-error-correo" class="mensaje-error">
+          {{ mensajeError('correo') }}
+        </p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="cu-nombreUsuario">Nombre de usuario</label>
+        <input
+          id="cu-nombreUsuario"
+          type="text"
+          formControlName="nombreUsuario"
+          autocomplete="off"
+          [attr.aria-invalid]="mostrarError('nombreUsuario')"
+          aria-describedby="cu-error-nombreUsuario"
+        />
+        @if (mostrarError('nombreUsuario')) {
+        <p id="cu-error-nombreUsuario" class="mensaje-error">
+          {{ mensajeError('nombreUsuario') }}
+        </p>
+        }
+      </div>
+    </div>
+
+    <div class="fila">
+      <div class="campo">
+        <label for="cu-contraseña">Contraseña</label>
+        <div class="campo-contraseña">
+          <input
+            id="cu-contraseña"
+            [type]="verContrasena() ? 'text' : 'password'"
+            formControlName="contraseña"
+            autocomplete="new-password"
+            [attr.aria-invalid]="mostrarError('contraseña')"
+            aria-describedby="cu-ayuda-contraseña cu-error-contraseña"
+          />
+          <button
+            type="button"
+            class="boton-ojo"
+            (click)="verContrasena.set(!verContrasena())"
+            [attr.aria-label]="verContrasena() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            aria-controls="cu-contraseña"
+          >
+            <svg
+              class="icono"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              aria-hidden="true"
+            >
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+              <circle cx="12" cy="12" r="3" />
+              @if (verContrasena()) {
+              <line x1="3" y1="3" x2="21" y2="21" />
+              }
+            </svg>
+          </button>
+        </div>
+        <p id="cu-ayuda-contraseña" class="ayuda texto-secundario">
+          Mínimo 8 caracteres, una mayúscula y un número.
+        </p>
+        @if (mostrarError('contraseña')) {
+        <p id="cu-error-contraseña" class="mensaje-error">
+          {{ mensajeError('contraseña') }}
+        </p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="cu-repetirContraseña">Repetir contraseña</label>
+        <div class="campo-contraseña">
+          <input
+            id="cu-repetirContraseña"
+            [type]="verContrasena() ? 'text' : 'password'"
+            formControlName="repetirContraseña"
+            autocomplete="new-password"
+            [attr.aria-invalid]="mostrarError('repetirContraseña')"
+            aria-describedby="cu-error-repetirContraseña"
+          />
+          <button
+            type="button"
+            class="boton-ojo"
+            (click)="verContrasena.set(!verContrasena())"
+            [attr.aria-label]="
+                  verContrasena() ? 'Ocultar contraseña' : 'Mostrar contraseña'
+                "
+            aria-controls="cu-repetirContraseña"
+          >
+            <svg
+              class="icono"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              aria-hidden="true"
+            >
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+              <circle cx="12" cy="12" r="3" />
+              @if (verContrasena()) {
+              <line x1="3" y1="3" x2="21" y2="21" />
+              }
+            </svg>
+          </button>
+        </div>
+        @if (mostrarError('repetirContraseña')) {
+        <p id="cu-error-repetirContraseña" class="mensaje-error">
+          {{ mensajeError('repetirContraseña') }}
+        </p>
+        }
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="grupo">
+    <legend>
+      <span class="grupo-numero" aria-hidden="true">03</span> Perfil público
+    </legend>
+
+    <div class="campo">
+      <label for="cu-imagenPerfil">Imagen de perfil</label>
+      <div class="imagen">
+        <!-- Círculo con la vista previa: tu foto, o una silueta si todavía no elegiste ninguna -->
+        <div class="avatar" [class.falta]="!!errorImagen()">
+          @if (vistaPrevia(); as url) {
+          <img
+            [src]="url"
+            alt="Vista previa de la imagen de perfil"
+            class="vista-previa"
+          />
+          } @else {
+          <svg
+            class="icono"
+            viewBox="0 0 24 24"
+            width="26"
+            height="26"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+          </svg>
+          }
+        </div>
+        <input
+          id="cu-imagenPerfil"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          (change)="elegirImagen($event)"
+          aria-required="true"
+          [attr.aria-invalid]="!!errorImagen()"
+          aria-describedby="cu-ayuda-imagen cu-error-imagen"
+        />
+      </div>
+      <p id="cu-ayuda-imagen" class="ayuda texto-secundario">
+        JPG, PNG o WEBP. Si pesa más de 2 MB, la achicamos automáticamente.
+      </p>
+      @if (errorImagen()) {
+      <p id="cu-error-imagen" class="mensaje-error">{{ errorImagen() }}</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="cu-descripcion">Descripción breve</label>
+      <textarea
+        appAutoAltura
+        id="cu-descripcion"
+        formControlName="descripcion"
+        rows="3"
+        maxlength="200"
+        placeholder="Qué mira, lee o dibuja…"
+        [attr.aria-invalid]="mostrarError('descripcion')"
+        aria-describedby="cu-contador-descripcion cu-error-descripcion"
+      ></textarea>
+      <p id="cu-contador-descripcion" class="ayuda texto-secundario contador">
+        {{ formulario.controls.descripcion.value.length }}/200
+      </p>
+      @if (mostrarError('descripcion')) {
+      <p id="cu-error-descripcion" class="mensaje-error">
+        {{ mensajeError('descripcion') }}
+      </p>
+      }
+    </div>
+  </fieldset>
+
+  <!-- Lo único que no tiene el registro: qué perfil va a tener la cuenta -->
+  <fieldset class="grupo">
+    <legend>
+      <span class="grupo-numero" aria-hidden="true">04</span> Tipo de perfil
+    </legend>
+    <div class="radios" role="radiogroup">
+      <label class="radio">
+        <input type="radio" formControlName="perfil" value="usuario" />
+        <span>
+          <strong>Usuario</strong>
+          <small class="texto-secundario"
+            >Publica, comenta y usa su biblioteca.</small
+          >
+        </span>
+      </label>
+      <label class="radio">
+        <input type="radio" formControlName="perfil" value="administrador" />
+        <span>
+          <strong>Administrador</strong>
+          <small class="texto-secundario">Además entra a este dashboard.</small>
+        </span>
+      </label>
+    </div>
+  </fieldset>
+
+  @if (error(); as mensaje) {
+  <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+  }
+
+  <div class="acciones">
+    <button
+      type="button"
+      class="boton boton-secundario"
+      (click)="cancelar.emit()"
+    >
+      Cancelar
+    </button>
+    <button
+      type="submit"
+      class="boton"
+      [attr.aria-disabled]="enviando()"
+      [attr.aria-busy]="enviando()"
+    >
+      @if (enviando()) {
+      <span class="spinner" aria-hidden="true"></span>
+      Creando usuario… } @else { Crear usuario }
+    </button>
+  </div>
+</form>

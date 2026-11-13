@@ -1,0 +1,63 @@
+/* El primer grupo no necesita el margen de arriba del registro */
+form > .grupo:first-child {
+  margin-top: 0.5rem;
+}
+
+/* Radios "Usuario" / "Administrador": dos tarjetas, la elegida en menta */
+.radios {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+@media (max-width: 560px) {
+  .radios {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.radio {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  background: var(--color-campo);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-campo);
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+}
+
+.radio:hover {
+  border-color: var(--linea-campo);
+}
+
+.radio:has(input:checked) {
+  background: var(--velo-menta);
+  border-color: var(--color-menta);
+}
+
+.radio input {
+  margin: 0.2rem 0 0;
+  accent-color: var(--color-menta);
+}
+
+.radio span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.radio small {
+  font-size: 0.82rem;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}

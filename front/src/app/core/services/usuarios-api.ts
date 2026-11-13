@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { IPerfilPublico, IResumenSeguir } from '../interfaces/usuario';
+import { IPerfilPublico, IResumenSeguir, IUsuarioAdmin } from '../interfaces/usuario';
+import { DatosRegistro } from './auth';
 import { IAutor } from '../interfaces/publicacion';
 
 // Habla con /usuarios del back (el token lo pone el interceptor).
@@ -40,5 +41,34 @@ export class UsuariosApi {
   // contraseñaActual solo va si la cuenta ya tenía una.
   cambiarContrasena(id: string, datos: { contraseñaActual?: string; contraseñaNueva: string }) {
     return this.http.patch<{ tieneContraseña: boolean }>(`${this.url}/${id}/contrasena`, datos);
+  }
+
+  // ---------- Dashboard del administrador (Sprint 4) ----------
+  // Las cuatro rutas tienen AdminGuard en el back: si no sos administrador, 403.
+
+  // GET /usuarios -> todos los usuarios (habilitados y deshabilitados), los más nuevos primero.
+  listar() {
+    return this.http.get<IUsuarioAdmin[]>(this.url);
+  }
+
+  // POST /usuarios -> crear un usuario con los datos del registro + el perfil.
+  // Va como FormData (multipart) porque lleva la imagen, igual que el registro.
+  crear(datos: DatosRegistro & { perfil: IUsuarioAdmin['perfil'] }, imagenPerfil: File) {
+    const formData = new FormData();
+    for (const [campo, valor] of Object.entries(datos)) {
+      formData.append(campo, valor);
+    }
+    formData.append('imagenPerfil', imagenPerfil);
+    return this.http.post<IUsuarioAdmin>(this.url, formData);
+  }
+
+  // DELETE /usuarios/:id -> deshabilitar (baja lógica: el usuario no se borra).
+  deshabilitar(id: string) {
+    return this.http.delete<IUsuarioAdmin>(`${this.url}/${id}`);
+  }
+
+  // POST /usuarios/:id/habilitar -> volver a habilitar (alta lógica).
+  habilitar(id: string) {
+    return this.http.post<IUsuarioAdmin>(`${this.url}/${id}/habilitar`, {});
   }
 }

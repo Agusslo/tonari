@@ -48,3 +48,20 @@
 
     // Lo que devuelven seguir / dejar de seguir: los números actualizados.
     export type IResumenSeguir = Pick<IPerfilPublico, 'seguidores' | 'siguiendo' | 'loSigo' | 'meSigue'>;
+
+    // Un usuario en el listado del dashboard (GET /usuarios, solo administradores).
+    // Trae el correo y si está habilitado, pero no la fecha de nacimiento ni la descripción.
+    export type IUsuarioAdmin = Pick<
+    IUsuario,
+    | '_id'
+    | 'nombre'
+    | 'apellido'
+    | 'correo'
+    | 'nombreUsuario'
+    | 'imagenPerfil'
+    | 'perfil'
+    | 'habilitado'
+    | 'googleId'
+    | 'discordId'
+    | 'createdAt'
+    >;

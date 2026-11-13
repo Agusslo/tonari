@@ -1,0 +1,92 @@
+<article class="panel tarjeta" [attr.aria-labelledby]="'titulo-' + cual()">
+  <header class="cabeza">
+    <div>
+      <h2 [id]="'titulo-' + cual()">{{ titulo() }}</h2>
+      @if (descripcion()) {
+      <p class="texto-secundario">{{ descripcion() }}</p>
+      }
+    </div>
+    @if (total() !== null && !cargando() && !error()) {
+    <p class="total"><strong>{{ total() }}</strong> en total</p>
+    }
+  </header>
+
+  <!-- El rango de fechas de ESTE gráfico -->
+  <div class="rango">
+    <div class="rapidos" role="group" aria-label="Rangos rápidos">
+      @for (dias of [7, 30, 90]; track dias) {
+      <button
+        type="button"
+        class="rapido"
+        [class.activo]="esRapido(dias)"
+        [attr.aria-pressed]="esRapido(dias)"
+        (click)="ultimosDias(dias)"
+      >
+        {{ dias }} días
+      </button>
+      }
+    </div>
+    <div class="fechas">
+      <div class="campo">
+        <label [for]="'desde-' + cual()">Desde</label>
+        <input
+          [id]="'desde-' + cual()"
+          type="date"
+          [value]="desde()"
+          [max]="hasta() || hoy"
+          (change)="cambiarDesde($event)"
+        />
+      </div>
+      <div class="campo">
+        <label [for]="'hasta-' + cual()">Hasta</label>
+        <input
+          [id]="'hasta-' + cual()"
+          type="date"
+          [value]="hasta()"
+          [min]="desde()"
+          [max]="hoy"
+          (change)="cambiarHasta($event)"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="area"
+    [class.area-torta]="tipo() === 'pie'"
+    [attr.aria-busy]="cargando()"
+  >
+    @if (errorRango(); as mensaje) {
+    <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+    } @else if (cargando()) {
+    <div class="esqueleto relleno" aria-label="Cargando gráfico"></div>
+    } @else if (error(); as mensaje) {
+    <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+    } @else if (!hayDatos()) {
+    <p class="texto-secundario">No hay datos en ese rango de fechas.</p>
+    } @else {
+    <!-- El gráfico es un dibujo: para lectores de pantalla va la tabla de abajo -->
+    <canvas
+      #lienzo
+      role="img"
+      [attr.aria-label]="titulo() + ': los datos están en la tabla siguiente'"
+    ></canvas>
+    }
+  </div>
+
+  @if (!cargando() && hayDatos()) {
+  <table class="solo-lector">
+    <caption>
+      {{ titulo() }}
+    </caption>
+    <tbody>
+      @for (punto of puntos(); track $index) {
+      <tr>
+        <th scope="row">{{ punto.etiqueta }}</th>
+        <td>{{ punto.cantidad }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  }
+</article>

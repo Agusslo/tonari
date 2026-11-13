@@ -133,7 +133,7 @@
   - [x] Formulario con validaciones y mensajes acordes
   - [x] Campos: nombre, apellido, correo, nombre de usuario, contraseña, repetir contraseña, fecha de nacimiento, descripción breve
   - [x] Campo de tipo file para la imagen de perfil
-  - [ ] Atributo perfil: por defecto "usuario", modificable a "administrador"
+  - [x] Atributo perfil: por defecto "usuario", modificable a "administrador" (un administrador crea cuentas de cualquiera de los dos perfiles desde el dashboard)
 
 ### Back
 - [x] Creación del proyecto back (NestJS)
@@ -219,15 +219,15 @@
 ### Front
 - **Publicación y Publicaciones**
   - [x] Si se loguea un administrador: botones para dar de baja cualquier publicación (dejan de estar disponibles la publicación y sus comentarios)
-- **Dashboard / Usuarios** (solo administradores)
-  - [ ] Listado de usuarios
-  - [ ] Crear usuarios (mismos datos que el registro) con dos radio buttons: "usuario" o "administrador"
-  - [ ] Alta y baja lógica (un usuario deshabilitado no puede ingresar y se le avisa al intentar el login)
-  - [ ] Formulario de registro para nuevos usuarios
-- **Dashboard / Estadísticas** (gráficos de tipos distintos: torta, barras, líneas, etc.)
-  - [ ] Publicaciones por usuario en un lapso de tiempo elegible
-  - [ ] Comentarios realizados en un lapso de tiempo elegible
-  - [ ] Comentarios por publicación en un lapso de tiempo elegible
+- **Dashboard / Usuarios** (solo administradores: `adminGuard` en la ruta y link "Dashboard" solo para ellos)
+  - [x] Listado de usuarios (`/dashboard/usuarios`: buscador y filtro por estado)
+  - [x] Crear usuarios (mismos datos que el registro) con dos radio buttons: "usuario" o "administrador"
+  - [x] Alta y baja lógica (un usuario deshabilitado no puede ingresar y se le avisa al intentar el login), con modal de confirmación
+  - [x] Formulario de registro para nuevos usuarios
+- **Dashboard / Estadísticas** (gráficos de tipos distintos con Chart.js, cada uno con su rango de fechas)
+  - [x] Publicaciones por usuario en un lapso de tiempo elegible (barras)
+  - [x] Comentarios realizados en un lapso de tiempo elegible (líneas, por día)
+  - [x] Comentarios por publicación en un lapso de tiempo elegible (torta)
 - **A nivel aplicación**
   - [x] PWA
   - [x] 3 pipes propias (`tiempoRelativo`, `estadoObra`, `numeroCorto`)
@@ -241,7 +241,7 @@
   - [x] DELETE: deshabilitar un usuario (al intentar ingresar se le notifica que no está autorizado) (`DELETE /usuarios/:id`; un admin no se puede deshabilitar a sí mismo)
   - [x] POST: alta lógica, rehabilita a un usuario deshabilitado (`POST /usuarios/:id/habilitar`)
 - **Estadísticas controller** (validar que el token sea de un administrador)
-  - [ ] Rutas GET necesarias para los gráficos
+  - [x] Rutas GET necesarias para los gráficos (`GET /estadisticas/publicaciones-por-usuario`, `/estadisticas/comentarios` y `/estadisticas/comentarios-por-publicacion`, con `?desde=AAAA-MM-DD&hasta=AAAA-MM-DD`; sin fechas, los últimos 30 días)
 
 ---
 

@@ -10,6 +10,7 @@ import { ComentariosModule } from './comentarios/comentarios.module.js';
 import { BibliotecaModule } from './biblioteca/biblioteca.module.js';
 import { CatalogoModule } from './catalogo/catalogo.module.js';
 import { NotificacionesModule } from './notificaciones/notificaciones.module.js';
+import { EstadisticasModule } from './estadisticas/estadisticas.module.js';
 
 @Module({
   imports: [
@@ -34,6 +35,8 @@ import { NotificacionesModule } from './notificaciones/notificaciones.module.js'
     BibliotecaModule,
     CatalogoModule,
     NotificacionesModule,
+    // Dashboard del administrador (Sprint 4): datos para los gráficos.
+    EstadisticasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

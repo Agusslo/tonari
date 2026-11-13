@@ -1,0 +1,25 @@
+<app-menu-dashboard />
+
+<div class="graficos">
+  <!-- Barras: comparar cantidades entre usuarios -->
+  <app-grafico
+    cual="publicaciones-por-usuario"
+    titulo="Publicaciones por usuario"
+    descripcion="Quiénes publicaron más (los 10 primeros)."
+  />
+
+  <!-- Líneas: cómo cambia algo día a día -->
+  <app-grafico
+    cual="comentarios"
+    titulo="Comentarios hechos"
+    descripcion="Cuántos comentarios se hicieron cada día."
+  />
+
+  <!-- Torta: cómo se reparten los comentarios entre publicaciones -->
+  <app-grafico
+    class="ancho"
+    cual="comentarios-por-publicacion"
+    titulo="Comentarios por publicación"
+    descripcion="Las publicaciones con más comentarios; el resto va junto en «Otras»."
+  />
+</div>

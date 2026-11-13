@@ -1,0 +1,22 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Dos gráficos por fila en pantallas anchas; la torta ocupa la fila entera */
+.graficos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.graficos .ancho {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+  .graficos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
