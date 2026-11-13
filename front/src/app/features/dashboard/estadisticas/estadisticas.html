@@ -1,18 +1,34 @@
 <app-menu-dashboard />
 
+<div class="intro">
+  <div>
+    <h2>Actividad de la comunidad</h2>
+    <p class="texto-secundario">
+      Publicaciones y comentarios en el período que elijas. Cada gráfico tiene su propio rango.
+    </p>
+  </div>
+  <p class="nota">
+    <svg class="icono" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+    Fechas en hora de Argentina
+  </p>
+</div>
+
 <div class="graficos">
   <!-- Barras: comparar cantidades entre usuarios -->
   <app-grafico
     cual="publicaciones-por-usuario"
     titulo="Publicaciones por usuario"
-    descripcion="Quiénes publicaron más (los 10 primeros)."
+    descripcion="Los 10 autores que más publicaron."
   />
 
   <!-- Líneas: cómo cambia algo día a día -->
   <app-grafico
     cual="comentarios"
-    titulo="Comentarios hechos"
-    descripcion="Cuántos comentarios se hicieron cada día."
+    titulo="Comentarios por día"
+    descripcion="Evolución diaria de los comentarios."
   />
 
   <!-- Torta: cómo se reparten los comentarios entre publicaciones -->
@@ -20,6 +36,6 @@
     class="ancho"
     cual="comentarios-por-publicacion"
     titulo="Comentarios por publicación"
-    descripcion="Las publicaciones con más comentarios; el resto va junto en «Otras»."
+    descripcion="Las publicaciones con más comentarios; el resto se agrupa en «Otras»."
   />
 </div>

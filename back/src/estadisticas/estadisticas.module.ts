@@ -1,13 +1,13 @@
-import { Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
-import { EstadisticasController } from "./estadisticas.controller.js";
-import { EstadisticasService } from "./estadisticas.service.js";
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { EstadisticasController } from './estadisticas.controller.js';
+import { EstadisticasService } from './estadisticas.service.js';
 import {
   Comentario,
   ComentarioSchema,
-} from "../comentarios/entities/comentario.entity.js";
-import { PublicacionesModule } from "../publicaciones/publicaciones.module.js";
-import { UsuariosModule } from "../usuarios/usuarios.module.js";
+} from '../comentarios/entities/comentario.entity.js';
+import { PublicacionesModule } from '../publicaciones/publicaciones.module.js';
+import { UsuariosModule } from '../usuarios/usuarios.module.js';
 
 @Module({
   imports: [

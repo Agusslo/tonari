@@ -8,6 +8,7 @@
     import { isValidObjectId, Model } from 'mongoose';
     import bcrypt from 'bcryptjs';
     import { Usuario } from './entities/usuario.entity.js';
+    import type { Perfil } from './entities/usuario.entity.js';
     import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto.js';
     import { CambiarContrasenaDto } from './dto/cambiar-contrasena.dto.js';
     import { CrearUsuarioDto } from './dto/crear-usuario.dto.js';
@@ -100,6 +101,27 @@
         throw new ConflictException('Ese usuario ya está habilitado'); // 409
         }
         usuario.habilitado = true;
+        await usuario.save();
+        return this.usuarioModel.findById(id).select(DATOS_ADMIN);
+    }
+
+    // PATCH /usuarios/:id/perfil -> dar o sacar el rol de administrador.
+    // No se puede cambiar el propio: así un admin no se saca el rol sin querer
+    // y siempre queda al menos uno. El cambio vale al instante: AdminGuard
+    // lee el perfil de la base en cada pedido, no el del token.
+    async cambiarPerfil(id: string, perfil: Perfil, adminId: string) {
+        if (id === adminId) {
+        throw new BadRequestException('No podés cambiar tu propio perfil'); // 400
+        }
+        const usuario = await this.buscarPorId(id);
+        if (usuario.perfil === perfil) {
+        throw new ConflictException(
+            perfil === 'administrador'
+            ? 'Ese usuario ya es administrador'
+            : 'Ese usuario ya no es administrador',
+        ); // 409
+        }
+        usuario.perfil = perfil;
         await usuario.save();
         return this.usuarioModel.findById(id).select(DATOS_ADMIN);
     }

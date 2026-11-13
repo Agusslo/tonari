@@ -1,13 +1,13 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { Publicacion } from "../publicaciones/entities/publicacion.entity.js";
-import { Comentario } from "../comentarios/entities/comentario.entity.js";
-import { RangoFechasDto } from "./dto/rango-fechas.dto.js";
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Publicacion } from '../publicaciones/entities/publicacion.entity.js';
+import { Comentario } from '../comentarios/entities/comentario.entity.js';
+import { RangoFechasDto } from './dto/rango-fechas.dto.js';
 
 // Las fechas se cuentan en hora argentina: un comentario de las 23:30 del lunes es
 // del lunes, aunque en UTC (como guarda Mongo) ya sea martes.
-const ZONA = "America/Argentina/Buenos_Aires";
+const ZONA = 'America/Argentina/Buenos_Aires';
 const DIA_MS = 24 * 60 * 60 * 1000;
 const MAXIMO_DIAS = 366;
 
@@ -31,27 +31,30 @@ export class EstadisticasService {
     const datos = await this.publicacionModel.aggregate<{
       nombreUsuario: string;
       nombre: string;
+      imagenPerfil: string;
       cantidad: number;
     }>([
       // Solo las activas: las dadas de baja ya no están en la app.
       { $match: { activa: true, createdAt: { $gte: inicio, $lte: fin } } },
-      { $group: { _id: "$usuario", cantidad: { $sum: 1 } } },
+      { $group: { _id: '$usuario', cantidad: { $sum: 1 } } },
       { $sort: { cantidad: -1, _id: 1 } },
       { $limit: 10 },
       {
         $lookup: {
-          from: "Usuarios",
-          localField: "_id",
-          foreignField: "_id",
-          as: "autor",
+          from: 'Usuarios',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'autor',
         },
       },
-      { $unwind: "$autor" },
+      { $unwind: '$autor' },
       {
         $project: {
           _id: 0,
-          nombreUsuario: "$autor.nombreUsuario",
-          nombre: { $concat: ["$autor.nombre", " ", "$autor.apellido"] },
+          nombreUsuario: '$autor.nombreUsuario',
+          nombre: { $concat: ['$autor.nombre', ' ', '$autor.apellido'] },
+          // La foto, para mostrarla al pasar el mouse por la barra
+          imagenPerfil: '$autor.imagenPerfil',
           cantidad: 1,
         },
       },
@@ -72,8 +75,8 @@ export class EstadisticasService {
         $group: {
           _id: {
             $dateToString: {
-              format: "%Y-%m-%d",
-              date: "$createdAt",
+              format: '%Y-%m-%d',
+              date: '$createdAt',
               timezone: ZONA,
             },
           },
@@ -102,19 +105,19 @@ export class EstadisticasService {
       cantidad: number;
     }>([
       { $match: { createdAt: { $gte: inicio, $lte: fin } } },
-      { $group: { _id: "$publicacion", cantidad: { $sum: 1 } } },
+      { $group: { _id: '$publicacion', cantidad: { $sum: 1 } } },
       {
         $lookup: {
-          from: "Publicaciones",
-          localField: "_id",
-          foreignField: "_id",
-          as: "publicacion",
+          from: 'Publicaciones',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'publicacion',
         },
       },
-      { $unwind: "$publicacion" },
-      { $match: { "publicacion.activa": true } },
+      { $unwind: '$publicacion' },
+      { $match: { 'publicacion.activa': true } },
       { $sort: { cantidad: -1, _id: 1 } },
-      { $project: { titulo: "$publicacion.titulo", cantidad: 1 } },
+      { $project: { titulo: '$publicacion.titulo', cantidad: 1 } },
     ]);
     // Una torta con muchas porciones no se lee: las 6 primeras y el resto junto.
     const primeras = porPublicacion.slice(0, 6).map((p) => ({
@@ -127,7 +130,7 @@ export class EstadisticasService {
       .reduce((suma, p) => suma + p.cantidad, 0);
     const datos =
       resto > 0
-        ? [...primeras, { id: null, titulo: "Otras", cantidad: resto }]
+        ? [...primeras, { id: null, titulo: 'Otras', cantidad: resto }]
         : primeras;
     const total = porPublicacion.reduce((suma, p) => suma + p.cantidad, 0);
     return { desde, hasta, total, datos };
@@ -148,7 +151,7 @@ function rango(filtro: RangoFechasDto) {
   const fin = new Date(`${hasta}T23:59:59.999-03:00`);
 
   if (!fechaReal(desde) || !fechaReal(hasta)) {
-    throw new BadRequestException("Alguna de las fechas no existe"); // 400 (ej.: 2026-02-31)
+    throw new BadRequestException('Alguna de las fechas no existe'); // 400 (ej.: 2026-02-31)
   }
   if (inicio > fin) {
     throw new BadRequestException(
@@ -156,7 +159,7 @@ function rango(filtro: RangoFechasDto) {
     ); // 400
   }
   if ((fin.getTime() - inicio.getTime()) / DIA_MS > MAXIMO_DIAS) {
-    throw new BadRequestException("El rango puede ser de hasta un año"); // 400
+    throw new BadRequestException('El rango puede ser de hasta un año'); // 400
   }
   return { desde, hasta, inicio, fin };
 }
@@ -170,7 +173,7 @@ function fechaReal(fecha: string) {
 
 // "2026-11-13" de una fecha, en hora argentina.
 function fechaArgentina(fecha: Date) {
-  return fecha.toLocaleDateString("en-CA", { timeZone: ZONA });
+  return fecha.toLocaleDateString('en-CA', { timeZone: ZONA });
 }
 
 // Todos los días entre dos fechas "AAAA-MM-DD", incluidos los dos.

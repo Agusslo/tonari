@@ -19,6 +19,7 @@
     import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto.js';
     import { CambiarContrasenaDto } from './dto/cambiar-contrasena.dto.js';
     import { CrearUsuarioDto } from './dto/crear-usuario.dto.js';
+    import { CambiarPerfilDto } from './dto/cambiar-perfil.dto.js';
     import { validarImagen } from '../common/imagenes.js';
     import { TokenGuard } from '../auth/token/token.guard.js';
     import { AdminGuard } from '../auth/token/admin.guard.js';
@@ -72,6 +73,19 @@
     @UseGuards(AdminGuard)
     habilitar(@Param('id') id: string) {
         return this.usuariosService.habilitar(id);
+    }
+
+    // PATCH /usuarios/:id/perfil -> 200 con el usuario actualizado.
+    // Body: { "perfil": "administrador" } para darle el rol, o "usuario" para sacárselo.
+    // 400 si querés cambiar tu propio perfil; 409 si ya tenía ese perfil.
+    @Patch(':id/perfil')
+    @UseGuards(AdminGuard)
+    cambiarPerfil(
+        @Param('id') id: string,
+        @Body() cambiarPerfilDto: CambiarPerfilDto,
+        @Req() req: RequestConToken,
+    ) {
+        return this.usuariosService.cambiarPerfil(id, cambiarPerfilDto.perfil, req.usuario.id);
     }
 
     // ---------- Perfiles y seguir ----------

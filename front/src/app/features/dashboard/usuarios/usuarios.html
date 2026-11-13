@@ -1,57 +1,141 @@
 <app-menu-dashboard />
 
-<section class="panel" aria-labelledby="titulo-usuarios">
+<!-- Indicadores: cuatro tarjetas con el número grande y una línea de contexto -->
+<dl class="kpis" [attr.aria-busy]="cargando()">
+  <div class="kpi">
+    <dt>
+      <span class="kpi-icono" aria-hidden="true">
+        <svg class="icono" viewBox="0 0 24 24" width="18" height="18">
+          <circle cx="9" cy="8" r="3.5" />
+          <path
+            d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.5a3.5 3.5 0 0 1 0 7M18 14c2.2.6 3.5 2.8 3.5 6"
+          />
+        </svg>
+      </span>
+      Cuentas
+    </dt>
+    <dd class="kpi-valor">{{ cargando() ? '–' : resumen().total }}</dd>
+    <dd class="kpi-nota">
+      @if (cargando()) {
+        &nbsp;
+      } @else if (resumen().nuevos) {
+        <span class="tendencia">+{{ resumen().nuevos }}</span> en los últimos 30 días
+      } @else {
+        Sin altas en los últimos 30 días
+      }
+    </dd>
+  </div>
+
+  <div class="kpi">
+    <dt>
+      <span class="kpi-icono" aria-hidden="true">
+        <svg class="icono" viewBox="0 0 24 24" width="18" height="18">
+          <circle cx="12" cy="12" r="9" />
+          <path d="m8 12 3 3 5-6" />
+        </svg>
+      </span>
+      Habilitadas
+    </dt>
+    <dd class="kpi-valor">{{ cargando() ? '–' : resumen().habilitados }}</dd>
+    <dd class="kpi-nota">
+      <span class="medidor" aria-hidden="true">
+        <span [style.width.%]="cargando() ? 0 : resumen().pctHabilitados"></span>
+      </span>
+      {{ cargando() ? '–' : resumen().pctHabilitados }} % del total
+    </dd>
+  </div>
+
+  <div class="kpi">
+    <dt>
+      <span class="kpi-icono kpi-icono-baja" aria-hidden="true">
+        <svg class="icono" viewBox="0 0 24 24" width="18" height="18">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M5.6 5.6l12.8 12.8" />
+        </svg>
+      </span>
+      Deshabilitadas
+    </dt>
+    <dd class="kpi-valor">{{ cargando() ? '–' : resumen().deshabilitados }}</dd>
+    <dd class="kpi-nota">Sin acceso a la app</dd>
+  </div>
+
+  <div class="kpi">
+    <dt>
+      <span class="kpi-icono kpi-icono-admin" aria-hidden="true">
+        <svg class="icono" viewBox="0 0 24 24" width="18" height="18">
+          <path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6L12 3z" />
+        </svg>
+      </span>
+      Administradores
+    </dt>
+    <dd class="kpi-valor">{{ cargando() ? '–' : resumen().administradores }}</dd>
+    <dd class="kpi-nota">
+      <span class="medidor medidor-admin" aria-hidden="true">
+        <span [style.width.%]="cargando() ? 0 : resumen().pctAdministradores"></span>
+      </span>
+      {{ cargando() ? '–' : resumen().pctAdministradores }} % del total
+    </dd>
+  </div>
+</dl>
+
+<section class="panel directorio" aria-labelledby="titulo-usuarios">
   <div class="cabeza">
     <div>
       <h2 id="titulo-usuarios">Usuarios</h2>
-      <!-- Números del listado: el valor grande arriba y la etiqueta abajo -->
-      <dl class="resumen" [attr.aria-busy]="cargando()">
-        <div>
-          <dt>Cuentas</dt>
-          <dd>{{ cargando() ? '–' : resumen().total }}</dd>
-        </div>
-        <div>
-          <dt>Habilitadas</dt>
-          <dd>{{ cargando() ? '–' : resumen().habilitados }}</dd>
-        </div>
-        <div>
-          <dt>Administradores</dt>
-          <dd>{{ cargando() ? '–' : resumen().administradores }}</dd>
-        </div>
-      </dl>
+      <p class="texto-secundario subtitulo" aria-live="polite">
+        @if (cargando()) {
+          Cargando cuentas…
+        } @else {
+          Mostrando {{ visibles().length }} de {{ resumen().total }}
+          {{ resumen().total === 1 ? 'cuenta' : 'cuentas' }}
+        }
+      </p>
     </div>
 
     @if (!formularioAbierto()) {
-    <button type="button" class="boton" (click)="formularioAbierto.set(true)">
-      <svg
-        class="icono"
-        viewBox="0 0 24 24"
-        width="16"
-        height="16"
-        aria-hidden="true"
-      >
-        <path d="M12 5v14M5 12h14" />
-      </svg>
-      Nuevo usuario
-    </button>
+      <button type="button" class="boton boton-compacto" (click)="formularioAbierto.set(true)">
+        <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        Nuevo usuario
+      </button>
     }
   </div>
 
   <!-- Crear usuario: el formulario del registro + "Usuario" / "Administrador" -->
   @if (formularioAbierto()) {
-  <div class="nuevo">
-    <h3>Nuevo usuario</h3>
-    <app-crear-usuario
-      (creado)="usuarioCreado($event)"
-      (cancelar)="formularioAbierto.set(false)"
-    />
-  </div>
+    <div class="nuevo">
+      <div class="nuevo-cabeza">
+        <div>
+          <h3>Nuevo usuario</h3>
+          <p class="texto-secundario">La cuenta queda creada y habilitada al instante.</p>
+        </div>
+        <button
+          type="button"
+          class="cerrar"
+          aria-label="Cerrar el formulario"
+          (click)="formularioAbierto.set(false)"
+        >
+          <svg class="icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M6 6l12 12M18 6 6 18" />
+          </svg>
+        </button>
+      </div>
+      <app-crear-usuario
+        (creado)="usuarioCreado($event)"
+        (cancelar)="formularioAbierto.set(false)"
+      />
+    </div>
   }
 
   <!-- Buscador y filtro por estado -->
   <div class="herramientas">
-    <div class="campo buscar">
+    <div class="buscar">
       <label for="buscar-usuario" class="solo-lector">Buscar usuario</label>
+      <svg class="icono lupa" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+      </svg>
       <input
         id="buscar-usuario"
         type="search"
@@ -60,151 +144,206 @@
         (input)="busqueda.set($any($event.target).value)"
       />
     </div>
-    <div class="filtros" role="group" aria-label="Filtrar por estado">
-      @for (opcion of ['todos', 'habilitados', 'deshabilitados']; track opcion)
-      {
-      <button
-        type="button"
-        class="filtro"
-        [class.activo]="filtro() === opcion"
-        [attr.aria-pressed]="filtro() === opcion"
-        (click)="filtro.set($any(opcion))"
-      >
-        {{ opcion === 'todos' ? 'Todos' : opcion === 'habilitados' ?
-        'Habilitados' : 'Deshabilitados' }}
-      </button>
+    <div class="segmentos" role="group" aria-label="Filtrar por estado">
+      @for (opcion of filtros; track opcion.valor) {
+        <button
+          type="button"
+          class="segmento"
+          [class.activo]="filtro() === opcion.valor"
+          [attr.aria-pressed]="filtro() === opcion.valor"
+          (click)="filtro.set(opcion.valor)"
+        >
+          {{ opcion.texto }}
+          <span class="contador">{{ cargando() ? '–' : cantidadFiltro(opcion.valor) }}</span>
+        </button>
       }
     </div>
   </div>
 
-  @if (cargando()) {
-  <ul class="lista" aria-busy="true" aria-label="Cargando usuarios">
-    @for (n of [1, 2, 3, 4]; track n) {
-    <li class="fila esqueleto-autor">
-      <div class="esqueleto esqueleto-circulo"></div>
-      <div>
-        <div class="esqueleto esqueleto-linea"></div>
-        <div class="esqueleto esqueleto-linea esqueleto-chica"></div>
-      </div>
-    </li>
-    }
-  </ul>
-  } @else if (errorCarga(); as mensaje) {
-  <div class="vacio">
-    <p class="mensaje-error" role="alert">{{ mensaje }}</p>
-    <button type="button" class="boton boton-secundario" (click)="cargar()">
-      Reintentar
-    </button>
+  <!-- Encabezado de columnas (decorativo: cada fila ya dice qué es cada dato) -->
+  <div class="columnas" aria-hidden="true">
+    <span>Usuario</span>
+    <span>Rol</span>
+    <span>Estado</span>
+    <span>Alta</span>
+    <span class="col-acciones">Acciones</span>
   </div>
+
+  @if (cargando()) {
+    <ul class="lista" aria-busy="true" aria-label="Cargando usuarios">
+      @for (n of [1, 2, 3, 4, 5]; track n) {
+        <li class="fila fila-esqueleto">
+          <div class="esqueleto-autor">
+            <div class="esqueleto-circulo"></div>
+            <div>
+              <div class="esqueleto-linea linea-larga"></div>
+              <div class="esqueleto-linea esqueleto-chica linea-corta"></div>
+            </div>
+          </div>
+        </li>
+      }
+    </ul>
+  } @else if (errorCarga(); as mensaje) {
+    <div class="vacio">
+      <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+      <button type="button" class="boton boton-secundario boton-compacto" (click)="cargar()">
+        Reintentar
+      </button>
+    </div>
   } @else if (!visibles().length) {
-  <p class="vacio texto-secundario">No hay usuarios que coincidan.</p>
+    <div class="vacio">
+      <span class="vacio-icono" aria-hidden="true">
+        <svg class="icono" viewBox="0 0 24 24" width="28" height="28">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </svg>
+      </span>
+      <p><strong>No hay usuarios que coincidan</strong></p>
+      <p class="texto-secundario">Probá con otra búsqueda o cambiá el filtro.</p>
+    </div>
   } @else {
-  <ul class="lista">
-    @for (usuario of visibles(); track usuario._id) {
-    <li class="fila" [class.apagado]="!usuario.habilitado">
-      <app-avatar [usuario]="usuario" />
+    <ul class="lista">
+      @for (usuario of visibles(); track usuario._id) {
+        <li class="fila" [class.apagado]="!usuario.habilitado">
+          <div class="persona">
+            <app-avatar [usuario]="usuario" />
+            <div class="datos">
+              <p class="nombre">
+                <a [routerLink]="['/usuarios', usuario.nombreUsuario]">
+                  {{ usuario.nombre }} {{ usuario.apellido }}
+                </a>
+                @if (usuario._id === miId()) {
+                  <span class="chip chip-vos">Vos</span>
+                }
+              </p>
+              <p class="texto-secundario detalle">
+                &#64;{{ usuario.nombreUsuario }} · {{ usuario.correo }}
+              </p>
+            </div>
+          </div>
 
-      <div class="datos">
-        <p class="nombre">
-          <a [routerLink]="['/usuarios', usuario.nombreUsuario]">
-            {{ usuario.nombre }} {{ usuario.apellido }}
-          </a>
-          @if (usuario._id === miId()) {
-          <span class="chip">Vos</span>
-          }
-        </p>
-        <p class="texto-secundario detalle">
-          &#64;{{ usuario.nombreUsuario }} · {{ usuario.correo }}
-        </p>
-        <p class="texto-secundario detalle">
-          Alta: {{ usuario.createdAt | date: 'dd/MM/yyyy' }} @if
-          (usuario.googleId) { · Google } @if (usuario.discordId) { · Discord }
-        </p>
-      </div>
+          <div class="celda celda-rol">
+            <span class="chip" [class.chip-admin]="usuario.perfil === 'administrador'">
+              @if (usuario.perfil === 'administrador') {
+                <svg class="icono" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+                  <path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6L12 3z" />
+                </svg>
+              }
+              {{ usuario.perfil === 'administrador' ? 'Administrador' : 'Usuario' }}
+            </span>
+          </div>
 
-      <div class="etiquetas-fila">
-        <span
-          class="chip"
-          [class.chip-admin]="usuario.perfil === 'administrador'"
-        >
-          {{ usuario.perfil === 'administrador' ? 'Administrador' : 'Usuario' }}
-        </span>
-        <span class="estado" [class.estado-baja]="!usuario.habilitado">
-          {{ usuario.habilitado ? 'Habilitado' : 'Deshabilitado' }}
-        </span>
-      </div>
+          <div class="celda celda-estado">
+            <span class="estado" [class.estado-baja]="!usuario.habilitado">
+              {{ usuario.habilitado ? 'Habilitado' : 'Deshabilitado' }}
+            </span>
+          </div>
 
-      <div class="accion">
-        @if (usuario._id !== miId()) {
-        <button
-          type="button"
-          class="boton"
-          [class.boton-peligro]="usuario.habilitado"
-          [class.boton-secundario]="!usuario.habilitado"
-          (click)="pedirConfirmacion(usuario)"
-        >
-          {{ usuario.habilitado ? 'Deshabilitar' : 'Habilitar' }}
-          <span class="solo-lector">a {{ usuario.nombreUsuario }}</span>
-        </button>
-        }
-      </div>
-    </li>
-    }
-  </ul>
+          <div class="celda alta">
+            <span class="alta-fecha">
+              <span class="solo-lector">Alta:</span>
+              {{ usuario.createdAt | date: 'dd/MM/yyyy' }}
+            </span>
+            <span class="texto-secundario alta-metodo">vía {{ metodo(usuario) }}</span>
+          </div>
+
+          <!-- Acciones: rol de administrador y alta / baja (a mí mismo, ninguna) -->
+          <div class="accion">
+            @if (usuario._id !== miId()) {
+              @if (usuario.habilitado) {
+                <button
+                  type="button"
+                  class="boton boton-secundario boton-chico"
+                  (click)="
+                    pedirConfirmacion(
+                      usuario,
+                      usuario.perfil === 'administrador' ? 'quitar-admin' : 'hacer-admin'
+                    )
+                  "
+                >
+                  {{ usuario.perfil === 'administrador' ? 'Quitar admin' : 'Hacer admin' }}
+                  <span class="solo-lector">a {{ usuario.nombreUsuario }}</span>
+                </button>
+              }
+              <button
+                type="button"
+                class="boton boton-chico"
+                [class.boton-baja]="usuario.habilitado"
+                [class.boton-secundario]="!usuario.habilitado"
+                (click)="
+                  pedirConfirmacion(usuario, usuario.habilitado ? 'deshabilitar' : 'habilitar')
+                "
+              >
+                {{ usuario.habilitado ? 'Deshabilitar' : 'Habilitar' }}
+                <span class="solo-lector">a {{ usuario.nombreUsuario }}</span>
+              </button>
+            } @else {
+              <span class="texto-secundario sin-acciones">Tu cuenta</span>
+            }
+          </div>
+        </li>
+      }
+    </ul>
   }
 </section>
 
-<!-- Confirmar deshabilitar / habilitar -->
+<!-- Confirmar la acción elegida -->
 <app-modal
   [abierto]="confirmando() !== null"
-  [titulo]="confirmando()?.habilitado ? '¿Deshabilitar este usuario?' : '¿Habilitar este usuario?'"
-  [tipo]="confirmando()?.habilitado ? 'error' : 'exito'"
+  [titulo]="confirmando() ? textos[confirmando()!.accion].titulo : ''"
+  [tipo]="confirmando()?.accion === 'deshabilitar' ? 'error' : 'exito'"
   (cerrar)="cerrarConfirmacion()"
 >
-  @if (confirmando(); as usuario) { @if (usuario.habilitado) {
-  <p>
-    <strong>&#64;{{ usuario.nombreUsuario }}</strong> no va a poder ingresar y
-    sus publicaciones dejan de verse. No se borra nada: lo podés volver a
-    habilitar.
-  </p>
-  } @else {
-  <p>
-    <strong>&#64;{{ usuario.nombreUsuario }}</strong> va a poder volver a
-    ingresar.
-  </p>
-  } } @if (errorAccion(); as mensaje) {
-  <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+  @if (confirmando(); as pendiente) {
+    @switch (pendiente.accion) {
+      @case ('deshabilitar') {
+        <p>
+          <strong>&#64;{{ pendiente.usuario.nombreUsuario }}</strong> no va a poder ingresar y sus
+          publicaciones dejan de verse. No se borra nada: lo podés volver a habilitar.
+        </p>
+      }
+      @case ('habilitar') {
+        <p>
+          <strong>&#64;{{ pendiente.usuario.nombreUsuario }}</strong> va a poder volver a ingresar.
+        </p>
+      }
+      @case ('hacer-admin') {
+        <p>
+          <strong>&#64;{{ pendiente.usuario.nombreUsuario }}</strong> va a poder entrar a este
+          dashboard: ver y crear usuarios, dar de baja publicaciones y cambiar roles.
+        </p>
+      }
+      @case ('quitar-admin') {
+        <p>
+          <strong>&#64;{{ pendiente.usuario.nombreUsuario }}</strong> vuelve a ser un usuario común
+          y deja de entrar al dashboard.
+        </p>
+      }
+    }
   }
-  <button
-    acciones
-    type="button"
-    class="boton boton-secundario"
-    (click)="cerrarConfirmacion()"
-  >
+  @if (errorAccion(); as mensaje) {
+    <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+  }
+  <button acciones type="button" class="boton boton-secundario" (click)="cerrarConfirmacion()">
     Cancelar
   </button>
   <button
     acciones
     type="button"
     class="boton"
-    [class.boton-peligro]="confirmando()?.habilitado"
+    [class.boton-peligro]="confirmando()?.accion === 'deshabilitar'"
     [attr.aria-disabled]="procesando()"
     (click)="confirmar()"
   >
     @if (procesando()) {
-    <span class="spinner" aria-hidden="true"></span>
-    } {{ confirmando()?.habilitado ? 'Deshabilitar' : 'Habilitar' }}
+      <span class="spinner" aria-hidden="true"></span>
+    }
+    {{ confirmando() ? textos[confirmando()!.accion].boton : '' }}
   </button>
 </app-modal>
 
 <!-- Listo -->
-<app-modal
-  [abierto]="aviso() !== null"
-  titulo="Listo"
-  (cerrar)="aviso.set(null)"
->
+<app-modal [abierto]="aviso() !== null" titulo="Listo" (cerrar)="aviso.set(null)">
   <p>{{ aviso() }}</p>
-  <button acciones type="button" class="boton" (click)="aviso.set(null)">
-    Entendido
-  </button>
+  <button acciones type="button" class="boton" (click)="aviso.set(null)">Entendido</button>
 </app-modal>

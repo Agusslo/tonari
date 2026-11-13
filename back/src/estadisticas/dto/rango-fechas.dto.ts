@@ -1,4 +1,4 @@
-import { IsOptional, Matches } from "class-validator";
+import { IsOptional, Matches } from 'class-validator';
 
 // ?desde=2026-11-01&hasta=2026-11-30 (los dos opcionales).
 // Sin fechas: los últimos 30 días. El formato es el del <input type="date"> del front.

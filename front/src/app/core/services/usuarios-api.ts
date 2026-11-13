@@ -71,4 +71,9 @@ export class UsuariosApi {
   habilitar(id: string) {
     return this.http.post<IUsuarioAdmin>(`${this.url}/${id}/habilitar`, {});
   }
+
+  // PATCH /usuarios/:id/perfil -> darle o sacarle el rol de administrador.
+  cambiarPerfil(id: string, perfil: IUsuarioAdmin['perfil']) {
+    return this.http.patch<IUsuarioAdmin>(`${this.url}/${id}/perfil`, { perfil });
+  }
 }

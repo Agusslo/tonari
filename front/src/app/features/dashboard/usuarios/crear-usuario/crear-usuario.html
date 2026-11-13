@@ -2,9 +2,7 @@
 <form [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
   <!-- Los campos van agrupados en tres partes para que el formulario no sea una lista eterna -->
   <fieldset class="grupo">
-    <legend>
-      <span class="grupo-numero" aria-hidden="true">01</span> Datos personales
-    </legend>
+    <legend><span class="grupo-numero" aria-hidden="true">01</span> Datos personales</legend>
 
     <div class="fila">
       <div class="campo">
@@ -18,9 +16,9 @@
           aria-describedby="cu-error-nombre"
         />
         @if (mostrarError('nombre')) {
-        <p id="cu-error-nombre" class="mensaje-error">
-          {{ mensajeError('nombre') }}
-        </p>
+          <p id="cu-error-nombre" class="mensaje-error">
+            {{ mensajeError('nombre') }}
+          </p>
         }
       </div>
 
@@ -35,9 +33,9 @@
           aria-describedby="cu-error-apellido"
         />
         @if (mostrarError('apellido')) {
-        <p id="cu-error-apellido" class="mensaje-error">
-          {{ mensajeError('apellido') }}
-        </p>
+          <p id="cu-error-apellido" class="mensaje-error">
+            {{ mensajeError('apellido') }}
+          </p>
         }
       </div>
     </div>
@@ -54,17 +52,15 @@
         aria-describedby="cu-error-fechaNacimiento"
       />
       @if (mostrarError('fechaNacimiento')) {
-      <p id="cu-error-fechaNacimiento" class="mensaje-error">
-        {{ mensajeError('fechaNacimiento') }}
-      </p>
+        <p id="cu-error-fechaNacimiento" class="mensaje-error">
+          {{ mensajeError('fechaNacimiento') }}
+        </p>
       }
     </div>
   </fieldset>
 
   <fieldset class="grupo">
-    <legend>
-      <span class="grupo-numero" aria-hidden="true">02</span> Cuenta
-    </legend>
+    <legend><span class="grupo-numero" aria-hidden="true">02</span> Cuenta</legend>
 
     <div class="fila">
       <div class="campo">
@@ -78,9 +74,9 @@
           aria-describedby="cu-error-correo"
         />
         @if (mostrarError('correo')) {
-        <p id="cu-error-correo" class="mensaje-error">
-          {{ mensajeError('correo') }}
-        </p>
+          <p id="cu-error-correo" class="mensaje-error">
+            {{ mensajeError('correo') }}
+          </p>
         }
       </div>
 
@@ -95,9 +91,9 @@
           aria-describedby="cu-error-nombreUsuario"
         />
         @if (mostrarError('nombreUsuario')) {
-        <p id="cu-error-nombreUsuario" class="mensaje-error">
-          {{ mensajeError('nombreUsuario') }}
-        </p>
+          <p id="cu-error-nombreUsuario" class="mensaje-error">
+            {{ mensajeError('nombreUsuario') }}
+          </p>
         }
       </div>
     </div>
@@ -121,17 +117,11 @@
             [attr.aria-label]="verContrasena() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
             aria-controls="cu-contraseña"
           >
-            <svg
-              class="icono"
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              aria-hidden="true"
-            >
+            <svg class="icono" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
               <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
               <circle cx="12" cy="12" r="3" />
               @if (verContrasena()) {
-              <line x1="3" y1="3" x2="21" y2="21" />
+                <line x1="3" y1="3" x2="21" y2="21" />
               }
             </svg>
           </button>
@@ -140,9 +130,9 @@
           Mínimo 8 caracteres, una mayúscula y un número.
         </p>
         @if (mostrarError('contraseña')) {
-        <p id="cu-error-contraseña" class="mensaje-error">
-          {{ mensajeError('contraseña') }}
-        </p>
+          <p id="cu-error-contraseña" class="mensaje-error">
+            {{ mensajeError('contraseña') }}
+          </p>
         }
       </div>
 
@@ -161,39 +151,29 @@
             type="button"
             class="boton-ojo"
             (click)="verContrasena.set(!verContrasena())"
-            [attr.aria-label]="
-                  verContrasena() ? 'Ocultar contraseña' : 'Mostrar contraseña'
-                "
+            [attr.aria-label]="verContrasena() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
             aria-controls="cu-repetirContraseña"
           >
-            <svg
-              class="icono"
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              aria-hidden="true"
-            >
+            <svg class="icono" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
               <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
               <circle cx="12" cy="12" r="3" />
               @if (verContrasena()) {
-              <line x1="3" y1="3" x2="21" y2="21" />
+                <line x1="3" y1="3" x2="21" y2="21" />
               }
             </svg>
           </button>
         </div>
         @if (mostrarError('repetirContraseña')) {
-        <p id="cu-error-repetirContraseña" class="mensaje-error">
-          {{ mensajeError('repetirContraseña') }}
-        </p>
+          <p id="cu-error-repetirContraseña" class="mensaje-error">
+            {{ mensajeError('repetirContraseña') }}
+          </p>
         }
       </div>
     </div>
   </fieldset>
 
   <fieldset class="grupo">
-    <legend>
-      <span class="grupo-numero" aria-hidden="true">03</span> Perfil público
-    </legend>
+    <legend><span class="grupo-numero" aria-hidden="true">03</span> Perfil público</legend>
 
     <div class="campo">
       <label for="cu-imagenPerfil">Imagen de perfil</label>
@@ -201,22 +181,12 @@
         <!-- Círculo con la vista previa: tu foto, o una silueta si todavía no elegiste ninguna -->
         <div class="avatar" [class.falta]="!!errorImagen()">
           @if (vistaPrevia(); as url) {
-          <img
-            [src]="url"
-            alt="Vista previa de la imagen de perfil"
-            class="vista-previa"
-          />
+            <img [src]="url" alt="Vista previa de la imagen de perfil" class="vista-previa" />
           } @else {
-          <svg
-            class="icono"
-            viewBox="0 0 24 24"
-            width="26"
-            height="26"
-            aria-hidden="true"
-          >
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
-          </svg>
+            <svg class="icono" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+            </svg>
           }
         </div>
         <input
@@ -233,7 +203,7 @@
         JPG, PNG o WEBP. Si pesa más de 2 MB, la achicamos automáticamente.
       </p>
       @if (errorImagen()) {
-      <p id="cu-error-imagen" class="mensaje-error">{{ errorImagen() }}</p>
+        <p id="cu-error-imagen" class="mensaje-error">{{ errorImagen() }}</p>
       }
     </div>
 
@@ -253,26 +223,22 @@
         {{ formulario.controls.descripcion.value.length }}/200
       </p>
       @if (mostrarError('descripcion')) {
-      <p id="cu-error-descripcion" class="mensaje-error">
-        {{ mensajeError('descripcion') }}
-      </p>
+        <p id="cu-error-descripcion" class="mensaje-error">
+          {{ mensajeError('descripcion') }}
+        </p>
       }
     </div>
   </fieldset>
 
   <!-- Lo único que no tiene el registro: qué perfil va a tener la cuenta -->
   <fieldset class="grupo">
-    <legend>
-      <span class="grupo-numero" aria-hidden="true">04</span> Tipo de perfil
-    </legend>
+    <legend><span class="grupo-numero" aria-hidden="true">04</span> Tipo de perfil</legend>
     <div class="radios" role="radiogroup">
       <label class="radio">
         <input type="radio" formControlName="perfil" value="usuario" />
         <span>
           <strong>Usuario</strong>
-          <small class="texto-secundario"
-            >Publica, comenta y usa su biblioteca.</small
-          >
+          <small class="texto-secundario">Publica, comenta y usa su biblioteca.</small>
         </span>
       </label>
       <label class="radio">
@@ -286,17 +252,11 @@
   </fieldset>
 
   @if (error(); as mensaje) {
-  <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+    <p class="mensaje-error" role="alert">{{ mensaje }}</p>
   }
 
   <div class="acciones">
-    <button
-      type="button"
-      class="boton boton-secundario"
-      (click)="cancelar.emit()"
-    >
-      Cancelar
-    </button>
+    <button type="button" class="boton boton-secundario" (click)="cancelar.emit()">Cancelar</button>
     <button
       type="submit"
       class="boton"
@@ -304,8 +264,11 @@
       [attr.aria-busy]="enviando()"
     >
       @if (enviando()) {
-      <span class="spinner" aria-hidden="true"></span>
-      Creando usuario… } @else { Crear usuario }
+        <span class="spinner" aria-hidden="true"></span>
+        Creando usuario…
+      } @else {
+        Crear usuario
+      }
     </button>
   </div>
 </form>

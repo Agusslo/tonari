@@ -1,92 +1,206 @@
-<article class="panel tarjeta" [attr.aria-labelledby]="'titulo-' + cual()">
+<article
+  class="tarjeta"
+  [class.tarjeta-torta]="tipo() === 'pie'"
+  [attr.aria-labelledby]="'titulo-' + cual()"
+>
   <header class="cabeza">
-    <div>
-      <h2 [id]="'titulo-' + cual()">{{ titulo() }}</h2>
-      @if (descripcion()) {
-      <p class="texto-secundario">{{ descripcion() }}</p>
-      }
+    <div class="identidad">
+      <span class="insignia" aria-hidden="true">
+        @switch (tipo()) {
+          @case ('bar') {
+            <svg class="icono" viewBox="0 0 24 24" width="18" height="18">
+              <path d="M4 5h9M4 12h15M4 19h6" />
+            </svg>
+          }
+          @case ('line') {
+            <svg class="icono" viewBox="0 0 24 24" width="18" height="18">
+              <path d="M3 17l5-5 4 3 8-9M3 21h18" />
+            </svg>
+          }
+          @default {
+            <svg class="icono" viewBox="0 0 24 24" width="18" height="18">
+              <path d="M12 3a9 9 0 1 0 9 9h-9V3z" />
+              <path d="M15 3.5A9 9 0 0 1 20.5 9H15V3.5z" />
+            </svg>
+          }
+        }
+      </span>
+      <div>
+        <h2 [id]="'titulo-' + cual()">{{ titulo() }}</h2>
+        @if (descripcion()) {
+          <p class="texto-secundario descripcion">{{ descripcion() }}</p>
+        }
+      </div>
     </div>
-    @if (total() !== null && !cargando() && !error()) {
-    <p class="total"><strong>{{ total() }}</strong> en total</p>
-    }
+
+    <!-- El rango de fechas de ESTE gráfico -->
+    <div class="rango">
+      <div class="segmentos" role="group" aria-label="Rangos rápidos">
+        @for (dias of rapidos; track dias) {
+          <button
+            type="button"
+            class="segmento"
+            [class.activo]="esRapido(dias)"
+            [attr.aria-pressed]="esRapido(dias)"
+            (click)="ultimosDias(dias)"
+          >
+            <span aria-hidden="true">{{ dias }}<span class="unidad">d</span></span>
+            <span class="solo-lector">Últimos {{ dias }} días</span>
+          </button>
+        }
+      </div>
+      <div class="fechas">
+        <label class="fecha">
+          <span class="fecha-etiqueta">Desde</span>
+          <input
+            [id]="'desde-' + cual()"
+            type="date"
+            [value]="desde()"
+            [max]="hasta() || hoy"
+            [attr.aria-invalid]="!!errorRango()"
+            (change)="cambiarDesde($event)"
+          />
+        </label>
+        <span class="separador" aria-hidden="true">→</span>
+        <label class="fecha">
+          <span class="fecha-etiqueta">Hasta</span>
+          <input
+            [id]="'hasta-' + cual()"
+            type="date"
+            [value]="hasta()"
+            [min]="desde()"
+            [max]="hoy"
+            [attr.aria-invalid]="!!errorRango()"
+            (change)="cambiarHasta($event)"
+          />
+        </label>
+      </div>
+    </div>
   </header>
 
-  <!-- El rango de fechas de ESTE gráfico -->
-  <div class="rango">
-    <div class="rapidos" role="group" aria-label="Rangos rápidos">
-      @for (dias of [7, 30, 90]; track dias) {
-      <button
-        type="button"
-        class="rapido"
-        [class.activo]="esRapido(dias)"
-        [attr.aria-pressed]="esRapido(dias)"
-        (click)="ultimosDias(dias)"
-      >
-        {{ dias }} días
-      </button>
+  <!-- Resumen en números -->
+  <dl class="metricas" [attr.aria-busy]="cargando()">
+    @for (metrica of metricas(); track metrica.etiqueta) {
+      <div class="metrica">
+        <dt>{{ metrica.etiqueta }}</dt>
+        <dd class="metrica-valor" [title]="metrica.valor">
+          @if (cargando() || errorRango() || error()) {
+            <span class="esqueleto-linea valor-esqueleto" aria-label="Cargando"></span>
+          } @else {
+            {{ hayDatos() ? metrica.valor : '—' }}
+          }
+        </dd>
+        @if (metrica.nota && !cargando() && hayDatos()) {
+          <dd class="metrica-nota">{{ metrica.nota }}</dd>
+        }
+      </div>
+    }
+  </dl>
+
+  <div class="cuerpo">
+    <div class="area" [attr.aria-busy]="cargando()">
+      @if (errorRango(); as mensaje) {
+        <div class="estado-area">
+          <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+        </div>
+      } @else if (cargando()) {
+        <div class="esqueleto-linea relleno" aria-label="Cargando gráfico"></div>
+      } @else if (error(); as mensaje) {
+        <div class="estado-area">
+          <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+        </div>
+      } @else if (!hayDatos()) {
+        <div class="estado-area">
+          <span class="vacio-icono" aria-hidden="true">
+            <svg class="icono" viewBox="0 0 24 24" width="24" height="24">
+              <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
+            </svg>
+          </span>
+          <p><strong>Sin actividad en este período</strong></p>
+          <p class="texto-secundario">Probá con un rango de fechas más amplio.</p>
+        </div>
+      } @else {
+        <!-- El gráfico es un dibujo: para lectores de pantalla va la tabla de abajo -->
+        <canvas
+          #lienzo
+          role="img"
+          [attr.aria-label]="titulo() + ': los datos están en la tabla siguiente'"
+        ></canvas>
+
+        <!-- Barras: tooltip en HTML con la foto del autor (es visual: los datos están en la tabla) -->
+        @if (burbuja(); as b) {
+          <div
+            class="burbuja"
+            [class.burbuja-izquierda]="b.izquierda"
+            [style.left.px]="b.x"
+            [style.top.px]="b.y"
+            aria-hidden="true"
+          >
+            @if (b.punto.autor; as autor) {
+              <app-avatar [usuario]="autor" />
+            }
+            <div class="burbuja-datos">
+              <p class="burbuja-nombre">{{ b.punto.detalle || b.punto.etiqueta }}</p>
+              <p class="burbuja-detalle">
+                @if (b.punto.detalle) {
+                  {{ b.punto.etiqueta }} ·
+                }
+                {{ numero.format(b.punto.cantidad) }}
+                {{ b.punto.cantidad === 1 ? 'publicación' : 'publicaciones' }}
+              </p>
+            </div>
+          </div>
+        }
       }
     </div>
-    <div class="fechas">
-      <div class="campo">
-        <label [for]="'desde-' + cual()">Desde</label>
-        <input
-          [id]="'desde-' + cual()"
-          type="date"
-          [value]="desde()"
-          [max]="hasta() || hoy"
-          (change)="cambiarDesde($event)"
-        />
-      </div>
-      <div class="campo">
-        <label [for]="'hasta-' + cual()">Hasta</label>
-        <input
-          [id]="'hasta-' + cual()"
-          type="date"
-          [value]="hasta()"
-          [min]="desde()"
-          [max]="hoy"
-          (change)="cambiarHasta($event)"
-        />
-      </div>
-    </div>
-  </div>
 
-  <div
-    class="area"
-    [class.area-torta]="tipo() === 'pie'"
-    [attr.aria-busy]="cargando()"
-  >
-    @if (errorRango(); as mensaje) {
-    <p class="mensaje-error" role="alert">{{ mensaje }}</p>
-    } @else if (cargando()) {
-    <div class="esqueleto relleno" aria-label="Cargando gráfico"></div>
-    } @else if (error(); as mensaje) {
-    <p class="mensaje-error" role="alert">{{ mensaje }}</p>
-    } @else if (!hayDatos()) {
-    <p class="texto-secundario">No hay datos en ese rango de fechas.</p>
-    } @else {
-    <!-- El gráfico es un dibujo: para lectores de pantalla va la tabla de abajo -->
-    <canvas
-      #lienzo
-      role="img"
-      [attr.aria-label]="titulo() + ': los datos están en la tabla siguiente'"
-    ></canvas>
+    <!-- Torta: la leyenda al lado, con cantidad y porcentaje -->
+    @if (tipo() === 'pie' && !cargando() && !error() && !errorRango() && hayDatos()) {
+      <ol class="leyenda" aria-hidden="true">
+        @for (porcion of leyenda(); track $index) {
+          <li (mouseenter)="resaltar($index)" (mouseleave)="resaltar(null)">
+            <span class="muestra" [style.background]="porcion.color"></span>
+            <span class="leyenda-titulo" [title]="porcion.etiqueta">{{ porcion.etiqueta }}</span>
+            <span class="leyenda-cantidad">{{ porcion.cantidad }}</span>
+            <span class="leyenda-porcentaje">{{ porcion.porcentaje }}</span>
+            <span class="leyenda-barra">
+              <span [style.width.%]="porcion.ancho" [style.background]="porcion.color"></span>
+            </span>
+          </li>
+        }
+      </ol>
     }
   </div>
 
+  <footer class="pie">
+    <svg class="icono" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+    </svg>
+    @if (rangoTexto()) {
+      <span>{{ rangoTexto() }}</span>
+      <span aria-hidden="true">·</span>
+      <span>{{ dias() }} {{ dias() === 1 ? 'día' : 'días' }}</span>
+    } @else {
+      <span>Rango incompleto</span>
+    }
+  </footer>
+
   @if (!cargando() && hayDatos()) {
-  <table class="solo-lector">
-    <caption>
-      {{ titulo() }}
-    </caption>
-    <tbody>
-      @for (punto of puntos(); track $index) {
-      <tr>
-        <th scope="row">{{ punto.etiqueta }}</th>
-        <td>{{ punto.cantidad }}</td>
-      </tr>
-      }
-    </tbody>
-  </table>
+    <table class="solo-lector">
+      <caption>
+        {{
+          titulo()
+        }}
+      </caption>
+      <tbody>
+        @for (punto of puntos(); track $index) {
+          <tr>
+            <th scope="row">{{ punto.etiqueta }}</th>
+            <td>{{ punto.cantidad }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
   }
 </article>

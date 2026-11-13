@@ -4,54 +4,236 @@
   gap: 1.5rem;
 }
 
+/* ---------- Indicadores (KPI) ---------- */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+  animation: aparecer 0.5s 0.05s ease-out both;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.25rem 1.35rem;
+  background:
+    linear-gradient(180deg, rgb(240 237 229 / 0.025), transparent 60%), var(--color-panel);
+  border: 1px solid var(--linea-suave);
+  border-radius: 18px;
+  box-shadow: var(--brillo-borde), var(--sombra-panel);
+  transition: border-color 0.2s ease;
+}
+
+.kpi:hover {
+  border-color: rgb(240 237 229 / 0.14);
+}
+
+.kpi dt {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-texto-sec);
+}
+
+.kpi-icono {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-radius: 10px;
+}
+
+.kpi-icono-baja {
+  color: var(--color-error);
+  background: rgb(255 155 143 / 0.1);
+}
+
+.kpi-icono-admin {
+  color: var(--color-lila);
+  background: rgb(199 184 255 / 0.1);
+}
+
+.kpi dd {
+  margin: 0;
+}
+
+.kpi-valor {
+  font-family: var(--fuente-titulo);
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-hueso);
+}
+
+.kpi-nota {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 1.4rem;
+  font-size: 0.8rem;
+  color: var(--color-texto-sec);
+}
+
+.tendencia {
+  padding: 0.05rem 0.45rem;
+  font-weight: 700;
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-radius: var(--radio-pildora);
+}
+
+/* Barrita de proporción */
+.medidor {
+  flex: none;
+  width: 3.5rem;
+  height: 0.35rem;
+  overflow: hidden;
+  background: var(--velo-hueso);
+  border-radius: var(--radio-pildora);
+}
+
+.medidor span {
+  display: block;
+  height: 100%;
+  background: var(--color-menta);
+  border-radius: inherit;
+  transition: width 0.6s ease;
+}
+
+.medidor-admin span {
+  background: var(--color-lila);
+}
+
+@media (max-width: 980px) {
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .kpis {
+    gap: 0.75rem;
+  }
+
+  .kpi {
+    padding: 1rem;
+  }
+}
+
+/* ---------- Directorio ---------- */
+.directorio {
+  animation: aparecer 0.5s 0.1s ease-out both;
+}
+
 .cabeza {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
 }
 
 .cabeza h2 {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.2rem;
+  font-size: 1.45rem;
 }
 
-/* Números: el valor grande arriba y la etiqueta abajo */
-.resumen {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.75rem;
+.subtitulo {
   margin: 0;
+  font-size: 0.875rem;
 }
 
-.resumen div {
-  display: flex;
-  flex-direction: column-reverse;
+/* Botones más bajos que los del resto de la app: esto es una herramienta */
+.boton-compacto {
+  min-height: 2.6rem;
+  padding: 0 1.2rem;
+  font-size: 0.9rem;
 }
 
-.resumen dt {
-  font-size: 0.8rem;
-  color: var(--color-texto-sec);
+.boton-chico {
+  min-height: 2.2rem;
+  padding: 0 0.95rem;
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
-.resumen dd {
-  margin: 0;
-  font-family: var(--fuente-titulo);
-  font-size: 1.6rem;
-  color: var(--color-menta);
+.boton-chico:hover,
+.boton-compacto:hover {
+  transform: none;
+}
+
+.boton-compacto:hover .icono {
+  transform: rotate(90deg);
+}
+
+/* Deshabilitar en la fila: contorno rojo suave (el rojo lleno queda para el modal) */
+.boton-baja {
+  color: var(--color-error);
+  background: transparent;
+  border-color: rgb(255 155 143 / 0.45);
+  box-shadow: none;
+}
+
+.boton-baja:hover {
+  background: rgb(255 155 143 / 0.08);
+  border-color: var(--color-error);
+  box-shadow: none;
 }
 
 /* Formulario de usuario nuevo */
 .nuevo {
   margin-top: 1.5rem;
-  padding: 1.5rem;
-  background: var(--velo-hueso);
+  padding: clamp(1.15rem, 3vw, 1.75rem);
+  background: rgb(240 237 229 / 0.025);
   border: 1px solid var(--linea-suave);
-  border-radius: var(--radio-campo);
+  border-radius: 18px;
+  animation: aparecer 0.35s ease-out both;
 }
 
-.nuevo h3 {
+.nuevo-cabeza {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--linea-suave);
+}
+
+.nuevo-cabeza h3 {
+  margin: 0 0 0.2rem;
+  font-size: 1.15rem;
+}
+
+.nuevo-cabeza p {
   margin: 0;
+  font-size: 0.85rem;
+}
+
+.cerrar {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 1px solid var(--linea-suave);
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
+}
+
+.cerrar:hover {
+  color: var(--color-hueso);
+  background: var(--velo-hueso);
 }
 
 /* Buscador + filtros */
@@ -59,68 +241,202 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75rem 1rem;
-  margin: 1.5rem 0 1rem;
+  margin: 1.5rem 0 1.25rem;
 }
 
 .buscar {
-  flex: 1 1 16rem;
-  margin: 0;
+  position: relative;
+  flex: 1 1 18rem;
+  max-width: 26rem;
 }
 
-.filtros {
-  display: flex;
+.lupa {
+  position: absolute;
+  top: 50%;
+  left: 0.9rem;
+  color: var(--color-texto-sec);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.buscar input {
+  width: 100%;
+  min-height: 2.6rem;
+  padding: 0.5rem 0.9rem 0.5rem 2.6rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--color-hueso);
+  background: var(--color-campo);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-campo);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.buscar input::placeholder {
+  color: var(--color-texto-sec);
+  opacity: 0.8;
+}
+
+.buscar input:hover {
+  border-color: var(--linea-campo);
+}
+
+.buscar input:focus-visible {
+  outline: none;
+  border-color: var(--color-menta);
+  box-shadow: var(--halo-menta);
+}
+
+/* Control segmentado: los tres filtros en una sola píldora */
+.segmentos {
+  display: inline-flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  background: rgb(240 237 229 / 0.03);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-campo);
 }
 
-.filtro {
-  padding: 0.45rem 0.9rem;
-  font: 700 0.85rem var(--fuente-texto);
+.segmento {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.8rem;
+  font: 700 0.82rem var(--fuente-texto);
   color: var(--color-texto-sec);
   background: transparent;
-  border: 1px solid var(--linea-suave);
-  border-radius: var(--radio-pildora);
+  border: 0;
+  border-radius: 9px;
   cursor: pointer;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
 }
 
-.filtro:hover {
+.segmento:hover {
   color: var(--color-hueso);
+}
+
+.segmento.activo {
+  color: var(--color-hueso);
+  background: rgb(240 237 229 / 0.09);
+  box-shadow: inset 0 1px 0 rgb(240 237 229 / 0.06);
+}
+
+.contador {
+  min-width: 1.5rem;
+  padding: 0 0.4rem;
+  font-size: 0.72rem;
+  line-height: 1.35rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
   background: var(--velo-hueso);
+  border-radius: var(--radio-pildora);
 }
 
-.filtro.activo {
-  color: var(--color-menta);
-  background: var(--velo-menta);
-  border-color: var(--color-menta);
+.segmento.activo .contador {
+  color: var(--color-tinta);
+  background: var(--color-menta);
 }
 
-/* Listado: una fila por usuario */
+/* ---------- Tabla (grilla) ---------- */
+
+/* Las mismas columnas para el encabezado y las filas */
+.columnas,
+.fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 9.5rem 8.5rem 8rem 14.5rem;
+  align-items: center;
+  gap: 1rem;
+  padding-inline: 0.85rem;
+}
+
+.columnas {
+  padding-block: 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-texto-sec);
+  background: rgb(240 237 229 / 0.025);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-campo);
+}
+
+.col-acciones {
+  text-align: right;
+}
+
 .lista {
   display: flex;
   flex-direction: column;
-  margin: 0;
+  margin: 0.35rem 0 0;
   padding: 0;
   list-style: none;
 }
 
 .fila {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.9rem 0;
-  border-top: 1px solid var(--linea-suave);
+  padding-block: 0.85rem;
+  border-bottom: 1px solid var(--linea-suave);
+  border-radius: var(--radio-campo);
+  transition: background-color 0.15s ease;
 }
 
-.fila app-avatar {
-  --tam: 2.75rem;
+.fila:last-child {
+  border-bottom: 0;
+}
+
+.fila:not(.fila-esqueleto):hover {
+  background: rgb(240 237 229 / 0.03);
+}
+
+.fila-esqueleto {
+  display: block;
+}
+
+.fila-esqueleto .esqueleto-autor {
+  margin: 0;
+}
+
+.linea-larga {
+  width: 9rem;
+}
+
+.linea-corta {
+  width: 13rem;
+  max-width: 50vw;
+}
+
+.persona {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.persona app-avatar {
+  --tam: 2.5rem;
+  box-shadow: 0 0 0 1.5px rgb(185 243 228 / 0.6);
 }
 
 /* Deshabilitado: la fila se apaga un poco */
-.fila.apagado app-avatar,
-.fila.apagado .datos {
+.fila.apagado .persona,
+.fila.apagado .alta {
   opacity: 0.55;
+}
+
+.fila.apagado app-avatar {
+  filter: grayscale(1);
+  box-shadow: 0 0 0 1.5px var(--linea-campo);
+}
+
+.datos {
+  min-width: 0;
 }
 
 .datos p {
@@ -129,15 +445,19 @@
 
 .nombre {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
+  min-width: 0;
   font-weight: 700;
+  font-size: 0.95rem;
 }
 
 .nombre a {
+  overflow: hidden;
   color: inherit;
   text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .nombre a:hover {
@@ -146,89 +466,211 @@
 
 .detalle {
   overflow: hidden;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.etiquetas-fila {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.35rem;
-}
-
 .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   padding: 0.15rem 0.6rem;
   font-size: 0.75rem;
   font-weight: 700;
+  white-space: nowrap;
   color: var(--color-texto-sec);
   background: var(--velo-hueso);
+  border: 1px solid var(--linea-suave);
   border-radius: var(--radio-pildora);
 }
 
 .chip-admin {
   color: var(--color-lila);
-  background: rgb(199 184 255 / 0.12);
+  background: rgb(199 184 255 / 0.1);
+  border-color: rgb(199 184 255 / 0.22);
 }
 
-/* Estado con un puntito de color */
+.chip-vos {
+  flex: none;
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-color: rgb(185 243 228 / 0.2);
+}
+
+/* Estado: puntito de color + texto (nunca solo color) */
 .estado {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.8rem;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  font-weight: 500;
   color: var(--color-menta);
+  white-space: nowrap;
 }
 
 .estado::before {
-  content: "";
+  content: '';
   width: 0.5rem;
   height: 0.5rem;
   background: currentColor;
   border-radius: 50%;
+  box-shadow: 0 0 0 3px rgb(185 243 228 / 0.15);
 }
 
 .estado-baja {
   color: var(--color-error);
 }
 
-.accion {
-  min-width: 8.5rem;
-  text-align: right;
+.estado-baja::before {
+  box-shadow: 0 0 0 3px rgb(255 155 143 / 0.15);
 }
 
-.accion:empty {
-  display: none; /* mi propia fila no tiene botón */
+.alta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+
+.alta-fecha {
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.alta-metodo {
+  font-size: 0.75rem;
+}
+
+.accion {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.sin-acciones {
+  font-size: 0.8rem;
+  font-style: italic;
 }
 
 .vacio {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  padding: 2rem 0;
+  gap: 0.25rem;
+  padding: 3rem 1rem 2rem;
   text-align: center;
 }
 
-/* Celular: la acción y las etiquetas bajan debajo de los datos */
-@media (max-width: 640px) {
+.vacio p {
+  margin: 0;
+}
+
+.vacio .vacio-icono {
+  margin-bottom: 0.75rem;
+}
+
+.vacio .boton {
+  margin-top: 0.75rem;
+}
+
+/* Pantallas medianas: la fecha de alta se va (se ve en el perfil) */
+@media (max-width: 1080px) {
+  .columnas,
   .fila {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 9.5rem 8.5rem 14.5rem;
   }
 
-  .etiquetas-fila {
-    grid-column: 2;
-    flex-direction: row;
-    align-items: center;
+  .columnas span:nth-child(4),
+  .alta {
+    display: none;
+  }
+}
+
+/* Tablet y celular: cada fila es una tarjeta y el encabezado de columnas se va */
+@media (max-width: 820px) {
+  .columnas {
+    display: none;
+  }
+
+  .lista {
+    gap: 0.75rem;
+    margin-top: 0;
+  }
+
+  .fila {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    grid-template-areas:
+      'persona persona persona'
+      'rol estado .'
+      'accion accion accion';
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgb(240 237 229 / 0.02);
+    border: 1px solid var(--linea-suave);
+    border-radius: 16px;
+  }
+
+  .fila:last-child {
+    border-bottom: 1px solid var(--linea-suave);
+  }
+
+  .fila-esqueleto {
+    display: block;
+  }
+
+  .persona {
+    grid-area: persona;
+  }
+
+  .celda-rol {
+    grid-area: rol;
+  }
+
+  .celda-estado {
+    grid-area: estado;
   }
 
   .accion {
-    grid-column: 1 / -1;
-    min-width: 0;
+    grid-area: accion;
+    justify-content: stretch;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--linea-suave);
   }
 
   .accion .boton {
-    width: 100%;
+    flex: 1;
+  }
+
+  .sin-acciones {
+    padding-top: 0;
+  }
+
+  .herramientas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .buscar {
+    max-width: none;
+    flex-basis: auto;
+  }
+
+  .segmentos {
+    display: flex;
+  }
+
+  .segmento {
+    flex: 1;
+    justify-content: center;
+    padding-inline: 0.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .segmento {
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.75rem;
   }
 }
