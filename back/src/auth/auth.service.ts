@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { createHash, randomBytes } from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -22,6 +22,7 @@ import { DiscordService } from './discord.service.js';
 import { guardarImagen } from '../common/imagenes.js';
 import { PayloadToken } from './token/token.guard.js';
 import { Recuperacion } from './entities/recuperacion.entity.js';
+import { Ingreso } from '../estadisticas/entities/ingreso.entity.js';
 import { RecuperarDto, RestablecerDto } from './dto/recuperar.dto.js';
 import { CorreoService } from './correo.service.js';
 
@@ -34,6 +35,7 @@ export class AuthService {
   constructor(
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
     @InjectModel(Recuperacion.name) private recuperacionModel: Model<Recuperacion>,
+    @InjectModel(Ingreso.name) private ingresoModel: Model<Ingreso>,
     private readonly config: ConfigService,
     private readonly discordService: DiscordService,
     private readonly correoService: CorreoService,
@@ -74,6 +76,7 @@ export class AuthService {
     });
 
     // 5. Devolver los datos (SIN la contraseña) y el token: queda logueado.
+    await this.registrarIngreso(usuario._id, 'registro');
     return this.respuestaConToken(usuario);
   }
 
@@ -118,6 +121,7 @@ export class AuthService {
     }
 
     // 4. Devolver los datos del usuario (menos la contraseña) y el token.
+    await this.registrarIngreso(usuario._id, 'contraseña');
     return this.respuestaConToken(usuario);
   }
 
@@ -259,6 +263,7 @@ export class AuthService {
       usuario.googleCorreo = correo;
       await usuario.save();
     }
+    await this.registrarIngreso(usuario._id, 'google');
     return { nuevo: false, ...this.respuestaConToken(usuario) };
   }
 
@@ -296,6 +301,7 @@ export class AuthService {
         // Sin contraseña: esta cuenta entra con Google.
         imagenPerfil: fotoGrande(google.picture),
       });
+      await this.registrarIngreso(usuario._id, 'registro');
       return this.respuestaConToken(usuario);
     } catch (error) {
       // 11000 = índice único repetido (alguien sacó ese nombre justo antes que vos).
@@ -410,6 +416,7 @@ export class AuthService {
     usuario.discordId = discord.id;
     usuario.discordUsuario = discord.usuario;
     await usuario.save();
+    await this.registrarIngreso(usuario._id, 'discord');
     return { nuevo: false, ...this.respuestaConToken(usuario) };
   }
 
@@ -440,6 +447,7 @@ export class AuthService {
         // Sin contraseña: esta cuenta entra con Discord (después puede crear una).
         imagenPerfil: discord.avatar,
       });
+      await this.registrarIngreso(usuario._id, 'registro');
       return this.respuestaConToken(usuario);
     } catch (error) {
       if ((error as { code?: number }).code === 11000) {
@@ -487,6 +495,16 @@ export class AuthService {
       this.config.getOrThrow<string>('CONTRASENA_DEL_SERVER'),
       { expiresIn: '15m' },
     );
+  }
+
+  // Sprint 5: anota el ingreso para la estadística "ingresos por usuario".
+  // Si falla, no frena el login: la estadística es secundaria.
+  private async registrarIngreso(usuario: Types.ObjectId, metodo: string) {
+    try {
+      await this.ingresoModel.create({ usuario, metodo });
+    } catch {
+      // sin ingreso anotado, pero la persona entra igual
+    }
   }
 
   // Lo que devuelven login y registro: { usuario, token }.

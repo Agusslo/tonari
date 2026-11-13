@@ -39,3 +39,35 @@
     descripcion="Las publicaciones con más comentarios; el resto se agrupa en «Otras»."
   />
 </div>
+
+<!-- Sprint 5: ingresos, visitas a mi perfil y "Me gusta" -->
+<div class="intro">
+  <div>
+    <h2>Uso de la app</h2>
+    <p class="texto-secundario">Quién entra, quién visita tu perfil y cuántos "Me gusta" se dan.</p>
+  </div>
+</div>
+
+<div class="graficos">
+  <!-- Barras horizontales: comparar entre usuarios -->
+  <app-grafico
+    cual="ingresos-por-usuario"
+    titulo="Ingresos por usuario"
+    descripcion="Los 10 usuarios que más veces iniciaron sesión."
+  />
+
+  <!-- Líneas: visitas a MI perfil día a día (las propias no cuentan) -->
+  <app-grafico
+    cual="visitas-perfil"
+    titulo="Visitas a mi perfil"
+    descripcion="Cuántas veces otros usuarios abrieron tu perfil."
+  />
+
+  <!-- Columnas: una barra por día -->
+  <app-grafico
+    class="ancho"
+    cual="me-gusta"
+    titulo='"Me gusta" por día'
+    descripcion='Los "Me gusta" dados cada día (los que se quitaron no cuentan).'
+  />
+</div>

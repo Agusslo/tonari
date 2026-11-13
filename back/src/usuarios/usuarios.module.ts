@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Usuario, UsuarioSchema } from './entities/usuario.entity.js';
 import { Seguimiento, SeguimientoSchema } from './entities/seguimiento.entity.js';
+import { Visita, VisitaSchema } from '../estadisticas/entities/visita.entity.js';
 import { SeguimientosService } from './seguimientos.service.js';
 import { UsuariosService } from './usuarios.service.js';
 import { UsuariosController } from './usuarios.controller.js';
@@ -13,6 +14,8 @@ import { NotificacionesModule } from '../notificaciones/notificaciones.module.js
       { name: Usuario.name, schema: UsuarioSchema },
       // "Seguir" (extra): quién sigue a quién.
       { name: Seguimiento.name, schema: SeguimientoSchema },
+      // Sprint 5: visitas a los perfiles (estadística "visitas a mi perfil").
+      { name: Visita.name, schema: VisitaSchema },
     ]),
     // Para avisar "te empezó a seguir".
     NotificacionesModule,

@@ -2,9 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../../environments/environment';
 
-// Las tres estadísticas del dashboard (Sprint 4). Solo administradores (AdminGuard en el back).
+// Las estadísticas del dashboard: tres del Sprint 4 y tres del Sprint 5.
+// Solo administradores (AdminGuard en el back).
 export type Estadistica =
-  'publicaciones-por-usuario' | 'comentarios' | 'comentarios-por-publicacion';
+  | 'publicaciones-por-usuario'
+  | 'comentarios'
+  | 'comentarios-por-publicacion'
+  | 'ingresos-por-usuario'
+  | 'visitas-perfil'
+  | 'me-gusta';
 
 // Lo que devuelve cada ruta: el rango que se usó y los datos para el gráfico.
 export interface IPublicacionesPorUsuario {
@@ -27,10 +33,23 @@ export interface IComentariosPorPublicacion {
   datos: { id: string | null; titulo: string; cantidad: number }[]; // id null = "Otras"
 }
 
+// Sprint 5: inicios de sesión de cada usuario (los 10 que más) y el total de todos.
+export interface IIngresosPorUsuario extends IPublicacionesPorUsuario {
+  total: number;
+}
+
+// Sprint 5: visitas a MI perfil por día, y cuántas personas distintas fueron.
+export interface IVisitasPorDia extends IComentariosPorDia {
+  visitantes: number;
+}
+
 export interface RespuestaEstadistica {
   'publicaciones-por-usuario': IPublicacionesPorUsuario;
   comentarios: IComentariosPorDia;
   'comentarios-por-publicacion': IComentariosPorPublicacion;
+  'ingresos-por-usuario': IIngresosPorUsuario;
+  'visitas-perfil': IVisitasPorDia;
+  'me-gusta': IComentariosPorDia; // misma forma: un número por día
 }
 
 @Service()

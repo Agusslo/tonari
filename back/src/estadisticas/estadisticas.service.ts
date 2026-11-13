@@ -1,9 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Publicacion } from '../publicaciones/entities/publicacion.entity.js';
 import { Comentario } from '../comentarios/entities/comentario.entity.js';
 import { RangoFechasDto } from './dto/rango-fechas.dto.js';
+import { Ingreso } from './entities/ingreso.entity.js';
+import { Visita } from './entities/visita.entity.js';
+import { MeGusta } from './entities/me-gusta.entity.js';
 
 // Las fechas se cuentan en hora argentina: un comentario de las 23:30 del lunes es
 // del lunes, aunque en UTC (como guarda Mongo) ya sea martes.
@@ -22,6 +25,13 @@ export class EstadisticasService {
     private readonly publicacionModel: Model<Publicacion>,
     @InjectModel(Comentario.name)
     private readonly comentarioModel: Model<Comentario>,
+    // Sprint 5: lo que se anota en cada login, visita a un perfil y "Me gusta".
+    @InjectModel(Ingreso.name)
+    private readonly ingresoModel: Model<Ingreso>,
+    @InjectModel(Visita.name)
+    private readonly visitaModel: Model<Visita>,
+    @InjectModel(MeGusta.name)
+    private readonly meGustaModel: Model<MeGusta>,
   ) {}
 
   // GET /estadisticas/publicaciones-por-usuario -> gráfico de barras.
@@ -135,6 +145,103 @@ export class EstadisticasService {
     const total = porPublicacion.reduce((suma, p) => suma + p.cantidad, 0);
     return { desde, hasta, total, datos };
   }
+
+  // ---------- Sprint 5 ----------
+
+  // GET /estadisticas/ingresos-por-usuario -> barras horizontales.
+  // Cuántas veces inició sesión cada usuario en el rango (los 10 que más).
+  async ingresosPorUsuario(filtro: RangoFechasDto) {
+    const { desde, hasta, inicio, fin } = rango(filtro);
+    const [datos, total] = await Promise.all([
+      this.ingresoModel.aggregate<{
+        nombreUsuario: string;
+        nombre: string;
+        imagenPerfil: string;
+        cantidad: number;
+      }>([
+        { $match: { createdAt: { $gte: inicio, $lte: fin } } },
+        { $group: { _id: '$usuario', cantidad: { $sum: 1 } } },
+        { $sort: { cantidad: -1, _id: 1 } },
+        { $limit: 10 },
+        {
+          $lookup: {
+            from: 'Usuarios',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'usuario',
+          },
+        },
+        { $unwind: '$usuario' },
+        {
+          $project: {
+            _id: 0,
+            nombreUsuario: '$usuario.nombreUsuario',
+            nombre: { $concat: ['$usuario.nombre', ' ', '$usuario.apellido'] },
+            imagenPerfil: '$usuario.imagenPerfil',
+            cantidad: 1,
+          },
+        },
+      ]),
+      // El total de ingresos del rango (de todos, no solo del top 10).
+      this.ingresoModel.countDocuments({
+        createdAt: { $gte: inicio, $lte: fin },
+      }),
+    ]);
+    return { desde, hasta, total, datos };
+  }
+
+  // GET /estadisticas/visitas-perfil -> líneas.
+  // Visitas al perfil de quien mira el dashboard (el admin logueado), por día.
+  // Las visitas a uno mismo no se guardan, así que no cuentan.
+  async visitasPorDia(filtro: RangoFechasDto, usuarioId: string) {
+    const { desde, hasta, inicio, fin } = rango(filtro);
+    const coincidir = {
+      perfil: new Types.ObjectId(usuarioId),
+      createdAt: { $gte: inicio, $lte: fin },
+    };
+    const [porDia, visitantes] = await Promise.all([
+      this.contarPorDia(this.visitaModel, coincidir),
+      // Cuántas personas distintas te visitaron.
+      this.visitaModel.distinct('visitante', coincidir),
+    ]);
+    const datos = completarDias(desde, hasta, porDia);
+    const total = datos.reduce((suma, d) => suma + d.cantidad, 0);
+    return { desde, hasta, total, visitantes: visitantes.length, datos };
+  }
+
+  // GET /estadisticas/me-gusta -> columnas.
+  // Cuántos "Me gusta" se dieron cada día del rango (los que se quitaron no cuentan).
+  async meGustaPorDia(filtro: RangoFechasDto) {
+    const { desde, hasta, inicio, fin } = rango(filtro);
+    const porDia = await this.contarPorDia(this.meGustaModel, {
+      createdAt: { $gte: inicio, $lte: fin },
+    });
+    const datos = completarDias(desde, hasta, porDia);
+    const total = datos.reduce((suma, d) => suma + d.cantidad, 0);
+    return { desde, hasta, total, datos };
+  }
+
+  // Cuenta documentos por día (en hora argentina) con el filtro que le pasen.
+  private contarPorDia<T>(
+    modelo: Model<T>,
+    coincidir: Record<string, unknown>,
+  ) {
+    return modelo.aggregate<{ _id: string; cantidad: number }>([
+      { $match: coincidir },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: '%Y-%m-%d',
+              date: '$createdAt',
+              timezone: ZONA,
+            },
+          },
+          cantidad: { $sum: 1 },
+        },
+      },
+    ]);
+  }
 }
 
 // Convierte ?desde&hasta en fechas reales. Sin fechas: los últimos 30 días.
@@ -187,4 +294,18 @@ function diasEntre(desde: string, hasta: string) {
     dias.push(fechaArgentina(new Date(t)));
   }
   return dias;
+}
+
+// Mongo solo devuelve los días que tuvieron algo: completamos los demás con 0
+// para que el gráfico no "saltee" días.
+function completarDias(
+  desde: string,
+  hasta: string,
+  porDia: { _id: string; cantidad: number }[],
+) {
+  const cantidades = new Map(porDia.map((d) => [d._id, d.cantidad]));
+  return diasEntre(desde, hasta).map((fecha) => ({
+    fecha,
+    cantidad: cantidades.get(fecha) ?? 0,
+  }));
 }

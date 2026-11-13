@@ -36,6 +36,7 @@ import {
   IComentariosPorDia,
   IComentariosPorPublicacion,
   IPublicacionesPorUsuario,
+  IVisitasPorDia,
 } from '../../../../core/services/estadisticas-api';
 import { Avatar } from '../../../../shared/components/avatar/avatar';
 import { mensajeDeError } from '../../../../shared/utils/errores-http';
@@ -78,6 +79,24 @@ export const PORCIONES = ['#26a48b', '#9085e9', '#c98500', '#d55181', '#3987e5',
 export const COLOR_OTRAS = '#77757f';
 
 const DIA_MS = 24 * 60 * 60 * 1000;
+
+// bar = barras horizontales (por usuario), line = líneas (por día),
+// columnas = barras verticales (por día), pie = torta.
+type TipoGrafico = 'bar' | 'line' | 'columnas' | 'pie';
+
+// Qué gráfico usa cada estadística y cómo se nombra lo que cuenta ("1 ingreso", "3 visitas").
+const INFO: Record<Estadistica, { tipo: TipoGrafico; uno: string; varios: string }> = {
+  'publicaciones-por-usuario': { tipo: 'bar', uno: 'publicación', varios: 'publicaciones' },
+  comentarios: { tipo: 'line', uno: 'comentario', varios: 'comentarios' },
+  'comentarios-por-publicacion': { tipo: 'pie', uno: 'comentario', varios: 'comentarios' },
+  // Sprint 5
+  'ingresos-por-usuario': { tipo: 'bar', uno: 'ingreso', varios: 'ingresos' },
+  'visitas-perfil': { tipo: 'line', uno: 'visita', varios: 'visitas' },
+  'me-gusta': { tipo: 'columnas', uno: '"Me gusta"', varios: '"Me gusta"' },
+};
+
+// Lo que cuenta cada gráfico, en singular y plural.
+type Unidad = { uno: string; varios: string };
 const numero = new Intl.NumberFormat('es-AR', { maximumFractionDigits: 1 });
 
 // Cada fila del gráfico (y de la tabla oculta para lectores de pantalla).
@@ -143,15 +162,12 @@ export class Grafico {
   protected readonly error = signal<string | null>(null);
   protected readonly puntos = signal<Punto[]>([]);
   protected readonly total = signal<number | null>(null);
+  // Visitas a mi perfil (Sprint 5): cuántas personas distintas.
+  protected readonly visitantes = signal<number | null>(null);
 
-  // Torta = comentarios por publicación; líneas = comentarios por día; barras = el resto.
-  protected readonly tipo = computed(() =>
-    this.cual() === 'comentarios-por-publicacion'
-      ? 'pie'
-      : this.cual() === 'comentarios'
-        ? 'line'
-        : 'bar',
-  );
+  // Qué gráfico es (ver INFO) y cómo se llama lo que cuenta.
+  protected readonly tipo = computed(() => INFO[this.cual()].tipo);
+  protected readonly unidad = computed<Unidad>(() => INFO[this.cual()]);
 
   // ¿Hay algo para dibujar? (con todo en 0 no tiene sentido un gráfico vacío)
   protected readonly hayDatos = computed(() => this.puntos().some((p) => p.cantidad > 0));
@@ -185,38 +201,55 @@ export class Grafico {
       null,
     );
 
+    const { uno, varios } = this.unidad();
+    const titulo = mayuscula(varios);
+
     if (this.tipo() === 'bar') {
+      // Ingresos trae el total de TODOS del back; publicaciones suma solo el top 10.
+      const conTotal = this.total() !== null;
+      const quien = this.cual() === 'ingresos-por-usuario' ? 'usuario' : 'autor';
       return [
         {
-          etiqueta: 'Publicaciones',
+          etiqueta: titulo,
           valor: numero.format(suma),
-          nota: puntos.length >= 10 ? 'del top 10' : 'en el período',
+          nota: !conTotal && puntos.length >= 10 ? 'del top 10' : 'en el período',
         },
         {
-          etiqueta: 'Autores',
+          etiqueta: quien === 'autor' ? 'Autores' : 'Usuarios',
           valor: numero.format(puntos.length),
-          nota: `${numero.format(puntos.length ? suma / puntos.length : 0)} por autor`,
+          nota: `${numero.format(puntos.length ? sumaPuntos(puntos) / puntos.length : 0)} por ${quien}`,
         },
         {
           etiqueta: 'Más activo',
           valor: mayor?.etiqueta ?? '—',
-          nota: mayor ? plural(mayor.cantidad, 'publicación', 'publicaciones') : undefined,
+          nota: mayor ? plural(mayor.cantidad, uno, varios) : undefined,
         },
       ];
     }
 
-    if (this.tipo() === 'line') {
+    if (this.tipo() === 'line' || this.tipo() === 'columnas') {
+      const promedio = {
+        etiqueta: 'Promedio diario',
+        valor: numero.format(this.dias() ? suma / this.dias() : 0),
+        nota: `${varios} por día`,
+      };
+      // Visitas: en vez del promedio, cuántas personas distintas entraron.
+      const visitantes = this.visitantes();
+      const segunda =
+        visitantes === null
+          ? promedio
+          : {
+              etiqueta: 'Visitantes',
+              valor: numero.format(visitantes),
+              nota: visitantes === 1 ? 'persona distinta' : 'personas distintas',
+            };
       return [
-        { etiqueta: 'Comentarios', valor: numero.format(suma), nota: 'en el período' },
-        {
-          etiqueta: 'Promedio diario',
-          valor: numero.format(this.dias() ? suma / this.dias() : 0),
-          nota: 'comentarios por día',
-        },
+        { etiqueta: titulo, valor: numero.format(suma), nota: 'en el período' },
+        segunda,
         {
           etiqueta: 'Día pico',
           valor: mayor?.etiqueta ?? '—',
-          nota: mayor ? plural(mayor.cantidad, 'comentario', 'comentarios') : undefined,
+          nota: mayor ? plural(mayor.cantidad, uno, varios) : undefined,
         },
       ];
     }
@@ -271,6 +304,7 @@ export class Grafico {
         next: (respuesta) => {
           this.puntos.set(aPuntos(cual, respuesta));
           this.total.set('total' in respuesta ? respuesta.total : null);
+          this.visitantes.set('visitantes' in respuesta ? respuesta.visitantes : null);
           this.cargando.set(false);
         },
         error: (error: HttpErrorResponse) => {
@@ -291,7 +325,9 @@ export class Grafico {
       if (!lienzo || !this.hayDatos()) return;
       this.grafico = new Chart(
         lienzo,
-        configuracion(this.tipo(), puntos, this.suma(), (contexto) => this.moverBurbuja(contexto)),
+        configuracion(this.tipo(), puntos, this.suma(), this.unidad(), (contexto) =>
+          this.moverBurbuja(contexto),
+        ),
       );
     });
 
@@ -351,7 +387,8 @@ export class Grafico {
 
 // Lo que manda el back, pasado a una lista de { etiqueta, cantidad }.
 function aPuntos(cual: Estadistica, respuesta: unknown): Punto[] {
-  if (cual === 'publicaciones-por-usuario') {
+  // Por usuario (Sprint 4 y 5): la misma forma, con la foto para el tooltip.
+  if (cual === 'publicaciones-por-usuario' || cual === 'ingresos-por-usuario') {
     return (respuesta as IPublicacionesPorUsuario).datos.map((d) => ({
       etiqueta: `@${d.nombreUsuario}`,
       cantidad: d.cantidad,
@@ -365,8 +402,9 @@ function aPuntos(cual: Estadistica, respuesta: unknown): Punto[] {
       },
     }));
   }
-  if (cual === 'comentarios') {
-    return (respuesta as IComentariosPorDia).datos.map((d) => ({
+  // Por día: comentarios, visitas a mi perfil y "Me gusta".
+  if (cual === 'comentarios' || cual === 'visitas-perfil' || cual === 'me-gusta') {
+    return (respuesta as IComentariosPorDia | IVisitasPorDia).datos.map((d) => ({
       etiqueta: `${d.fecha.slice(8, 10)}/${d.fecha.slice(5, 7)}`, // 2026-11-13 -> 13/11
       cantidad: d.cantidad,
     }));
@@ -403,9 +441,10 @@ const lineaGuia: Plugin = {
 
 // La configuración de Chart.js para cada tipo de gráfico, con los colores de TONARI.
 function configuracion(
-  tipo: 'bar' | 'line' | 'pie',
+  tipo: TipoGrafico,
   puntos: Punto[],
   suma: number,
+  unidad: Unidad,
   alMoverTooltip: (contexto: ContextoTooltip) => void,
 ): ChartConfiguration {
   const etiquetas = puntos.map((p) => p.etiqueta);
@@ -469,7 +508,7 @@ function configuracion(
         labels: etiquetas,
         datasets: [
           {
-            label: 'Comentarios',
+            label: mayuscula(unidad.varios),
             data: valores,
             borderColor: MENTA,
             borderWidth: 2,
@@ -518,12 +557,60 @@ function configuracion(
           tooltip: {
             ...tooltip,
             callbacks: {
-              label: (item) => plural(item.raw as number, 'comentario', 'comentarios'),
+              label: (item) => plural(item.raw as number, unidad.uno, unidad.varios),
             },
           },
         },
       },
       plugins: [lineaGuia],
+    };
+  }
+
+  // Columnas (Sprint 5, "Me gusta" por día): una barra vertical por día.
+  if (tipo === 'columnas') {
+    return {
+      type: 'bar',
+      data: {
+        labels: etiquetas,
+        datasets: [
+          {
+            label: mayuscula(unidad.varios),
+            data: valores,
+            backgroundColor: MENTA,
+            hoverBackgroundColor: MENTA_CLARA,
+            borderRadius: 3,
+            borderSkipped: 'start', // redondeada solo la punta
+            maxBarThickness: 18,
+            categoryPercentage: 0.8,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            ticks: { color: TEXTO_SEC, maxRotation: 0, autoSkipPadding: 16 },
+            grid: { display: false },
+            border: { color: LINEA },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: TEXTO_SEC, precision: 0, padding: 8 },
+            grid: { color: LINEA },
+            border: { display: false },
+          },
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            ...tooltip,
+            callbacks: {
+              label: (item) => plural(item.raw as number, unidad.uno, unidad.varios),
+            },
+          },
+        },
+      },
     };
   }
 
@@ -534,7 +621,7 @@ function configuracion(
       labels: etiquetas,
       datasets: [
         {
-          label: 'Publicaciones',
+          label: mayuscula(unidad.varios),
           data: valores,
           backgroundColor: MENTA,
           hoverBackgroundColor: MENTA_CLARA,
@@ -569,6 +656,16 @@ function configuracion(
       },
     },
   };
+}
+
+// "publicaciones" -> "Publicaciones" ('"Me gusta"' queda igual)
+function mayuscula(texto: string) {
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+// La suma de lo que se ve en el gráfico (sin contar el total que manda el back).
+function sumaPuntos(puntos: Punto[]) {
+  return puntos.reduce((suma, p) => suma + p.cantidad, 0);
 }
 
 // "1 comentario" / "3 comentarios"

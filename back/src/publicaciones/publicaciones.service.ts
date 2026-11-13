@@ -9,6 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { HydratedDocument, isValidObjectId, Model, Types } from 'mongoose';
 import { Publicacion } from './entities/publicacion.entity.js';
 import { Voto } from './entities/voto.entity.js';
+import { MeGusta } from '../estadisticas/entities/me-gusta.entity.js';
 import { Entrada } from '../biblioteca/entities/entrada.entity.js';
 import { Usuario } from '../usuarios/entities/usuario.entity.js';
 import { SeguimientosService } from '../usuarios/seguimientos.service.js';
@@ -30,6 +31,7 @@ export class PublicacionesService {
     @InjectModel(Publicacion.name) private publicacionModel: Model<Publicacion>,
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
     @InjectModel(Voto.name) private votoModel: Model<Voto>,
+    @InjectModel(MeGusta.name) private meGustaModel: Model<MeGusta>,
     @InjectModel(Entrada.name) private entradaModel: Model<Entrada>,
     private readonly seguimientosService: SeguimientosService,
     private readonly notificacionesService: NotificacionesService,
@@ -150,6 +152,8 @@ export class PublicacionesService {
     publicacion.meGusta.push(new Types.ObjectId(usuarioId));
     publicacion.cantidadMeGusta = publicacion.meGusta.length;
     await publicacion.save();
+    // Sprint 5: se anota CUÁNDO se dio, para la estadística de "Me gusta" por día.
+    await this.meGustaModel.create({ usuario: usuarioId, publicacion: publicacion._id });
     // Aviso al autor: "<usuario> le gustó tu publicación" (si no es él mismo).
     await this.notificacionesService.avisar({
       destinatario: publicacion.usuario,
@@ -173,6 +177,8 @@ export class PublicacionesService {
     publicacion.meGusta = publicacion.meGusta.filter((meGusta) => !meGusta.equals(usuarioId));
     publicacion.cantidadMeGusta = publicacion.meGusta.length;
     await publicacion.save();
+    // Sprint 5: si lo quita, deja de contar en la estadística.
+    await this.meGustaModel.deleteOne({ usuario: usuarioId, publicacion: publicacion._id });
     // Si lo saca, el aviso también se va.
     await this.notificacionesService.retirar({
       autor: usuarioId,

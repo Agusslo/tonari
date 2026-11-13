@@ -5,10 +5,11 @@
     NotFoundException,
     } from '@nestjs/common';
     import { InjectModel } from '@nestjs/mongoose';
-    import { isValidObjectId, Model } from 'mongoose';
+    import { isValidObjectId, Model, Types } from 'mongoose';
     import bcrypt from 'bcryptjs';
     import { Usuario } from './entities/usuario.entity.js';
     import type { Perfil } from './entities/usuario.entity.js';
+    import { Visita } from '../estadisticas/entities/visita.entity.js';
     import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto.js';
     import { CambiarContrasenaDto } from './dto/cambiar-contrasena.dto.js';
     import { CrearUsuarioDto } from './dto/crear-usuario.dto.js';
@@ -20,7 +21,10 @@
 
     @Injectable()
     export class UsuariosService {
-    constructor(@InjectModel(Usuario.name) private usuarioModel: Model<Usuario>) {}
+    constructor(
+        @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
+        @InjectModel(Visita.name) private visitaModel: Model<Visita>,
+    ) {}
 
     // ---------- Administración (Sprint 4: solo administradores) ----------
     // Que quien llama sea administrador NO se revisa acá: lo hace AdminGuard antes
@@ -156,6 +160,17 @@
         const discord =
         discordId && mostrarDiscord !== false ? { id: discordId, usuario: discordUsuario } : null;
         return { ...publico, discord };
+    }
+
+    // Sprint 5: anota que "visitante" abrió el perfil de "perfil" (para "visitas a mi perfil").
+    // Tu propio perfil no cuenta. Si falla, el perfil se muestra igual.
+    async registrarVisita(perfil: Types.ObjectId, visitante: string) {
+        if (String(perfil) === visitante) return;
+        try {
+        await this.visitaModel.create({ perfil, visitante });
+        } catch {
+        // sin visita anotada, pero el perfil se ve igual
+        }
     }
 
     // Editar mi perfil: cambia solo los campos que vinieron y, si mandaron

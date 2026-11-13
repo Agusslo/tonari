@@ -254,12 +254,12 @@
 - **Publicaciones**
   - [x] Scroll infinito en vez de paginación tradicional
 - **Dashboard / Estadísticas**
-  - [ ] Cantidad de ingresos (login) por usuario
-  - [ ] Visitas a mi perfil (de usuarios que no sean uno mismo)
-  - [ ] "Me gusta" otorgados por día
+  - [x] Cantidad de ingresos (login) por usuario (barras horizontales, los 10 que más ingresaron)
+  - [x] Visitas a mi perfil (de usuarios que no sean uno mismo) (líneas por día, con visitantes distintos)
+  - [x] "Me gusta" otorgados por día (columnas)
 
 ### Back
-- [ ] Lógica necesaria para los requisitos del front
+- [x] Lógica necesaria para los requisitos del front: se anota cada ingreso (colección `Ingresos`, en login, registro, Google y Discord), cada visita a un perfil ajeno (`Visitas`) y cada "Me gusta" con su fecha (`MeGustas`; si se quita, se borra). Rutas `GET /estadisticas/ingresos-por-usuario`, `/estadisticas/visitas-perfil` y `/estadisticas/me-gusta`, con `AdminGuard`
 
 ---
 

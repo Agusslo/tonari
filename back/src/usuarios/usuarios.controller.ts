@@ -96,6 +96,8 @@
     @Get(':nombreUsuario')
     async perfilPublico(@Param('nombreUsuario') nombreUsuario: string, @Req() req: RequestConToken) {
         const usuario = await this.usuariosService.perfilPublico(nombreUsuario);
+        // Sprint 5: cuenta como visita (si no es tu propio perfil).
+        await this.usuariosService.registrarVisita(usuario._id, req.usuario.id);
         const numeros = await this.seguimientosService.resumen(usuario._id, req.usuario.id);
         return { ...usuario, ...numeros };
     }
