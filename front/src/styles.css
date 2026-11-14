@@ -18,17 +18,30 @@
   --color-tinta: #171717; /* texto sobre menta */
   --color-texto-sec: #a6a4b0; /* texto secundario: ayudas, fechas */
   --color-error: #ff9b8f; /* errores */
+  --color-oro: #ffd27a; /* ámbar: puntajes y avisos de "cuidado" */
+
+  /* Los mismos colores en canales (R G B) para usarlos con transparencia:
+     rgb(var(--rgb-hueso) / 0.08). Así el modo claro cambia también las transparencias. */
+  --rgb-hueso: 240 237 229;
+  --rgb-menta: 185 243 228;
+  --rgb-lila: 199 184 255;
+  --rgb-error: 255 155 143;
+  --rgb-oro: 255 210 122;
+  --rgb-noche: 17 17 22;
+  --rgb-panel: 24 24 31;
+  --rgb-burbuja: 30 30 38; /* tooltips flotantes */
+  --rgb-sombra: 0 0 0;
 
   /* Líneas y transparencias: se apoyan sobre cualquier fondo */
-  --linea-suave: rgb(240 237 229 / 0.08);
-  --linea-campo: rgb(240 237 229 / 0.36); /* borde de inputs: contraste 3:1 */
-  --velo-hueso: rgb(240 237 229 / 0.06); /* fondo al pasar el mouse */
-  --velo-menta: rgb(185 243 228 / 0.1); /* fondo de chips y estados activos */
-  --halo-menta: 0 0 0 4px rgb(185 243 228 / 0.18);
+  --linea-suave: rgb(var(--rgb-hueso) / 0.08);
+  --linea-campo: rgb(var(--rgb-hueso) / 0.36); /* borde de inputs: contraste 3:1 */
+  --velo-hueso: rgb(var(--rgb-hueso) / 0.06); /* fondo al pasar el mouse */
+  --velo-menta: rgb(var(--rgb-menta) / 0.1); /* fondo de chips y estados activos */
+  --halo-menta: 0 0 0 4px rgb(var(--rgb-menta) / 0.18);
 
   /* Profundidad: un filo de luz arriba de cada panel y una sombra larga y suave */
-  --brillo-borde: inset 0 1px 0 rgb(240 237 229 / 0.05);
-  --sombra-panel: 0 24px 48px -32px rgb(0 0 0 / 0.75);
+  --brillo-borde: inset 0 1px 0 rgb(var(--rgb-hueso) / 0.05);
+  --sombra-panel: 0 24px 48px -32px rgb(var(--rgb-sombra) / 0.75);
   --degrade-marca: linear-gradient(135deg, var(--color-menta), var(--color-lila));
 
   /* Tipografías (las dos son japonesas: también dibujan kana y kanji) */
@@ -44,6 +57,37 @@
   color-scheme: dark;
 }
 
+/* Modo claro (extra). Se activa con <html data-tema="claro"> (botón de la cabecera).
+   Solo cambian las variables: como toda la app usa estas variables, se adapta sola.
+   La menta y el lila se oscurecen para que se lean sobre blanco (contraste AA). */
+:root[data-tema='claro'] {
+  --color-noche: #f4f3ef;
+  --color-panel: #ffffff;
+  --color-campo: #f0efea;
+  --color-menta: #0b7a62;
+  --color-lila: #5b47c7;
+  --color-hueso: #1a1a20;
+  --color-tinta: #ffffff;
+  --color-texto-sec: #5d5b67;
+  --color-error: #c23b2c;
+  --color-oro: #9a6400;
+
+  --rgb-hueso: 26 26 32;
+  --rgb-menta: 11 122 98;
+  --rgb-lila: 91 71 199;
+  --rgb-error: 194 59 44;
+  --rgb-oro: 154 100 0;
+  --rgb-noche: 244 243 239;
+  --rgb-panel: 255 255 255;
+  --rgb-burbuja: 255 255 255;
+  --rgb-sombra: 40 40 60;
+
+  /* Sobre blanco, el filo de luz y la sombra van más suaves */
+  --brillo-borde: inset 0 1px 0 rgb(255 255 255 / 0.7);
+  --sombra-panel: 0 18px 40px -28px rgb(40 40 60 / 0.28);
+  color-scheme: light;
+}
+
 /* ---------- 2. Base ---------- */
 *,
 *::before,
@@ -52,7 +96,7 @@
 }
 
 html {
-  scrollbar-color: rgb(240 237 229 / 0.18) var(--color-noche);
+  scrollbar-color: rgb(var(--rgb-hueso) / 0.18) var(--color-noche);
 }
 
 body {
@@ -61,9 +105,9 @@ body {
   /* Dos brillos muy suaves (menta arriba a la izquierda, lila abajo a la derecha)
      sobre una trama de puntos casi invisible: el fondo tiene profundidad sin distraer */
   background:
-    radial-gradient(60rem 36rem at 0% 0%, rgb(185 243 228 / 0.06), transparent 70%),
-    radial-gradient(50rem 32rem at 100% 100%, rgb(199 184 255 / 0.05), transparent 70%),
-    radial-gradient(circle, rgb(240 237 229 / 0.035) 1px, transparent 1.2px) 0 0 / 22px 22px,
+    radial-gradient(60rem 36rem at 0% 0%, rgb(var(--rgb-menta) / 0.06), transparent 70%),
+    radial-gradient(50rem 32rem at 100% 100%, rgb(var(--rgb-lila) / 0.05), transparent 70%),
+    radial-gradient(circle, rgb(var(--rgb-hueso) / 0.035) 1px, transparent 1.2px) 0 0 / 22px 22px,
     var(--color-noche);
   background-attachment: fixed;
   color: var(--color-hueso);
@@ -123,7 +167,7 @@ app-root {
   justify-content: space-between;
   gap: 0.75rem 1.5rem;
   padding: 0.75rem clamp(1rem, 4vw, 2.5rem);
-  background: rgb(17 17 22 / 0.72);
+  background: rgb(var(--rgb-noche) / 0.72);
   backdrop-filter: blur(16px) saturate(140%);
   border-bottom: 1px solid var(--linea-suave);
 }
@@ -176,7 +220,7 @@ app-root {
   flex-wrap: wrap;
   gap: 0.25rem;
   padding: 0.25rem;
-  background: rgb(240 237 229 / 0.03);
+  background: rgb(var(--rgb-hueso) / 0.03);
   border: 1px solid var(--linea-suave);
   border-radius: var(--radio-pildora);
 }
@@ -201,7 +245,7 @@ app-root {
 .navegacion a.activo {
   color: var(--color-menta);
   background: var(--velo-menta);
-  box-shadow: inset 0 0 0 1px rgb(185 243 228 / 0.2);
+  box-shadow: inset 0 0 0 1px rgb(var(--rgb-menta) / 0.2);
 }
 
 /* "Mi perfil" con tu foto chiquita adelante */
@@ -376,7 +420,7 @@ app-root {
 .panel {
   padding: clamp(1.5rem, 3vw, 2.5rem);
   /* Un degradé apenas perceptible: más claro arriba, como si le diera luz */
-  background: linear-gradient(180deg, rgb(240 237 229 / 0.025), transparent 40%), var(--color-panel);
+  background: linear-gradient(180deg, rgb(var(--rgb-hueso) / 0.025), transparent 40%), var(--color-panel);
   border: 1px solid var(--linea-suave);
   border-radius: var(--radio-panel);
   box-shadow: var(--brillo-borde), var(--sombra-panel);
@@ -456,7 +500,7 @@ app-root {
 
 .boton:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 28px -10px rgb(185 243 228 / 0.55);
+  box-shadow: 0 10px 28px -10px rgb(var(--rgb-menta) / 0.55);
 }
 
 .boton:active {
@@ -484,7 +528,7 @@ app-root {
 .boton-secundario {
   color: var(--color-menta);
   background: transparent;
-  border-color: rgb(185 243 228 / 0.5);
+  border-color: rgb(var(--rgb-menta) / 0.5);
   box-shadow: none;
 }
 
@@ -500,7 +544,7 @@ app-root {
 }
 
 .boton-peligro:hover {
-  box-shadow: 0 10px 28px -10px rgb(255 155 143 / 0.55);
+  box-shadow: 0 10px 28px -10px rgb(var(--rgb-error) / 0.55);
 }
 
 /* Botones que el padre pone dentro de un modal (Cancelar / Eliminar) */
@@ -554,7 +598,7 @@ app-root {
 
 .campo input:hover,
 .campo textarea:hover {
-  border-color: rgb(240 237 229 / 0.55);
+  border-color: rgb(var(--rgb-hueso) / 0.55);
 }
 
 .campo input:focus-visible,
@@ -664,7 +708,7 @@ app-root {
 .esqueleto-linea {
   display: block;
   background:
-    linear-gradient(90deg, transparent, rgb(240 237 229 / 0.06), transparent) 0 0 / 200% 100%,
+    linear-gradient(90deg, transparent, rgb(var(--rgb-hueso) / 0.06), transparent) 0 0 / 200% 100%,
     var(--velo-hueso);
   animation: brillo 1.4s ease-in-out infinite;
 }
@@ -724,7 +768,7 @@ app-root {
   color: var(--color-menta);
   background: var(--velo-menta);
   border-radius: 50%;
-  box-shadow: 0 0 0 8px rgb(185 243 228 / 0.04);
+  box-shadow: 0 0 0 8px rgb(var(--rgb-menta) / 0.04);
 }
 
 /* Transición entre pantallas (View Transitions): la vieja baja y se desvanece,
@@ -766,13 +810,13 @@ app-root {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(240 237 229 / 0.14);
+  background: rgb(var(--rgb-hueso) / 0.14);
   border: 3px solid var(--color-noche);
   border-radius: var(--radio-pildora);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(240 237 229 / 0.26);
+  background: rgb(var(--rgb-hueso) / 0.26);
 }
 
 /* ---------- 6. Movimiento reducido ---------- */

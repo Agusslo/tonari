@@ -49,7 +49,7 @@
   position: absolute;
   inset: 0;
   z-index: -2;
-  background: radial-gradient(22rem 16rem at 10% 50%, rgb(185 243 228 / 0.09), transparent 70%);
+  background: radial-gradient(22rem 16rem at 10% 50%, rgb(var(--rgb-menta) / 0.09), transparent 70%);
 }
 
 .foto {
@@ -57,9 +57,9 @@
   border-width: 4px;
   box-shadow:
     0 0 0 3px var(--color-menta),
-    0 0 0 9px rgb(185 243 228 / 0.08),
-    0 0 0 10px rgb(199 184 255 / 0.18),
-    0 20px 40px -12px rgb(0 0 0 / 0.6);
+    0 0 0 9px rgb(var(--rgb-menta) / 0.08),
+    0 0 0 10px rgb(var(--rgb-lila) / 0.18),
+    0 20px 40px -12px rgb(var(--rgb-sombra) / 0.6);
 }
 
 .identidad {
@@ -89,21 +89,21 @@
   letter-spacing: 0.06em;
   color: var(--color-menta);
   background: var(--velo-menta);
-  border: 1px solid rgb(185 243 228 / 0.25);
+  border: 1px solid rgb(var(--rgb-menta) / 0.25);
   border-radius: var(--radio-pildora);
 }
 
 /* "Administrador" se distingue con el lila */
 .insignia-admin {
   color: var(--color-lila);
-  background: rgb(199 184 255 / 0.1);
-  border-color: rgb(199 184 255 / 0.3);
+  background: rgb(var(--rgb-lila) / 0.1);
+  border-color: rgb(var(--rgb-lila) / 0.3);
 }
 
 .descripcion {
   max-width: 60ch;
   margin: 1rem 0 0;
-  color: rgb(240 237 229 / 0.88);
+  color: rgb(var(--rgb-hueso) / 0.88);
 }
 
 /* Sin descripción no queda un hueco */
@@ -146,7 +146,7 @@
 
 /* Con banner, la trama de puntos y el brillo quedan solo abajo */
 .con-banner::after {
-  background: radial-gradient(22rem 16rem at 10% 80%, rgb(185 243 228 / 0.09), transparent 70%);
+  background: radial-gradient(22rem 16rem at 10% 80%, rgb(var(--rgb-menta) / 0.09), transparent 70%);
 }
 
 /* Seguidores / siguiendo (extra): debajo de la descripción, en los dos perfiles */
@@ -184,7 +184,7 @@
 .contador-seguir:hover {
   color: var(--color-menta);
   background: var(--velo-menta);
-  border-color: rgb(185 243 228 / 0.3);
+  border-color: rgb(var(--rgb-menta) / 0.3);
 }
 
 .contador-seguir:focus-visible {
@@ -263,7 +263,7 @@
 }
 
 .boton-editar:hover {
-  background: rgb(185 243 228 / 0.18);
+  background: rgb(var(--rgb-menta) / 0.18);
 }
 
 /* Aviso verde de "perfil actualizado" */
@@ -333,9 +333,9 @@
 }
 
 .mi-publicacion:hover {
-  border-color: rgb(185 243 228 / 0.35);
+  border-color: rgb(var(--rgb-menta) / 0.35);
   transform: translateY(-2px);
-  box-shadow: 0 14px 28px -18px rgb(0 0 0 / 0.8);
+  box-shadow: 0 14px 28px -18px rgb(var(--rgb-sombra) / 0.8);
 }
 
 .miniatura {
@@ -442,7 +442,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: rgb(240 237 229 / 0.85);
+  color: rgb(var(--rgb-hueso) / 0.85);
 }
 
 .mini-autor {
@@ -523,7 +523,7 @@
   flex-direction: column-reverse; /* el número arriba, la etiqueta abajo */
   gap: 0.1rem;
   padding: 0.8rem 0.9rem;
-  background: linear-gradient(180deg, rgb(185 243 228 / 0.05), transparent 70%), var(--color-campo);
+  background: linear-gradient(180deg, rgb(var(--rgb-menta) / 0.05), transparent 70%), var(--color-campo);
   border: 1px solid var(--linea-suave);
   border-radius: var(--radio-campo);
 }
@@ -592,7 +592,7 @@
   background: var(--color-campo);
   border: 1px solid var(--linea-suave);
   border-radius: var(--radio-campo);
-  box-shadow: 0 12px 24px -16px rgb(0 0 0 / 0.8);
+  box-shadow: 0 12px 24px -16px rgb(var(--rgb-sombra) / 0.8);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
@@ -601,8 +601,8 @@
 
 .tapa-enlace:hover img {
   transform: translateY(-4px);
-  border-color: rgb(185 243 228 / 0.4);
-  box-shadow: 0 18px 30px -14px rgb(0 0 0 / 0.85);
+  border-color: rgb(var(--rgb-menta) / 0.4);
+  box-shadow: 0 18px 30px -14px rgb(var(--rgb-sombra) / 0.85);
 }
 
 .tapa p {

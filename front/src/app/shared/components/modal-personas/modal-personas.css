@@ -15,7 +15,7 @@
   border-radius: var(--radio-panel);
   box-shadow:
     var(--brillo-borde),
-    0 30px 80px -20px rgb(0 0 0 / 0.7);
+    0 30px 80px -20px rgb(var(--rgb-sombra) / 0.7);
 }
 
 .modal-personas[open] {

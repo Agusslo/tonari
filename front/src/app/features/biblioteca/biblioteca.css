@@ -86,7 +86,7 @@
 
 .resumen .estrella {
   font-size: 1.1rem;
-  color: #ffd27a;
+  color: var(--color-oro);
 }
 
 /* Abanico: hasta tres tapas inclinadas, la del medio adelante */
@@ -106,7 +106,7 @@
   object-fit: cover;
   border: 3px solid var(--color-panel);
   border-radius: var(--radio-campo);
-  box-shadow: 0 18px 36px -12px rgb(0 0 0 / 0.7);
+  box-shadow: 0 18px 36px -12px rgb(var(--rgb-sombra) / 0.7);
   translate: -50% -50%;
   transition: rotate 0.3s ease, translate 0.3s ease;
 }
@@ -197,7 +197,7 @@
   font-size: 0.78rem;
   font-weight: 700;
   border-radius: var(--radio-pildora);
-  background: rgb(17 17 22 / 0.15);
+  background: rgb(var(--rgb-noche) / 0.15);
 }
 
 .tipos button:not([aria-pressed='true']) .cuenta {
@@ -236,7 +236,7 @@
 .filtros button[aria-pressed='true'] {
   color: var(--color-menta);
   background: var(--velo-menta);
-  border-color: rgb(185 243 228 / 0.4);
+  border-color: rgb(var(--rgb-menta) / 0.4);
 }
 
 /* En el celular: Anime / Manga a lo ancho, y los filtros en una sola fila que se desliza */

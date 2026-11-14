@@ -11,6 +11,7 @@ import { BibliotecaModule } from './biblioteca/biblioteca.module.js';
 import { CatalogoModule } from './catalogo/catalogo.module.js';
 import { NotificacionesModule } from './notificaciones/notificaciones.module.js';
 import { EstadisticasModule } from './estadisticas/estadisticas.module.js';
+import { BuscarModule } from './buscar/buscar.module.js';
 
 @Module({
   imports: [
@@ -37,6 +38,8 @@ import { EstadisticasModule } from './estadisticas/estadisticas.module.js';
     NotificacionesModule,
     // Dashboard del administrador (Sprint 4): datos para los gráficos.
     EstadisticasModule,
+    // Buscador global de la barra de arriba (extra).
+    BuscarModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -41,6 +41,7 @@ import {
 import { Avatar } from '../../../../shared/components/avatar/avatar';
 import { mensajeDeError } from '../../../../shared/utils/errores-http';
 import { fechaLocalHoy } from '../../../../shared/validators/validadores';
+import { NombreTema, Tema } from '../../../../core/services/tema';
 
 // Chart.js: registramos solo las piezas que usamos (barras, líneas y torta),
 // así no se descarga la librería entera.
@@ -63,13 +64,63 @@ Chart.defaults.font.family = "'Zen Kaku Gothic New', system-ui, sans-serif";
 Chart.defaults.font.size = 12;
 
 // Colores de TONARI (los de styles.css). Chart.js dibuja en un <canvas>,
-// así que no puede leer las variables CSS: van escritos acá.
-const MENTA = '#b9f3e4';
-const MENTA_CLARA = '#dcfaf2';
-const HUESO = '#f0ede5';
-const TEXTO_SEC = '#a6a4b0';
-const LINEA = 'rgba(240, 237, 229, 0.07)';
-const PANEL = '#18181f';
+// así que no puede leer las variables CSS: van escritos acá, uno por tema.
+// Antes de dibujar, usarColores() pone los del tema actual (modo claro/oscuro).
+const COLORES: Record<NombreTema, Record<string, string>> = {
+  oscuro: {
+    menta: '#b9f3e4',
+    mentaClara: '#dcfaf2',
+    hueso: '#f0ede5',
+    textoSec: '#a6a4b0',
+    linea: 'rgba(240, 237, 229, 0.07)',
+    panel: '#18181f',
+    guia: 'rgba(240, 237, 229, 0.22)',
+    tooltipFondo: 'rgba(24, 24, 31, 0.96)',
+    tooltipBorde: 'rgba(240, 237, 229, 0.14)',
+    rellenoArriba: 'rgba(185, 243, 228, 0.26)',
+    rellenoAbajo: 'rgba(185, 243, 228, 0)',
+  },
+  claro: {
+    menta: '#0b7a62',
+    mentaClara: '#12a283',
+    hueso: '#1a1a20',
+    textoSec: '#5d5b67',
+    linea: 'rgba(26, 26, 32, 0.08)',
+    panel: '#ffffff',
+    guia: 'rgba(26, 26, 32, 0.25)',
+    tooltipFondo: 'rgba(255, 255, 255, 0.98)',
+    tooltipBorde: 'rgba(26, 26, 32, 0.12)',
+    rellenoArriba: 'rgba(11, 122, 98, 0.18)',
+    rellenoAbajo: 'rgba(11, 122, 98, 0)',
+  },
+};
+let MENTA = '';
+let MENTA_CLARA = '';
+let HUESO = '';
+let TEXTO_SEC = '';
+let LINEA = '';
+let PANEL = '';
+let GUIA = '';
+let TOOLTIP_FONDO = '';
+let TOOLTIP_BORDE = '';
+let RELLENO_ARRIBA = '';
+let RELLENO_ABAJO = '';
+
+function usarColores(tema: NombreTema) {
+  const c = COLORES[tema];
+  MENTA = c['menta'];
+  MENTA_CLARA = c['mentaClara'];
+  HUESO = c['hueso'];
+  TEXTO_SEC = c['textoSec'];
+  LINEA = c['linea'];
+  PANEL = c['panel'];
+  GUIA = c['guia'];
+  TOOLTIP_FONDO = c['tooltipFondo'];
+  TOOLTIP_BORDE = c['tooltipBorde'];
+  RELLENO_ARRIBA = c['rellenoArriba'];
+  RELLENO_ABAJO = c['rellenoAbajo'];
+}
+usarColores('oscuro');
 
 // Porciones de la torta: los tonos de la marca (menta, lila, ámbar, rosa, azul, verde)
 // oscurecidos para el fondo oscuro. Orden fijo, validado para daltonismo (diferencia
@@ -147,6 +198,8 @@ interface Metrica {
 })
 export class Grafico {
   private readonly api = inject(EstadisticasApi);
+  // Modo claro / oscuro: al cambiar, el gráfico se vuelve a dibujar con sus colores.
+  private readonly tema = inject(Tema);
 
   readonly cual = input.required<Estadistica>();
   readonly titulo = input.required<string>();
@@ -319,6 +372,7 @@ export class Grafico {
     effect(() => {
       const lienzo = this.lienzo()?.nativeElement;
       const puntos = this.puntos();
+      usarColores(this.tema.tema()); // leerlo acá hace que el efecto se repita al cambiar
       this.grafico?.destroy();
       this.grafico = null;
       this.burbuja.set(null);
@@ -333,6 +387,78 @@ export class Grafico {
 
     // Al salir de la pantalla, liberamos el gráfico.
     inject(DestroyRef).onDestroy(() => this.grafico?.destroy());
+  }
+
+  // "Descargar PNG" (extra): arma una imagen con el título, el rango, el gráfico
+  // y (en la torta) la leyenda, con el fondo del panel. Chart.js dibuja en un canvas
+  // transparente: por eso se copia sobre otro canvas con fondo antes de bajarlo.
+  protected descargar() {
+    const grafico = this.grafico;
+    if (!grafico) return;
+    usarColores(this.tema.tema());
+
+    const origen = grafico.canvas;
+    const escala = origen.width / origen.clientWidth || 1; // nitidez (pantallas retina)
+    const margen = 28 * escala;
+    const cabecera = 70 * escala;
+    const torta = this.tipo() === 'pie';
+    const anchoLeyenda = torta ? 320 * escala : 0;
+    const puntos = this.puntos();
+
+    const lienzo = document.createElement('canvas');
+    lienzo.width = origen.width + anchoLeyenda + margen * 2;
+    lienzo.height = Math.max(
+      origen.height + cabecera + margen * 2,
+      torta ? cabecera + margen * 2 + puntos.length * 30 * escala : 0,
+    );
+    const ctx = lienzo.getContext('2d');
+    if (!ctx) return;
+
+    const fuente = Chart.defaults.font.family;
+    ctx.fillStyle = PANEL;
+    ctx.fillRect(0, 0, lienzo.width, lienzo.height);
+
+    // Título y rango arriba
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = HUESO;
+    ctx.font = `700 ${20 * escala}px ${fuente}`;
+    ctx.fillText(this.titulo(), margen, margen);
+    ctx.fillStyle = TEXTO_SEC;
+    ctx.font = `${13 * escala}px ${fuente}`;
+    ctx.fillText(
+      `TONARI · ${this.rangoTexto()} · ${this.dias()} días`,
+      margen,
+      margen + 30 * escala,
+    );
+
+    ctx.drawImage(origen, margen, margen + cabecera);
+
+    // Leyenda de la torta: color, nombre, cantidad y porcentaje
+    if (torta) {
+      const suma = this.suma() || 1;
+      const x = margen + origen.width + 24 * escala;
+      ctx.font = `${13 * escala}px ${fuente}`;
+      puntos.forEach((punto, i) => {
+        const y = margen + cabecera + i * 30 * escala;
+        ctx.fillStyle = colorPorcion(punto, i);
+        ctx.fillRect(x, y + 2 * escala, 12 * escala, 12 * escala);
+        ctx.fillStyle = HUESO;
+        const nombre =
+          punto.etiqueta.length > 28 ? punto.etiqueta.slice(0, 27) + '…' : punto.etiqueta;
+        ctx.fillText(nombre, x + 22 * escala, y);
+        ctx.fillStyle = TEXTO_SEC;
+        ctx.fillText(
+          `${punto.cantidad} · ${Math.round((punto.cantidad / suma) * 100)} %`,
+          x + 22 * escala,
+          y + 15 * escala,
+        );
+      });
+    }
+
+    const enlace = document.createElement('a');
+    enlace.href = lienzo.toDataURL('image/png');
+    enlace.download = `tonari-${this.cual()}-${this.desde()}-a-${this.hasta()}.png`;
+    enlace.click();
   }
 
   // Botones rápidos: 7, 30 o 90 días hasta hoy.
@@ -432,7 +558,7 @@ const lineaGuia: Plugin = {
     ctx.moveTo(activo.element.x, chartArea.top);
     ctx.lineTo(activo.element.x, chartArea.bottom);
     ctx.lineWidth = 1;
-    ctx.strokeStyle = 'rgba(240, 237, 229, 0.22)';
+    ctx.strokeStyle = GUIA;
     ctx.setLineDash([4, 4]);
     ctx.stroke();
     ctx.restore();
@@ -451,8 +577,8 @@ function configuracion(
   const valores = puntos.map((p) => p.cantidad);
   // Tooltip con el estilo de los paneles de la app.
   const tooltip = {
-    backgroundColor: 'rgba(24, 24, 31, 0.96)',
-    borderColor: 'rgba(240, 237, 229, 0.14)',
+    backgroundColor: TOOLTIP_FONDO,
+    borderColor: TOOLTIP_BORDE,
     borderWidth: 1,
     cornerRadius: 10,
     padding: { x: 12, y: 10 },
@@ -517,8 +643,8 @@ function configuracion(
               const area = chart.chartArea;
               if (!area) return 'transparent';
               const degrade = chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
-              degrade.addColorStop(0, 'rgba(185, 243, 228, 0.26)');
-              degrade.addColorStop(1, 'rgba(185, 243, 228, 0)');
+              degrade.addColorStop(0, RELLENO_ARRIBA);
+              degrade.addColorStop(1, RELLENO_ABAJO);
               return degrade;
             },
             fill: true,

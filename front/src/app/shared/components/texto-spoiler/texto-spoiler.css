@@ -8,8 +8,8 @@
 .spoiler {
   padding: 0.05em 0.25em;
   color: transparent;
-  text-shadow: 0 0 0.55em rgb(240 237 229 / 0.75);
-  background: rgb(240 237 229 / 0.14);
+  text-shadow: 0 0 0.55em rgb(var(--rgb-hueso) / 0.75);
+  background: rgb(var(--rgb-hueso) / 0.14);
   border-radius: 5px;
   /* si se corta en dos renglones, cada pedazo tiene sus bordes redondeados */
   box-decoration-break: clone;
@@ -20,7 +20,7 @@
 }
 
 .spoiler:hover {
-  background: rgb(240 237 229 / 0.22);
+  background: rgb(var(--rgb-hueso) / 0.22);
 }
 
 .spoiler:focus-visible {
@@ -41,7 +41,7 @@
 @keyframes destapar {
   from {
     color: transparent;
-    text-shadow: 0 0 0.55em rgb(240 237 229 / 0.75);
+    text-shadow: 0 0 0.55em rgb(var(--rgb-hueso) / 0.75);
   }
 }
 

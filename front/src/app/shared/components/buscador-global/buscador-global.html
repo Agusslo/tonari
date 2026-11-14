@@ -1,0 +1,114 @@
+<div class="buscador" role="search" (appClickAfuera)="abierto.set(false)">
+  <label for="buscador-global" class="solo-lector">Buscar usuarios y publicaciones</label>
+  <svg class="icono lupa" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-3.5-3.5" />
+  </svg>
+  <input
+    #campo
+    id="buscador-global"
+    type="search"
+    placeholder="Buscar personas o publicaciones"
+    autocomplete="off"
+    enterkeyhint="search"
+    role="combobox"
+    aria-autocomplete="list"
+    aria-controls="buscador-resultados"
+    [attr.aria-expanded]="mostrarPanel()"
+    [attr.aria-activedescendant]="idMarcada()"
+    [value]="texto()"
+    (input)="escribir($event)"
+    (focus)="abierto.set(true)"
+    (keydown)="teclas($event)"
+  />
+  @if (texto()) {
+    <button type="button" class="borrar" aria-label="Borrar búsqueda" (click)="limpiar()">
+      <svg class="icono" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+        <path d="M6 6l12 12M18 6 6 18" />
+      </svg>
+    </button>
+  } @else {
+    <kbd class="tecla" aria-hidden="true">/</kbd>
+  }
+
+  @if (mostrarPanel()) {
+    <div class="panel-resultados" id="buscador-resultados" role="listbox" aria-label="Resultados">
+      @if (cortoParaBuscar()) {
+        <p class="aviso">Escribí al menos 2 letras.</p>
+      } @else {
+        @switch (estado().tipo) {
+          @case ('cargando') {
+            <p class="aviso" role="status">
+              <span class="spinner" aria-hidden="true"></span>
+              Buscando…
+            </p>
+          }
+          @case ('error') {
+            <p class="aviso mensaje-error" role="alert">
+              {{ $any(estado()).mensaje }}
+            </p>
+          }
+          @case ('listo') {
+            @if (resultados(); as r) {
+              @if (!r.usuarios.length && !r.publicaciones.length) {
+                <p class="aviso" role="status">No encontramos nada con "{{ texto().trim() }}".</p>
+              }
+
+              @if (r.usuarios.length) {
+                <p class="grupo" aria-hidden="true">Personas</p>
+                @for (u of r.usuarios; track u._id) {
+                  <div
+                    class="opcion"
+                    role="option"
+                    [id]="'u-' + u._id"
+                    [class.marcada]="idMarcada() === 'u-' + u._id"
+                    [attr.aria-selected]="idMarcada() === 'u-' + u._id"
+                    (mouseenter)="marcada.set(indiceDe('u-' + u._id))"
+                    (click)="ir(['/usuarios', u.nombreUsuario])"
+                  >
+                    <app-avatar [usuario]="u" />
+                    <span class="textos">
+                      <span class="principal">{{ u.nombre }} {{ u.apellido }}</span>
+                      <span class="secundario">&#64;{{ u.nombreUsuario }}</span>
+                    </span>
+                  </div>
+                }
+              }
+
+              @if (r.publicaciones.length) {
+                <p class="grupo" aria-hidden="true">Publicaciones</p>
+                @for (p of r.publicaciones; track p._id) {
+                  <div
+                    class="opcion"
+                    role="option"
+                    [id]="'p-' + p._id"
+                    [class.marcada]="idMarcada() === 'p-' + p._id"
+                    [attr.aria-selected]="idMarcada() === 'p-' + p._id"
+                    (mouseenter)="marcada.set(indiceDe('p-' + p._id))"
+                    (click)="ir(['/publicaciones', p._id])"
+                  >
+                    @if (p.imagen) {
+                      <img class="miniatura" [src]="miniatura(p.imagen)" alt="" />
+                    } @else {
+                      <span class="miniatura miniatura-vacia" aria-hidden="true">
+                        <svg class="icono" viewBox="0 0 24 24" width="16" height="16">
+                          <path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5" />
+                        </svg>
+                      </span>
+                    }
+                    <span class="textos">
+                      <span class="principal">{{ p.titulo }}</span>
+                      <span class="secundario">
+                        &#64;{{ p.usuario.nombreUsuario }} · {{ p.createdAt | tiempoRelativo }}
+                      </span>
+                    </span>
+                  </div>
+                }
+              }
+            }
+          }
+        }
+      }
+    </div>
+  }
+</div>

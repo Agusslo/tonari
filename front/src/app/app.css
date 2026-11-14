@@ -17,7 +17,7 @@
 
 .nav-salir:hover {
   color: var(--color-error);
-  background: rgb(255 155 143 / 0.08);
+  background: rgb(var(--rgb-error) / 0.08);
 }
 
 @media (max-width: 480px) {
@@ -51,6 +51,46 @@
     padding-inline: 0.25rem;
   }
 }
+/* Modo claro / oscuro: botón redondo con el ícono, al final del menú */
+.nav-tema {
+  display: inline-grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.nav-tema:hover {
+  color: var(--color-menta);
+  background: var(--velo-hueso);
+}
+
+.nav-tema .icono {
+  transition: transform 0.4s ease;
+}
+
+.nav-tema:hover .icono {
+  transform: rotate(-20deg);
+}
+
+/* Celular: el menú ya va justo en un renglón; el botón del tema sube a la
+   esquina de la cabecera, a la altura del logo */
+@media (max-width: 480px) {
+  .nav-tema {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.75rem;
+  }
+}
+
 /* Link a la política de privacidad, en el pie */
 .pie-enlace {
   color: inherit;
@@ -89,8 +129,8 @@
   font-size: 0.875rem;
   text-align: center;
   color: var(--color-error);
-  background: rgb(255 155 143 / 0.08);
-  border-bottom: 1px solid rgb(255 155 143 / 0.2);
+  background: rgb(var(--rgb-error) / 0.08);
+  border-bottom: 1px solid rgb(var(--rgb-error) / 0.2);
 }
 
 /* "Hay una versión nueva": cartelito flotante abajo al centro */
@@ -108,7 +148,7 @@
   background: var(--color-panel);
   border: 1px solid var(--linea-suave);
   border-radius: var(--radio-pildora);
-  box-shadow: 0 20px 50px -15px rgb(0 0 0 / 0.7);
+  box-shadow: 0 20px 50px -15px rgb(var(--rgb-sombra) / 0.7);
   transform: translateX(-50%);
 }
 

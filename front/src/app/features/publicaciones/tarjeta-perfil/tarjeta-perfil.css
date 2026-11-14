@@ -22,8 +22,8 @@
   height: 5.5rem;
   /* Dos luces (menta y lila) sobre el panel, como un degradé "mesh" */
   background:
-    radial-gradient(120% 140% at 0% 0%, rgb(185 243 228 / 0.55), transparent 60%),
-    radial-gradient(120% 140% at 100% 0%, rgb(199 184 255 / 0.5), transparent 60%),
+    radial-gradient(120% 140% at 0% 0%, rgb(var(--rgb-menta) / 0.55), transparent 60%),
+    radial-gradient(120% 140% at 100% 0%, rgb(var(--rgb-lila) / 0.5), transparent 60%),
     var(--color-campo);
 }
 
@@ -36,7 +36,7 @@
 }
 
 .banner::before {
-  background: radial-gradient(circle, rgb(17 17 22 / 0.28) 1px, transparent 1.3px) 0 0 / 9px 9px;
+  background: radial-gradient(circle, rgb(var(--rgb-noche) / 0.28) 1px, transparent 1.3px) 0 0 / 9px 9px;
   mask-image: linear-gradient(#000, transparent 85%);
 }
 
@@ -58,7 +58,7 @@
   z-index: 1;
   width: 3rem;
   height: 3rem;
-  filter: drop-shadow(0 8px 18px rgb(0 0 0 / 0.45));
+  filter: drop-shadow(0 8px 18px rgb(var(--rgb-sombra) / 0.45));
 }
 
 /* ---------- Contenido ---------- */
@@ -83,8 +83,8 @@ app-avatar {
   margin-top: -2.6rem;
   border-width: 4px;
   box-shadow:
-    0 0 0 1.5px rgb(185 243 228 / 0.7),
-    0 14px 28px -12px rgb(0 0 0 / 0.75);
+    0 0 0 1.5px rgb(var(--rgb-menta) / 0.7),
+    0 14px 28px -12px rgb(var(--rgb-sombra) / 0.75);
 }
 
 /* ---------- Foto + nombre = enlace al perfil ---------- */
@@ -115,8 +115,8 @@ app-avatar {
   translate: 0 -3px;
   box-shadow:
     0 0 0 2px var(--color-menta),
-    0 0 22px 2px rgb(185 243 228 / 0.35),
-    0 18px 30px -12px rgb(0 0 0 / 0.75);
+    0 0 22px 2px rgb(var(--rgb-menta) / 0.35),
+    0 18px 30px -12px rgb(var(--rgb-sombra) / 0.75);
 }
 
 .enlace-perfil .nombre {
@@ -155,7 +155,7 @@ app-avatar {
   overflow: hidden;
   max-width: 28ch;
   font-size: 0.9rem;
-  color: rgb(240 237 229 / 0.8);
+  color: rgb(var(--rgb-hueso) / 0.8);
 }
 
 /* ---------- Números ---------- */

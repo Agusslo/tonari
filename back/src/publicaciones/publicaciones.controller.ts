@@ -18,6 +18,7 @@ import { ListarPublicacionesDto } from './dto/listar-publicaciones.dto.js';
 import { VotarDto } from './dto/votar.dto.js';
 import { validarImagen } from '../common/imagenes.js';
 import { TokenGuard } from '../auth/token/token.guard.js';
+import { AdminGuard } from '../auth/token/admin.guard.js';
 import type { RequestConToken } from '../auth/token/token.guard.js';
 
 // @UseGuards arriba de la clase: TODAS las rutas de publicaciones piden token.
@@ -49,6 +50,22 @@ export class PublicacionesController {
   @Get()
   listar(@Query() listarPublicacionesDto: ListarPublicacionesDto, @Req() req: RequestConToken) {
     return this.publicacionesService.listar(listarPublicacionesDto, req.usuario.id);
+  }
+
+  // GET /publicaciones/papelera -> las dadas de baja (solo administradores).
+  // Va ANTES de ':id': si no, Nest tomaría "papelera" como un id.
+  // Usa offset y limit como el listado (el resto de los filtros no aplica).
+  @Get('papelera')
+  @UseGuards(AdminGuard)
+  papelera(@Query() { offset, limit }: ListarPublicacionesDto) {
+    return this.publicacionesService.papelera(offset, limit);
+  }
+
+  // POST /publicaciones/:id/reactivar -> 201 (solo administradores). 409 si ya está activa.
+  @Post(':id/reactivar')
+  @UseGuards(AdminGuard)
+  reactivar(@Param('id') id: string) {
+    return this.publicacionesService.reactivar(id);
   }
 
   // GET /publicaciones/:id -> 200 con una publicación (para la página Publicación).

@@ -110,6 +110,12 @@
 - **Imágenes en Cloudinary** con recorte automático para los avatares.
 - **Avatar generado** ([blobatar](https://blobatar.dev)) cuando el usuario no sube foto; si no carga, iniciales.
 - **Tarjeta "Tu actividad"** en el muro: "Me gusta" recibidos, promedio y tu publicación más querida.
+- **Olvidé mi contraseña**: link de un solo uso que llega por mail (nodemailer por SMTP de Gmail) y vence en 30 minutos.
+- **Papelera del admin** (Dashboard / Papelera): las publicaciones dadas de baja, con quién y cuándo las dio de baja, y botón para **reactivarlas** con todo lo que tenían (`GET /publicaciones/papelera` y `POST /publicaciones/:id/reactivar`, con `AdminGuard`).
+- **Hacer o quitar administrador** desde el listado de usuarios (`PATCH /usuarios/:id/perfil`).
+- **Buscador global** en la cabecera: personas (por usuario, nombre o apellido) y publicaciones (por título) mientras escribís, con flechas, Enter y el atajo `/` (`GET /buscar?q=`). No busca en las descripciones para no destapar spoilers.
+- **Descargar PNG** en cada gráfico de Estadísticas (con título, rango y, en la torta, la leyenda).
+- **Modo claro / oscuro**: botón en la cabecera; arranca con el del sistema y se recuerda en el navegador. Los gráficos también cambian de colores.
 - **UX**: esqueletos de carga, View Transitions entre pantallas, animaciones con GSAP, confeti al registrarse, cuenta regresiva en el aviso de sesión, scroll infinito y página 404 propia para las direcciones que no existen.
 
 ---

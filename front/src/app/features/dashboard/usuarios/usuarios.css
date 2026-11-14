@@ -19,7 +19,7 @@
   gap: 0.35rem;
   padding: 1.25rem 1.35rem;
   background:
-    linear-gradient(180deg, rgb(240 237 229 / 0.025), transparent 60%), var(--color-panel);
+    linear-gradient(180deg, rgb(var(--rgb-hueso) / 0.025), transparent 60%), var(--color-panel);
   border: 1px solid var(--linea-suave);
   border-radius: 18px;
   box-shadow: var(--brillo-borde), var(--sombra-panel);
@@ -27,7 +27,7 @@
 }
 
 .kpi:hover {
-  border-color: rgb(240 237 229 / 0.14);
+  border-color: rgb(var(--rgb-hueso) / 0.14);
 }
 
 .kpi dt {
@@ -52,12 +52,12 @@
 
 .kpi-icono-baja {
   color: var(--color-error);
-  background: rgb(255 155 143 / 0.1);
+  background: rgb(var(--rgb-error) / 0.1);
 }
 
 .kpi-icono-admin {
   color: var(--color-lila);
-  background: rgb(199 184 255 / 0.1);
+  background: rgb(var(--rgb-lila) / 0.1);
 }
 
 .kpi dd {
@@ -177,12 +177,12 @@
 .boton-baja {
   color: var(--color-error);
   background: transparent;
-  border-color: rgb(255 155 143 / 0.45);
+  border-color: rgb(var(--rgb-error) / 0.45);
   box-shadow: none;
 }
 
 .boton-baja:hover {
-  background: rgb(255 155 143 / 0.08);
+  background: rgb(var(--rgb-error) / 0.08);
   border-color: var(--color-error);
   box-shadow: none;
 }
@@ -191,7 +191,7 @@
 .nuevo {
   margin-top: 1.5rem;
   padding: clamp(1.15rem, 3vw, 1.75rem);
-  background: rgb(240 237 229 / 0.025);
+  background: rgb(var(--rgb-hueso) / 0.025);
   border: 1px solid var(--linea-suave);
   border-radius: 18px;
   animation: aparecer 0.35s ease-out both;
@@ -297,7 +297,7 @@
   flex-wrap: wrap;
   gap: 0.2rem;
   padding: 0.2rem;
-  background: rgb(240 237 229 / 0.03);
+  background: rgb(var(--rgb-hueso) / 0.03);
   border: 1px solid var(--linea-suave);
   border-radius: var(--radio-campo);
 }
@@ -324,8 +324,8 @@
 
 .segmento.activo {
   color: var(--color-hueso);
-  background: rgb(240 237 229 / 0.09);
-  box-shadow: inset 0 1px 0 rgb(240 237 229 / 0.06);
+  background: rgb(var(--rgb-hueso) / 0.09);
+  box-shadow: inset 0 1px 0 rgb(var(--rgb-hueso) / 0.06);
 }
 
 .contador {
@@ -363,7 +363,7 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-texto-sec);
-  background: rgb(240 237 229 / 0.025);
+  background: rgb(var(--rgb-hueso) / 0.025);
   border: 1px solid var(--linea-suave);
   border-radius: var(--radio-campo);
 }
@@ -392,7 +392,7 @@
 }
 
 .fila:not(.fila-esqueleto):hover {
-  background: rgb(240 237 229 / 0.03);
+  background: rgb(var(--rgb-hueso) / 0.03);
 }
 
 .fila-esqueleto {
@@ -421,7 +421,7 @@
 
 .persona app-avatar {
   --tam: 2.5rem;
-  box-shadow: 0 0 0 1.5px rgb(185 243 228 / 0.6);
+  box-shadow: 0 0 0 1.5px rgb(var(--rgb-menta) / 0.6);
 }
 
 /* Deshabilitado: la fila se apaga un poco */
@@ -487,15 +487,15 @@
 
 .chip-admin {
   color: var(--color-lila);
-  background: rgb(199 184 255 / 0.1);
-  border-color: rgb(199 184 255 / 0.22);
+  background: rgb(var(--rgb-lila) / 0.1);
+  border-color: rgb(var(--rgb-lila) / 0.22);
 }
 
 .chip-vos {
   flex: none;
   color: var(--color-menta);
   background: var(--velo-menta);
-  border-color: rgb(185 243 228 / 0.2);
+  border-color: rgb(var(--rgb-menta) / 0.2);
 }
 
 /* Estado: puntito de color + texto (nunca solo color) */
@@ -515,7 +515,7 @@
   height: 0.5rem;
   background: currentColor;
   border-radius: 50%;
-  box-shadow: 0 0 0 3px rgb(185 243 228 / 0.15);
+  box-shadow: 0 0 0 3px rgb(var(--rgb-menta) / 0.15);
 }
 
 .estado-baja {
@@ -523,7 +523,7 @@
 }
 
 .estado-baja::before {
-  box-shadow: 0 0 0 3px rgb(255 155 143 / 0.15);
+  box-shadow: 0 0 0 3px rgb(var(--rgb-error) / 0.15);
 }
 
 .alta {
@@ -606,7 +606,7 @@
       'accion accion accion';
     gap: 0.75rem;
     padding: 1rem;
-    background: rgb(240 237 229 / 0.02);
+    background: rgb(var(--rgb-hueso) / 0.02);
     border: 1px solid var(--linea-suave);
     border-radius: 16px;
   }

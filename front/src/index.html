@@ -7,6 +7,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="TONARI — Un mundo más cerca." />
     <meta name="theme-color" content="#111116" />
+    <!-- Modo claro / oscuro (extra): se aplica ANTES de que cargue Angular, para que
+         la página no aparezca un instante en oscuro y después cambie. -->
+    <script>
+      (function () {
+        var tema;
+        try {
+          tema = localStorage.getItem('tonari-tema');
+        } catch (e) {}
+        if (tema !== 'claro' && tema !== 'oscuro') {
+          tema = matchMedia('(prefers-color-scheme: light)').matches ? 'claro' : 'oscuro';
+        }
+        document.documentElement.dataset.tema = tema;
+      })();
+    </script>
     <!-- Favicon propio, transparente. Los navegadores sin soporte de SVG
          buscan solos /favicon.ico como respaldo. "?v=2" evita que quede el viejo en caché. -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2" sizes="any" />

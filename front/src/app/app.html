@@ -5,6 +5,11 @@
     <span class="marca-ja" lang="ja">となり</span>
   </a>
 
+  <!-- Buscador global (extra): personas y publicaciones. Pide sesión, como el back -->
+  @if (usuario()) {
+    <app-buscador-global />
+  }
+
   <nav class="navegacion" aria-label="Navegación principal">
     <a routerLink="/publicaciones" routerLinkActive="activo" ariaCurrentWhenActive="page">
       Publicaciones
@@ -34,6 +39,29 @@
         Crear cuenta
       </a>
     }
+    <!-- Modo claro / oscuro (extra): se recuerda en este navegador -->
+    <button
+      type="button"
+      class="nav-tema"
+      [attr.aria-label]="tema.tema() === 'oscuro' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+      [title]="tema.tema() === 'oscuro' ? 'Modo claro' : 'Modo oscuro'"
+      (click)="tema.alternar()"
+    >
+      @if (tema.tema() === 'oscuro') {
+        <!-- sol: lo que vas a activar -->
+        <svg class="icono" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" />
+          <path
+            d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"
+          />
+        </svg>
+      } @else {
+        <!-- luna -->
+        <svg class="icono" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+          <path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z" />
+        </svg>
+      }
+    </button>
   </nav>
 </header>
 

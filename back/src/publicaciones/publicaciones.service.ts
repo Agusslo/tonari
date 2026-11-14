@@ -22,6 +22,10 @@ import { NotificacionesService } from '../notificaciones/notificaciones.service.
 // Nunca la contraseña (igual tiene select:false) ni el correo.
 const DATOS_AUTOR = 'nombre apellido nombreUsuario imagenPerfil';
 
+// Lo que muestra la papelera del admin de cada publicación dada de baja.
+const DATOS_PAPELERA =
+  'titulo descripcion imagen usuario cantidadMeGusta cantidadComentarios createdAt eliminadaPor eliminadaEn';
+
 // Por qué se muestra un spoiler sin taparlo (null = se tapa).
 type SpoilerLiberado = 'autor' | 'completado' | 'progreso' | null;
 
@@ -134,10 +138,53 @@ export class PublicacionesService {
     }
 
     publicacion.activa = false;
+    // Para la papelera del admin: quién y cuándo.
+    publicacion.eliminadaPor = usuario._id;
+    publicacion.eliminadaEn = new Date();
     await publicacion.save();
     // Sus notificaciones (me gusta, comentarios) ya no apuntan a nada: se borran.
     await this.notificacionesService.retirarDePublicacion(publicacion._id);
     return { mensaje: 'Publicación eliminada' };
+  }
+
+  // ---------- Papelera del admin (extra) ----------
+
+  // GET /publicaciones/papelera -> las dadas de baja, la última baja primero.
+  // Las viejas (sin eliminadaEn) van al final, por fecha de actualización.
+  async papelera(offset: number, limit: number) {
+    const filtro = { activa: false };
+    const [publicaciones, total] = await Promise.all([
+      this.publicacionModel
+        .find(filtro)
+        .select(DATOS_PAPELERA)
+        .sort({ eliminadaEn: -1, updatedAt: -1 })
+        .skip(offset)
+        .limit(limit)
+        .populate('usuario', DATOS_AUTOR)
+        .populate('eliminadaPor', 'nombreUsuario perfil'),
+      this.publicacionModel.countDocuments(filtro),
+    ]);
+    return { publicaciones, total, offset, limit };
+  }
+
+  // POST /publicaciones/:id/reactivar -> vuelve a estar activa (alta lógica).
+  // Lo que tenía (Me gusta, comentarios, votos) sigue ahí: nunca se borró.
+  async reactivar(id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('El id de la publicación no es válido'); // 400
+    }
+    const publicacion = await this.publicacionModel.findById(id);
+    if (!publicacion) {
+      throw new NotFoundException('La publicación no existe'); // 404
+    }
+    if (publicacion.activa) {
+      throw new ConflictException('La publicación ya está activa'); // 409
+    }
+    publicacion.activa = true;
+    publicacion.eliminadaPor = null;
+    publicacion.eliminadaEn = null;
+    await publicacion.save();
+    return { mensaje: 'Publicación reactivada' };
   }
 
   // Un solo "Me gusta" por usuario por publicación.

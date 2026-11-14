@@ -31,7 +31,7 @@
   font-weight: 700;
   color: var(--color-menta);
   background: transparent;
-  border: 1px solid rgb(185 243 228 / 0.45);
+  border: 1px solid rgb(var(--rgb-menta) / 0.45);
   border-radius: var(--radio-pildora);
   cursor: pointer;
   overflow-wrap: anywhere;
@@ -74,13 +74,13 @@
   position: absolute;
   inset: 0 auto 0 0;
   z-index: -1;
-  background: rgb(240 237 229 / 0.1);
+  background: rgb(var(--rgb-hueso) / 0.1);
   border-radius: inherit;
   animation: crecer 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .resultado.mia .barra {
-  background: rgb(185 243 228 / 0.22);
+  background: rgb(var(--rgb-menta) / 0.22);
 }
 
 .resultado.ganadora {
@@ -88,7 +88,7 @@
 }
 
 .resultado.ganadora .barra {
-  background: rgb(199 184 255 / 0.28); /* lila: la que ganó */
+  background: rgb(var(--rgb-lila) / 0.28); /* lila: la que ganó */
 }
 
 .resultado-texto {

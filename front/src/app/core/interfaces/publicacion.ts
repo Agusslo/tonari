@@ -69,6 +69,24 @@
     }
 
     // Lo que devuelve GET /publicaciones: una página y el total.
+    // Papelera del admin (extra): una publicación dada de baja.
+    // eliminadaPor / eliminadaEn quedan en null en las bajas viejas (antes de la papelera).
+    export interface IPublicacionEliminada
+    extends Pick<
+        IPublicacion,
+        '_id' | 'titulo' | 'descripcion' | 'imagen' | 'usuario' | 'cantidadMeGusta' | 'cantidadComentarios' | 'createdAt'
+    > {
+    eliminadaPor: { _id: string; nombreUsuario: string; perfil: 'usuario' | 'administrador' } | null;
+    eliminadaEn: string | null;
+    }
+
+    export interface IPaginaPapelera {
+    publicaciones: IPublicacionEliminada[];
+    total: number;
+    offset: number;
+    limit: number;
+    }
+
     export interface IPaginaPublicaciones {
     publicaciones: IPublicacion[];
     total: number;

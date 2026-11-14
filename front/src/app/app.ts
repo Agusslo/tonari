@@ -6,6 +6,8 @@ import { Pwa } from './core/services/pwa';
 import { Avatar } from './shared/components/avatar/avatar';
 import { Modal } from './shared/components/modal/modal';
 import { Campanita } from './shared/components/campanita/campanita';
+import { BuscadorGlobal } from './shared/components/buscador-global/buscador-global';
+import { Tema } from './core/services/tema';
 import { mensajeDeError } from './shared/utils/errores-http';
 
 // Consigna: a los 10 minutos de iniciar sesión, avisar que quedan 5.
@@ -14,7 +16,7 @@ const AVISO_ANTES_MS = 5 * 60 * 1000;
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, Avatar, Modal, Campanita],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Avatar, Modal, Campanita, BuscadorGlobal],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -29,6 +31,9 @@ export class App {
 
   // PWA: versión nueva, sin conexión e instalar la app.
   protected readonly pwa = inject(Pwa);
+
+  // Modo claro / oscuro (extra): el botón de la cabecera.
+  protected readonly tema = inject(Tema);
 
   // ---- Control de la sesión ----
   protected readonly avisoSesion = signal(false); // modal "¿extender la sesión?"

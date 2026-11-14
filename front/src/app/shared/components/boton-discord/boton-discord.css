@@ -20,7 +20,7 @@
   font: 500 0.92rem var(--fuente-texto);
   color: #e3e3e3;
   background: #131314;
-  border: 1px solid rgb(240 237 229 / 0.16);
+  border: 1px solid rgb(var(--rgb-hueso) / 0.16);
   border-radius: var(--radio-pildora);
   cursor: pointer;
   transition:

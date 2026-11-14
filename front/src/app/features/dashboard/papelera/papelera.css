@@ -1,0 +1,216 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.papelera {
+  animation: aparecer 0.5s 0.05s ease-out both;
+}
+
+.cabeza {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.cabeza h2 {
+  margin-bottom: 0.2rem;
+  font-size: 1.45rem;
+}
+
+.subtitulo {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.contador-total {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-texto-sec);
+}
+
+.contador-total strong {
+  font-family: var(--fuente-titulo);
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--color-hueso);
+}
+
+/* ---------- Lista ---------- */
+.lista {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.95rem 0.85rem;
+  border-top: 1px solid var(--linea-suave);
+  border-radius: var(--radio-campo);
+  transition: background-color 0.15s ease;
+}
+
+.item:not(.item-esqueleto):hover {
+  background: var(--velo-hueso);
+}
+
+.miniatura {
+  width: 4rem;
+  height: 4rem;
+  object-fit: cover;
+  border-radius: var(--radio-campo);
+  /* Apagada: está dada de baja */
+  filter: grayscale(0.6);
+  opacity: 0.85;
+}
+
+.miniatura-vacia {
+  display: grid;
+  place-items: center;
+  color: var(--color-texto-sec);
+  background: var(--color-campo);
+  border: 1px solid var(--linea-suave);
+}
+
+.cuerpo {
+  min-width: 0;
+}
+
+.cuerpo p {
+  margin: 0;
+}
+
+.titulo {
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.descripcion {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 0.875rem;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.45rem;
+  margin-top: 0.4rem !important;
+  font-size: 0.8rem;
+  color: var(--color-texto-sec);
+}
+
+.autor {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 700;
+  color: var(--color-hueso);
+  text-decoration: none;
+}
+
+.autor:hover {
+  color: var(--color-menta);
+}
+
+.autor app-avatar {
+  --tam: 1.35rem;
+}
+
+/* Quién y cuándo la dio de baja */
+.baja {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.45rem !important;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-error);
+  background: rgb(var(--rgb-error) / 0.08);
+  border-radius: var(--radio-pildora);
+}
+
+/* Bajas de antes de la papelera: sin datos de quién, en gris */
+.baja-vieja {
+  color: var(--color-texto-sec);
+  background: var(--velo-hueso);
+}
+
+.boton-chico {
+  min-height: 2.2rem;
+  padding: 0 0.95rem;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.boton-chico:hover {
+  transform: none;
+}
+
+.mas {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.25rem;
+}
+
+/* Vacía o con error */
+.vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1rem;
+  text-align: center;
+}
+
+.vacio p {
+  margin: 0;
+}
+
+.vacio-icono {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-radius: 50%;
+}
+
+.vacio-titulo {
+  font-weight: 700;
+}
+
+/* Esqueleto mientras carga */
+.item-esqueleto .miniatura {
+  filter: none;
+}
+
+/* Celular: el botón baja debajo, a lo ancho */
+@media (max-width: 640px) {
+  .item {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .item .boton-chico {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}

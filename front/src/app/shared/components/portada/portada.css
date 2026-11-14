@@ -21,7 +21,7 @@
         min-height: 36rem;
         padding: clamp(1.5rem, 3vw, 2.5rem);
         overflow: hidden;
-        background: linear-gradient(180deg, rgb(240 237 229 / 0.025), transparent 40%), var(--color-panel);
+        background: linear-gradient(180deg, rgb(var(--rgb-hueso) / 0.025), transparent 40%), var(--color-panel);
         border: 1px solid var(--linea-suave);
         border-radius: var(--radio-panel);
         box-shadow: var(--brillo-borde), var(--sombra-panel);
@@ -54,7 +54,7 @@
         position: absolute;
         inset: 0;
         z-index: -1;
-        background: radial-gradient(20rem 16rem at 58% 42%, rgb(185 243 228 / 0.09), transparent 70%);
+        background: radial-gradient(20rem 16rem at 58% 42%, rgb(var(--rgb-menta) / 0.09), transparent 70%);
     }
 
     /* Texto vertical en japonés, como los carteles de las tapas de manga */
@@ -87,8 +87,8 @@
         inset: -70%;
         z-index: -1;
         background:
-            repeating-conic-gradient(rgb(240 237 229 / 0.09) 0deg 0.7deg, transparent 0.7deg 4.3deg),
-            repeating-conic-gradient(from 2deg, rgb(240 237 229 / 0.05) 0deg 1deg, transparent 1deg 7.1deg);
+            repeating-conic-gradient(rgb(var(--rgb-hueso) / 0.09) 0deg 0.7deg, transparent 0.7deg 4.3deg),
+            repeating-conic-gradient(from 2deg, rgb(var(--rgb-hueso) / 0.05) 0deg 1deg, transparent 1deg 7.1deg);
         mask-image: radial-gradient(closest-side, transparent 28%, #000 48%, transparent);
     }
 
@@ -111,11 +111,11 @@
         aspect-ratio: 2 / 3;
         overflow: hidden;
         background:
-            radial-gradient(circle, rgb(240 237 229 / 0.08) 1.2px, transparent 1.5px) 0 0 / 10px 10px,
+            radial-gradient(circle, rgb(var(--rgb-hueso) / 0.08) 1.2px, transparent 1.5px) 0 0 / 10px 10px,
             var(--color-campo);
         border: 3px solid var(--color-panel);
         border-radius: var(--radio-campo);
-        box-shadow: 0 22px 40px -14px rgb(0 0 0 / 0.75);
+        box-shadow: 0 22px 40px -14px rgb(var(--rgb-sombra) / 0.75);
         translate: -50% -50%;
     }
 
@@ -166,11 +166,11 @@
         font-weight: 700;
         white-space: nowrap;
         color: var(--color-hueso);
-        background: rgb(24 24 31 / 0.85);
+        background: rgb(var(--rgb-panel) / 0.85);
         backdrop-filter: blur(10px);
-        border: 1px solid rgb(240 237 229 / 0.12);
+        border: 1px solid rgb(var(--rgb-hueso) / 0.12);
         border-radius: var(--radio-campo);
-        box-shadow: 0 14px 30px -12px rgb(0 0 0 / 0.7);
+        box-shadow: 0 14px 30px -12px rgb(var(--rgb-sombra) / 0.7);
         animation: flotar 6s ease-in-out infinite;
     }
 
@@ -235,7 +235,7 @@
         top: 24%;
         right: 2%;
         font-size: 0.9rem;
-        color: #ffd27a;
+        color: var(--color-oro);
         rotate: 8deg;
         animation-delay: -2s;
     }

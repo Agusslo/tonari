@@ -24,7 +24,7 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(28rem 14rem at 100% 0%, rgb(185 243 228 / 0.06), transparent 70%);
+  background: radial-gradient(28rem 14rem at 100% 0%, rgb(var(--rgb-menta) / 0.06), transparent 70%);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -41,9 +41,9 @@
 }
 
 .tarjeta:hover {
-  border-color: rgb(240 237 229 / 0.16);
+  border-color: rgb(var(--rgb-hueso) / 0.16);
   transform: translateY(-2px);
-  box-shadow: var(--brillo-borde), 0 22px 44px -24px rgb(0 0 0 / 0.85);
+  box-shadow: var(--brillo-borde), 0 22px 44px -24px rgb(var(--rgb-sombra) / 0.85);
 }
 
 .tarjeta:hover::before,
@@ -124,7 +124,7 @@
 
 .descripcion {
   max-width: 68ch; /* renglones cómodos de leer */
-  color: rgb(240 237 229 / 0.86);
+  color: rgb(var(--rgb-hueso) / 0.86);
   white-space: pre-line; /* respeta los saltos de línea que escribió el autor */
   overflow-wrap: anywhere;
 }
@@ -136,9 +136,9 @@
   gap: 0.45rem;
   padding: 0.5rem 0.75rem;
   font-size: 0.85rem;
-  color: #ffd27a; /* ámbar: "cuidado", sin ser un error */
-  background: rgb(255 210 122 / 0.08);
-  border: 1px solid rgb(255 210 122 / 0.22);
+  color: var(--color-oro); /* ámbar: "cuidado", sin ser un error */
+  background: rgb(var(--rgb-oro) / 0.08);
+  border: 1px solid rgb(var(--rgb-oro) / 0.22);
   border-radius: var(--radio-campo);
 }
 
@@ -186,8 +186,8 @@
   gap: 0.4rem;
   padding: 1rem;
   text-align: center;
-  background: rgb(17 17 22 / 0.45);
-  border: 1px dashed rgb(255 210 122 / 0.35);
+  background: rgb(var(--rgb-noche) / 0.45);
+  border: 1px dashed rgb(var(--rgb-oro) / 0.35);
   border-radius: 16px;
   animation: aparecer 0.3s ease-out both;
 }
@@ -216,7 +216,7 @@
   background: var(--color-campo);
   border: 1px solid var(--linea-suave);
   border-radius: calc(var(--radio-panel) - 8px);
-  box-shadow: 0 16px 32px -20px rgb(0 0 0 / 0.7);
+  box-shadow: 0 16px 32px -20px rgb(var(--rgb-sombra) / 0.7);
 }
 
 /* En la página Publicación ("en grande"): título más grande y la tarjeta quieta
@@ -285,14 +285,14 @@ span.comentarios {
 a.comentarios:hover {
   color: var(--color-menta);
   background: var(--velo-menta);
-  border-color: rgb(185 243 228 / 0.45);
+  border-color: rgb(var(--rgb-menta) / 0.45);
 }
 
 /* Ya le di "Me gusta": corazón relleno y en menta */
 .me-gusta.activo {
   color: var(--color-menta);
   background: var(--velo-menta);
-  border-color: rgb(185 243 228 / 0.3);
+  border-color: rgb(var(--rgb-menta) / 0.3);
 }
 
 .me-gusta.activo .icono {
@@ -333,8 +333,8 @@ a.comentarios:hover {
 
 .eliminar:hover:not(:disabled) {
   color: var(--color-error);
-  background: rgb(255 155 143 / 0.08);
-  border-color: rgb(255 155 143 / 0.3);
+  background: rgb(var(--rgb-error) / 0.08);
+  border-color: rgb(var(--rgb-error) / 0.3);
 }
 
 .eliminar:disabled {

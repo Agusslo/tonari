@@ -1,0 +1,200 @@
+:host {
+  display: block;
+  flex: 1 1 18rem;
+  max-width: 26rem;
+  min-width: 0;
+}
+
+.buscador {
+  position: relative;
+}
+
+.lupa {
+  position: absolute;
+  top: 50%;
+  left: 0.95rem;
+  color: var(--color-texto-sec);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+input {
+  width: 100%;
+  min-height: 2.6rem;
+  padding: 0 2.6rem 0 2.6rem;
+  font: 500 0.92rem var(--fuente-texto);
+  color: var(--color-hueso);
+  background: rgb(var(--rgb-hueso) / 0.04);
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-pildora);
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+input::placeholder {
+  color: var(--color-texto-sec);
+}
+
+input:hover {
+  border-color: var(--linea-campo);
+}
+
+input:focus-visible {
+  outline: none;
+  background: var(--color-campo);
+  border-color: var(--color-menta);
+  box-shadow: var(--halo-menta);
+}
+
+/* La cruz propia reemplaza la del navegador */
+input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.tecla,
+.borrar {
+  position: absolute;
+  top: 50%;
+  right: 0.7rem;
+  transform: translateY(-50%);
+}
+
+.tecla {
+  padding: 0.05rem 0.45rem;
+  font: 700 0.72rem var(--fuente-texto);
+  color: var(--color-texto-sec);
+  background: var(--color-panel);
+  border: 1px solid var(--linea-suave);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+}
+
+.borrar {
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  padding: 0;
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.borrar:hover {
+  color: var(--color-hueso);
+  background: var(--velo-hueso);
+}
+
+/* ---------- Desplegable ---------- */
+.panel-resultados {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  max-height: min(70vh, 30rem);
+  overflow-y: auto;
+  padding: 0.4rem;
+  background: var(--color-panel);
+  border: 1px solid var(--linea-suave);
+  border-radius: 18px;
+  box-shadow:
+    var(--brillo-borde),
+    0 24px 48px -16px rgb(var(--rgb-sombra) / 0.6);
+  animation: aparecer 0.18s ease-out both;
+}
+
+.grupo {
+  margin: 0.45rem 0.6rem 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-texto-sec);
+}
+
+.opcion {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--radio-campo);
+  cursor: pointer;
+}
+
+.opcion.marcada {
+  background: var(--velo-menta);
+}
+
+.opcion app-avatar {
+  --tam: 2.1rem;
+}
+
+.miniatura {
+  flex: none;
+  width: 2.1rem;
+  height: 2.1rem;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.miniatura-vacia {
+  display: grid;
+  place-items: center;
+  color: var(--color-texto-sec);
+  background: var(--color-campo);
+}
+
+.textos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.principal,
+.secundario {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.principal {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.opcion.marcada .principal {
+  color: var(--color-menta);
+}
+
+.secundario {
+  font-size: 0.78rem;
+  color: var(--color-texto-sec);
+}
+
+.aviso {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.75rem 0.7rem;
+  font-size: 0.875rem;
+  color: var(--color-texto-sec);
+}
+
+/* Celular / tablet: el buscador baja a su propio renglón, a lo ancho */
+@media (max-width: 900px) {
+  :host {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .tecla {
+    display: none;
+  }
+}

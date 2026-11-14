@@ -11,7 +11,7 @@
   height: 100%;
   padding: clamp(1.15rem, 2.5vw, 1.6rem);
   background:
-    linear-gradient(180deg, rgb(240 237 229 / 0.025), transparent 40%), var(--color-panel);
+    linear-gradient(180deg, rgb(var(--rgb-hueso) / 0.025), transparent 40%), var(--color-panel);
   border: 1px solid var(--linea-suave);
   border-radius: 20px;
   box-shadow: var(--brillo-borde), var(--sombra-panel);
@@ -42,7 +42,7 @@
   height: 2.4rem;
   color: var(--color-menta);
   background: var(--velo-menta);
-  border: 1px solid rgb(185 243 228 / 0.16);
+  border: 1px solid rgb(var(--rgb-menta) / 0.16);
   border-radius: 11px;
 }
 
@@ -69,7 +69,7 @@
   display: inline-flex;
   gap: 0.15rem;
   padding: 0.2rem;
-  background: rgb(240 237 229 / 0.03);
+  background: rgb(var(--rgb-hueso) / 0.03);
   border: 1px solid var(--linea-suave);
   border-radius: 10px;
 }
@@ -171,7 +171,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0;
-  background: rgb(240 237 229 / 0.02);
+  background: rgb(var(--rgb-hueso) / 0.02);
   border: 1px solid var(--linea-suave);
   border-radius: 14px;
 }
@@ -441,10 +441,10 @@
   max-width: 16rem;
   padding: 0.45rem 0.8rem 0.45rem 0.45rem;
   text-align: left;
-  background: rgb(30 30 38 / 0.86);
-  border: 1px solid rgb(240 237 229 / 0.08);
+  background: rgb(var(--rgb-burbuja) / 0.86);
+  border: 1px solid rgb(var(--rgb-hueso) / 0.08);
   border-radius: 12px;
-  box-shadow: 0 8px 24px -8px rgb(0 0 0 / 0.55);
+  box-shadow: 0 8px 24px -8px rgb(var(--rgb-sombra) / 0.55);
   backdrop-filter: blur(10px);
   pointer-events: none; /* que no le robe el mouse al gráfico */
   /* a la derecha de la punta de la barra, centrado en altura */
@@ -492,4 +492,29 @@
   from {
     opacity: 0;
   }
+}
+
+/* "Descargar PNG", a la derecha del pie de la tarjeta */
+.descargar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+  padding: 0.3rem 0.75rem;
+  font: 700 0.75rem var(--fuente-texto);
+  color: var(--color-texto-sec);
+  background: transparent;
+  border: 1px solid var(--linea-suave);
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.descargar:hover {
+  color: var(--color-menta);
+  background: var(--velo-menta);
+  border-color: rgb(var(--rgb-menta) / 0.35);
 }

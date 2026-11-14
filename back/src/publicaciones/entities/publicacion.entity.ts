@@ -94,6 +94,14 @@
     // Baja lógica: en vez de borrarla, se marca como inactiva.
     @Prop({ default: true })
     activa: boolean;
+
+    // Papelera del admin (extra): quién la dio de baja y cuándo.
+    // Las bajas anteriores a esto no lo tienen (quedan en null).
+    @Prop({ type: MongooseSchema.Types.ObjectId, ref: Usuario.name, default: null })
+    eliminadaPor?: Types.ObjectId | null;
+
+    @Prop({ type: Date, default: null })
+    eliminadaEn?: Date | null;
     }
 
     export const PublicacionSchema = SchemaFactory.createForClass(Publicacion);

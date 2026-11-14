@@ -47,7 +47,7 @@
   width: 2rem;
   height: 2rem;
   color: var(--color-hueso);
-  background: rgb(17 17 22 / 0.75);
+  background: rgb(var(--rgb-noche) / 0.75);
   backdrop-filter: blur(6px);
   border: 1px solid var(--linea-suave);
   border-radius: 50%;
@@ -55,7 +55,7 @@
 }
 
 .quitar-imagen:hover {
-  background: rgb(17 17 22 / 0.95);
+  background: rgb(var(--rgb-noche) / 0.95);
 }
 
 .mensaje-error {

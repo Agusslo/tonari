@@ -53,7 +53,7 @@
 
 .mensaje {
   margin: 0;
-  color: rgb(240 237 229 / 0.9);
+  color: rgb(var(--rgb-hueso) / 0.9);
   white-space: pre-line; /* respeta los saltos de línea */
   overflow-wrap: anywhere;
 }
@@ -96,7 +96,7 @@
 /* "Eliminar": igual de discreto, pero rojo al pasar */
 .boton-eliminar:hover {
   color: var(--color-error);
-  background: rgb(255 155 143 / 0.1);
+  background: rgb(var(--rgb-error) / 0.1);
 }
 
 /* ---------- Edición ---------- */
@@ -214,7 +214,7 @@
 .rayita {
   width: 1.5rem;
   height: 1px;
-  background: rgb(185 243 228 / 0.5);
+  background: rgb(var(--rgb-menta) / 0.5);
 }
 
 .cargando-respuestas {

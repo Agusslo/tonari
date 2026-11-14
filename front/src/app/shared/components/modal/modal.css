@@ -5,18 +5,18 @@
   text-align: center;
   /* Un brillo arriba, del color del tipo de modal (menta o rojo suave) */
   background:
-    radial-gradient(18rem 9rem at 50% 0%, rgb(185 243 228 / 0.08), transparent 70%),
+    radial-gradient(18rem 9rem at 50% 0%, rgb(var(--rgb-menta) / 0.08), transparent 70%),
     var(--color-panel);
   border: 1px solid var(--linea-suave);
   border-radius: var(--radio-panel);
   box-shadow:
     var(--brillo-borde),
-    0 30px 80px -20px rgb(0 0 0 / 0.7);
+    0 30px 80px -20px rgb(var(--rgb-sombra) / 0.7);
 }
 
 .modal-error {
   background:
-    radial-gradient(18rem 9rem at 50% 0%, rgb(255 155 143 / 0.08), transparent 70%),
+    radial-gradient(18rem 9rem at 50% 0%, rgb(var(--rgb-error) / 0.08), transparent 70%),
     var(--color-panel);
 }
 
@@ -51,7 +51,7 @@
 
 .modal-error .modal-icono {
   color: var(--color-error);
-  background: rgb(255 155 143 / 0.12);
+  background: rgb(var(--rgb-error) / 0.12);
 }
 
 .modal-titulo {

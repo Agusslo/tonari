@@ -30,7 +30,7 @@
   padding: 0.35rem 0.8rem;
   font-size: 0.78rem;
   color: var(--color-texto-sec);
-  background: rgb(240 237 229 / 0.03);
+  background: rgb(var(--rgb-hueso) / 0.03);
   border: 1px solid var(--linea-suave);
   border-radius: var(--radio-pildora);
 }

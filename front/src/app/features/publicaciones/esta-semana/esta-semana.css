@@ -79,7 +79,7 @@
   object-fit: cover;
   background: var(--velo-hueso);
   border-radius: 8px;
-  box-shadow: 0 6px 14px -8px rgb(0 0 0 / 0.7);
+  box-shadow: 0 6px 14px -8px rgb(var(--rgb-sombra) / 0.7);
 }
 
 .datos {
@@ -164,12 +164,12 @@
 
 .chip-NOT_YET_RELEASED {
   color: var(--color-lila);
-  background: rgb(199 184 255 / 0.15);
+  background: rgb(var(--rgb-lila) / 0.15);
 }
 
 .chip-FINISHED {
-  color: #ffd27a;
-  background: rgb(255 210 122 / 0.12);
+  color: var(--color-oro);
+  background: rgb(var(--rgb-oro) / 0.12);
 }
 
 /* ---------- Agregar / No me interesa ----------
@@ -204,11 +204,11 @@
 .agregar {
   color: var(--color-menta);
   background: var(--velo-menta);
-  border-color: rgb(185 243 228 / 0.25);
+  border-color: rgb(var(--rgb-menta) / 0.25);
 }
 
 .agregar:hover:not(:disabled) {
-  background: rgb(185 243 228 / 0.2);
+  background: rgb(var(--rgb-menta) / 0.2);
 }
 
 /* "No me interesa": redondo, solo con la ✕ */
@@ -338,7 +338,7 @@
   }
 
   .estreno:has(.obra:hover) {
-    background: rgb(240 237 229 / 0.09);
+    background: rgb(var(--rgb-hueso) / 0.09);
   }
 
   .tapa {

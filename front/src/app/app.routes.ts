@@ -136,6 +136,13 @@ export const routes: Routes = [
             (m) => m.DashboardEstadisticas,
           ),
       },
+      {
+        // Extra: las publicaciones dadas de baja, para reactivarlas.
+        path: 'papelera',
+        title: 'Dashboard · Papelera · TONARI',
+        loadComponent: () =>
+          import('./features/dashboard/papelera/papelera').then((m) => m.DashboardPapelera),
+      },
     ],
   },
   // Cualquier ruta que no exista: página 404 (sin guard: se ve con o sin sesión).

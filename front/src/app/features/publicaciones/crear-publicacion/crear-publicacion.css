@@ -13,10 +13,10 @@
 
 /* Mientras escribís, el panel se "enciende" con el borde menta */
 .crear:focus-within {
-  border-color: rgb(185 243 228 / 0.35);
+  border-color: rgb(var(--rgb-menta) / 0.35);
   box-shadow:
     var(--brillo-borde),
-    0 0 0 4px rgb(185 243 228 / 0.06),
+    0 0 0 4px rgb(var(--rgb-menta) / 0.06),
     var(--sombra-panel);
 }
 
@@ -106,7 +106,7 @@
   width: 2.25rem;
   height: 2.25rem;
   color: var(--color-hueso);
-  background: rgb(17 17 22 / 0.7);
+  background: rgb(var(--rgb-noche) / 0.7);
   backdrop-filter: blur(6px);
   border: 1px solid var(--linea-suave);
   border-radius: 50%;
@@ -115,7 +115,7 @@
 }
 
 .quitar:hover {
-  background: rgb(17 17 22 / 0.95);
+  background: rgb(var(--rgb-noche) / 0.95);
 }
 
 /* ---------- Encuesta y spoiler (extras) ---------- */
@@ -142,7 +142,7 @@
 }
 
 .extra-spoiler {
-  border-color: rgb(255 210 122 / 0.3); /* ámbar, como la etiqueta de la tarjeta */
+  border-color: rgb(var(--rgb-oro) / 0.3); /* ámbar, como la etiqueta de la tarjeta */
 }
 
 .ayuda-extra {

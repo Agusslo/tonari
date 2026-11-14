@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import IPublicacion, {
   INuevaEncuesta,
   INuevoSpoiler,
+  IPaginaPapelera,
   IPaginaPublicaciones,
   IParametrosListado,
 } from '../interfaces/publicacion';
@@ -72,5 +73,17 @@ export class PublicacionesApi {
   // DELETE /publicaciones/:id -> baja lógica
   eliminar(id: string, usuario: string) {
     return this.http.delete<{ mensaje: string }>(`${this.url}/${id}`, { body: { usuario } });
+  }
+
+  // ---------- Papelera del admin (extra). Las dos rutas tienen AdminGuard. ----------
+
+  // GET /publicaciones/papelera?offset=...&limit=... -> las dadas de baja
+  papelera(offset: number, limit: number) {
+    return this.http.get<IPaginaPapelera>(`${this.url}/papelera`, { params: { offset, limit } });
+  }
+
+  // POST /publicaciones/:id/reactivar -> vuelve a estar activa (409 si ya lo estaba)
+  reactivar(id: string) {
+    return this.http.post<{ mensaje: string }>(`${this.url}/${id}/reactivar`, {});
   }
 }

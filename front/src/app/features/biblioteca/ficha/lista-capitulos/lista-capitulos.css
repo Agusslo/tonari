@@ -133,7 +133,7 @@
 }
 
 .marcar-grupo:hover:not(:disabled) {
-  background: rgb(185 243 228 / 0.2);
+  background: rgb(var(--rgb-menta) / 0.2);
 }
 
 .alternar:focus-visible,
@@ -173,7 +173,7 @@
 
 /* El próximo que te toca, resaltado */
 .capitulos li.siguiente {
-  border-color: rgb(185 243 228 / 0.4);
+  border-color: rgb(var(--rgb-menta) / 0.4);
 }
 
 .ojo {
@@ -225,7 +225,7 @@
 /* El próximo que sale: menos apagado y con la fecha. "Ep. 7" corto para que entre. */
 .capitulos li.proximo {
   opacity: 0.85;
-  border-color: rgb(199 184 255 / 0.4);
+  border-color: rgb(var(--rgb-lila) / 0.4);
 }
 
 .capitulos li.proximo .unidad-larga {

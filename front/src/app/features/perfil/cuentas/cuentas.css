@@ -29,7 +29,7 @@
 }
 
 .cuenta:hover {
-  border-color: rgb(240 237 229 / 0.16);
+  border-color: rgb(var(--rgb-hueso) / 0.16);
 }
 
 .cuenta-datos {

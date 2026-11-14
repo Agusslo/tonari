@@ -189,6 +189,16 @@
     } @else {
       <span>Rango incompleto</span>
     }
+    <!-- Descargar PNG (extra): solo cuando hay un gráfico dibujado -->
+    @if (!cargando() && !error() && hayDatos()) {
+      <button type="button" class="descargar" (click)="descargar()">
+        <svg class="icono" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+          <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+        </svg>
+        Descargar PNG
+        <span class="solo-lector">de "{{ titulo() }}"</span>
+      </button>
+    }
   </footer>
 
   @if (!cargando() && hayDatos()) {

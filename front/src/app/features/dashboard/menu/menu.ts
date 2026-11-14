@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { fechaLocalHoy } from '../../../shared/validators/validadores';
 
-// Encabezado del dashboard (Sprint 4): título, la fecha de hoy y las dos
-// pestañas (Usuarios y Estadísticas).
+// Encabezado del dashboard (Sprint 4): título, la fecha de hoy y las
+// pestañas (Usuarios, Estadísticas y Papelera).
 @Component({
   selector: 'app-menu-dashboard',
   imports: [RouterLink, RouterLinkActive],
