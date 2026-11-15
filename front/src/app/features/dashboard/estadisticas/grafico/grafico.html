@@ -202,20 +202,23 @@
   </footer>
 
   @if (!cargando() && hayDatos()) {
-    <table class="solo-lector">
-      <caption>
-        {{
-          titulo()
-        }}
-      </caption>
-      <tbody>
-        @for (punto of puntos(); track $index) {
-          <tr>
-            <th scope="row">{{ punto.etiqueta }}</th>
-            <td>{{ punto.cantidad }}</td>
-          </tr>
-        }
-      </tbody>
-    </table>
+    <!-- El div es el que se oculta: una tabla no se achica a 1px y corría la página de costado -->
+    <div class="solo-lector">
+      <table>
+        <caption>
+          {{
+            titulo()
+          }}
+        </caption>
+        <tbody>
+          @for (punto of puntos(); track $index) {
+            <tr>
+              <th scope="row">{{ punto.etiqueta }}</th>
+              <td>{{ punto.cantidad }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   }
 </article>

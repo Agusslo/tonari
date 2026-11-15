@@ -316,13 +316,12 @@ a.aviso:focus-visible {
     position: static;
   }
 
-  .campanita-boton {
-    width: 2.1rem;
-    height: 2.1rem;
-  }
-
+  /* fixed: la campanita está en la esquina de la cabecera (ver app.css), así que el
+     panel se ubica respecto de la cabecera, justo debajo del renglón del logo.
+     (La cabecera tiene backdrop-filter: para "fixed" ella hace de pantalla.) */
   .campanita-panel {
-    top: calc(100% + 0.5rem);
+    position: fixed;
+    top: 3.4rem;
     right: 0.75rem;
     left: 0.75rem;
     width: auto;

@@ -1,6 +1,6 @@
 <!-- Tapa toda la pantalla (también la cabecera) mientras se valida la sesión -->
 <section class="cargando" aria-labelledby="titulo-cargando">
-  <img src="logo.svg" alt="" class="cargando-logo" width="88" height="88" />
+  <img [src]="tema.logo()" alt="" class="cargando-logo" width="88" height="88" />
 
   @if (sinConexion()) {
     <h1 id="titulo-cargando" class="cargando-titulo">No pudimos conectarnos</h1>

@@ -2,6 +2,7 @@
   import { toSignal } from '@angular/core/rxjs-interop';
   import { catchError, of } from 'rxjs';
   import { Anilist } from '../../../core/services/anilist';
+  import { Tema } from '../../../core/services/tema';
   import { ImagenRespaldoDirective } from '../../directives/imagen-respaldo.directive';
 
   // La portada tipo tapa de manga de las pantallas de acceso (registro y login).
@@ -14,6 +15,7 @@
   })
   export class Portada {
     private readonly anilist = inject(Anilist);
+    protected readonly tema = inject(Tema);
 
     // Las tapas del abanico: lo que está en tendencia en AniList.
     // Si AniList no responde, quedan vacías y se ve la trama de puntos (no es un error).

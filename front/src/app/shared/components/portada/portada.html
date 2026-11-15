@@ -15,14 +15,14 @@
                 <img appImagenRespaldo [src]="url" alt="" />
             } @else if (lugar === 0) {
                 <!-- Sin tapas (cargando o sin AniList): el logo en la del medio -->
-                <img src="logo.svg" alt="" class="tapa-logo" />
+                <img [src]="tema.logo()" alt="" class="tapa-logo" />
             }
             </div>
         }
         </div>
 
         <div class="globo globo-publicacion">
-        <img src="logo.svg" alt="" width="22" height="22" />
+        <img [src]="tema.logo()" alt="" width="22" height="22" />
         ¿Ya vieron el final?
         <span class="globo-likes">♥ 24</span>
         </div>

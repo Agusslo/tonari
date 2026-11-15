@@ -125,6 +125,20 @@
   .kpi {
     padding: 1rem;
   }
+
+  /* Dos tarjetas por renglón en 320–420px: el ícono va arriba del nombre
+     ("Administradores" no entraba al lado) y la nota baja de renglón si hace falta */
+  .kpi dt {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    overflow-wrap: anywhere;
+  }
+
+  .kpi-nota {
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+  }
 }
 
 /* ---------- Directorio ---------- */

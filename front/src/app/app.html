@@ -1,6 +1,6 @@
 <header class="cabecera">
   <a routerLink="/publicaciones" class="marca" aria-label="TONARI, ir a Publicaciones">
-    <img src="logo.svg" alt="" class="marca-logo" width="36" height="36" />
+    <img [src]="tema.logo()" alt="" class="marca-logo" width="36" height="36" />
     TONARI
     <span class="marca-ja" lang="ja">となり</span>
   </a>
@@ -82,7 +82,7 @@
 
 <footer class="pie-sitio">
   <p>
-    <img src="logo.svg" alt="" width="22" height="22" />
+    <img [src]="tema.logo()" alt="" width="22" height="22" />
     TONARI · <span lang="ja">となり</span>
   </p>
   <p>

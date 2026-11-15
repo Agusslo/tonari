@@ -1,4 +1,4 @@
-import { effect, Service, signal } from '@angular/core';
+import { computed, effect, Service, signal } from '@angular/core';
 
 export type NombreTema = 'oscuro' | 'claro';
 
@@ -12,6 +12,10 @@ const CLAVE = 'tonari-tema';
 @Service()
 export class Tema {
   readonly tema = signal<NombreTema>(temaInicial());
+
+  // El logo original es claro (contorno hueso y menta): sobre fondo blanco no se ve.
+  // En modo claro se usa la versión con contorno tinta y menta oscura.
+  readonly logo = computed(() => (this.tema() === 'claro' ? 'logo-claro.svg' : 'logo.svg'));
 
   constructor() {
     // Cada vez que cambia: atributo en <html>, color de la barra del celular y se guarda.

@@ -4,6 +4,7 @@ import {
   computed,
   effect,
   ElementRef,
+  inject,
   input,
   signal,
   untracked,
@@ -14,6 +15,7 @@ import IUsuario from '../../../core/interfaces/usuario';
 import { Avatar } from '../../../shared/components/avatar/avatar';
 import { aparecerConRebote, contarHasta } from '../../../shared/utils/animaciones';
 import { urlBanner } from '../../../shared/utils/cloudinary';
+import { Tema } from '../../../core/services/tema';
 
 // Tarjeta de la columna lateral del muro: tu perfil resumido (con sesión)
 // o la invitación a sumarte (sin sesión).
@@ -25,6 +27,7 @@ import { urlBanner } from '../../../shared/utils/cloudinary';
 })
 export class TarjetaPerfil {
   protected readonly urlBanner = urlBanner;
+  protected readonly tema = inject(Tema);
 
   readonly usuario = input<IUsuario | null>(null);
   // Cuántas publicaciones tiene (null = todavía no se sabe).

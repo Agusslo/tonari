@@ -119,9 +119,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  max-width: 100%;
+  min-width: 0;
   font-weight: 700;
   color: var(--color-hueso);
   text-decoration: none;
+  overflow-wrap: anywhere; /* nombres de usuario largos: cortan en vez de desbordar */
 }
 
 .autor:hover {
@@ -138,9 +141,11 @@
   align-items: center;
   gap: 0.35rem;
   margin-top: 0.45rem !important;
+  max-width: 100%; /* en celulares el texto baja de renglón adentro de la píldora */
   padding: 0.15rem 0.6rem;
   font-size: 0.75rem;
   font-weight: 700;
+  overflow-wrap: anywhere;
   color: var(--color-error);
   background: rgb(var(--rgb-error) / 0.08);
   border-radius: var(--radio-pildora);
@@ -212,5 +217,24 @@
   .item .boton-chico {
     grid-column: 1 / -1;
     width: 100%;
+  }
+}
+
+/* Celulares angostos: miniatura más chica y arriba, así el texto tiene lugar */
+@media (max-width: 420px) {
+  .item {
+    align-items: start;
+    gap: 0.75rem;
+    padding-inline: 0.25rem;
+  }
+
+  .miniatura {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  /* En dos o tres renglones, una píldora queda deforme: esquinas comunes */
+  .baja {
+    border-radius: 8px;
   }
 }

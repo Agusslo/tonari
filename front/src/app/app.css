@@ -51,6 +51,12 @@
     padding-inline: 0.25rem;
   }
 }
+/* Los links son más altos que los botones redondos (campanita y tema): sin esto
+   los botones quedan pegados arriba de la píldora en vez de centrados */
+.navegacion {
+  align-items: center;
+}
+
 /* Modo claro / oscuro: botón redondo con el ícono, al final del menú */
 .nav-tema {
   display: inline-grid;
@@ -88,6 +94,20 @@
     position: absolute;
     top: 0.7rem;
     right: 0.75rem;
+  }
+
+  /* La campanita también sube, al lado del sol: con el Dashboard (admins) el menú
+     no entraba en un renglón y la página se corría de costado */
+  app-campanita {
+    position: absolute;
+    top: 0.7rem;
+    right: calc(0.75rem + 2.35rem + 0.25rem);
+  }
+
+  /* Con los dos íconos a la derecha, el logo va a la izquierda (si queda centrado,
+     en los celulares de 320px se pisa con la campanita) */
+  .marca {
+    margin-right: auto;
   }
 }
 

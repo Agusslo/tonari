@@ -690,4 +690,19 @@
   .datos dl {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  /* Mis publicaciones: al lado de la miniatura el título quedaba en una columna
+     finita ("Recomenda-ciones"). La imagen va arriba, a lo ancho, y el texto abajo. */
+  .mi-publicacion {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.85rem;
+  }
+
+  .mi-publicacion .miniatura,
+  .mi-publicacion .esqueleto-miniatura {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
 }

@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, timer } from 'rxjs';
 import { Auth } from '../../core/services/auth';
+import { Tema } from '../../core/services/tema';
 
 // Pantalla Cargando: es lo primero que se ve al abrir la app (o al recargar).
 // Le pregunta al back si el token guardado sigue sirviendo (POST /auth/autorizar):
@@ -17,6 +18,7 @@ export class Cargando implements OnInit {
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
   private readonly ruta = inject(ActivatedRoute);
+  protected readonly tema = inject(Tema);
 
   // true = no se pudo hablar con el back (apagado o sin internet).
   protected readonly sinConexion = signal(false);
