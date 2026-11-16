@@ -181,7 +181,7 @@
         <!-- Círculo con la vista previa: tu foto, o una silueta si todavía no elegiste ninguna -->
         <div class="avatar" [class.falta]="!!errorImagen()">
           @if (vistaPrevia(); as url) {
-            <img [src]="url" alt="Vista previa de la imagen de perfil" class="vista-previa" />
+            <img width="160" height="160" [src]="url" alt="Vista previa de la imagen de perfil" class="vista-previa" />
           } @else {
             <svg class="icono" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
               <circle cx="12" cy="8" r="4" />

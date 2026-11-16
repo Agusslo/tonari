@@ -274,7 +274,7 @@ export class Grafico {
         },
         {
           etiqueta: 'Más activo',
-          valor: mayor?.etiqueta ?? '—',
+          valor: mayor?.etiqueta ?? 'Sin datos',
           nota: mayor ? plural(mayor.cantidad, uno, varios) : undefined,
         },
       ];
@@ -301,7 +301,7 @@ export class Grafico {
         segunda,
         {
           etiqueta: 'Día pico',
-          valor: mayor?.etiqueta ?? '—',
+          valor: mayor?.etiqueta ?? 'Sin datos',
           nota: mayor ? plural(mayor.cantidad, uno, varios) : undefined,
         },
       ];
@@ -318,7 +318,7 @@ export class Grafico {
       },
       {
         etiqueta: 'La más comentada',
-        valor: mayor?.etiqueta ?? '—',
+        valor: mayor?.etiqueta ?? 'Sin datos',
         nota: mayor ? `${porcentaje(mayor.cantidad, suma)} del total` : undefined,
       },
     ];

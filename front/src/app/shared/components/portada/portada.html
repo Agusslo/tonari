@@ -12,10 +12,10 @@
         @for (lugar of lugares; track lugar) {
             <div class="tapa">
             @if (tapas()[lugar]; as url) {
-                <img appImagenRespaldo [src]="url" alt="" />
+                <img width="230" height="345" appImagenRespaldo [src]="url" alt="" />
             } @else if (lugar === 0) {
                 <!-- Sin tapas (cargando o sin AniList): el logo en la del medio -->
-                <img [src]="tema.logo()" alt="" class="tapa-logo" />
+                <img width="64" height="64" [src]="tema.logo()" alt="" class="tapa-logo" />
             }
             </div>
         }
@@ -33,6 +33,9 @@
         </div>
 
         <div class="globo globo-nota">★ 9</div>
+
+        <!-- Los números de los globos son de muestra, no datos reales: se aclara a la vista -->
+        <span class="portada-ejemplo">Ilustración de ejemplo</span>
     </div>
 
     <div class="portada-pie">

@@ -64,6 +64,9 @@
   width: 2.35rem;
   height: 2.35rem;
   padding: 0;
+  /* El ícono (17px) deja menos aire a la derecha que el padding de los links a la
+     izquierda de "Publicaciones": este margen lo empareja y el sol queda centrado */
+  margin-right: 0.3rem;
   color: var(--color-texto-sec);
   background: transparent;
   border: 0;
@@ -94,6 +97,7 @@
     position: absolute;
     top: 0.7rem;
     right: 0.75rem;
+    margin-right: 0;
   }
 
   /* La campanita también sube, al lado del sol: con el Dashboard (admins) el menú

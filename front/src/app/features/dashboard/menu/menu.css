@@ -59,7 +59,7 @@
   color: var(--color-texto-sec);
   background: rgb(var(--rgb-hueso) / 0.03);
   border: 1px solid var(--linea-suave);
-  border-radius: var(--radio-pildora);
+  border-radius: var(--radio-campo);
 }
 
 .meta-admin {
@@ -130,5 +130,22 @@
   .pestanas a {
     flex: 1;
     justify-content: center;
+  }
+}
+
+/* Celular: las tres pestañas tienen que verse enteras (sin quedar una escondida
+   a la derecha). Se reparten el ancho y, si no entran, se van los íconos. */
+@media (max-width: 480px) {
+  .pestanas a {
+    flex: 1;
+    justify-content: center;
+    padding-inline: 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .pestanas .icono {
+    display: none;
   }
 }

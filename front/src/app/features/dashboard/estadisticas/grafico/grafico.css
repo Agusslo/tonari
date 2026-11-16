@@ -14,7 +14,7 @@
     linear-gradient(180deg, rgb(var(--rgb-hueso) / 0.025), transparent 40%), var(--color-panel);
   border: 1px solid var(--linea-suave);
   border-radius: 20px;
-  box-shadow: var(--brillo-borde), var(--sombra-panel);
+  box-shadow: var(--brillo-borde);
 }
 
 /* ---------- Cabeza: identidad + rango ---------- */
@@ -139,9 +139,10 @@
   font-variant-numeric: tabular-nums;
   color: var(--color-hueso);
   background: var(--color-campo);
-  border: 1px solid var(--linea-suave);
+  /* Mismo borde que los demás campos (3:1) y el calendario del navegador en el
+     tema que esté activo (antes quedaba siempre oscuro, también en modo claro) */
+  border: 1px solid var(--linea-campo);
   border-radius: 9px;
-  color-scheme: dark;
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease;
@@ -441,11 +442,10 @@
   max-width: 16rem;
   padding: 0.45rem 0.8rem 0.45rem 0.45rem;
   text-align: left;
-  background: rgb(var(--rgb-burbuja) / 0.86);
+  background: rgb(var(--rgb-burbuja) / 0.97);
   border: 1px solid rgb(var(--rgb-hueso) / 0.08);
   border-radius: 12px;
   box-shadow: 0 8px 24px -8px rgb(var(--rgb-sombra) / 0.55);
-  backdrop-filter: blur(10px);
   pointer-events: none; /* que no le robe el mouse al gráfico */
   /* a la derecha de la punta de la barra, centrado en altura */
   transform: translate(10px, -50%);
@@ -505,7 +505,7 @@
   color: var(--color-texto-sec);
   background: transparent;
   border: 1px solid var(--linea-suave);
-  border-radius: var(--radio-pildora);
+  border-radius: var(--radio-campo);
   cursor: pointer;
   transition:
     color 0.15s ease,
@@ -517,4 +517,18 @@
   color: var(--color-menta);
   background: var(--velo-menta);
   border-color: rgb(var(--rgb-menta) / 0.35);
+}
+
+/* Celulares angostos: "desde" y "hasta" uno arriba del otro, para que la fecha
+   se lea entera en vez de quedar cortada */
+@media (max-width: 400px) {
+  .fechas {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+  }
+
+  .fechas .separador {
+    display: none;
+  }
 }

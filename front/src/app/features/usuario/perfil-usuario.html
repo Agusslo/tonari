@@ -25,7 +25,7 @@
     <section class="panel portada-perfil" [class.con-banner]="perfil.banner" aria-labelledby="nombre-perfil">
       <!-- Banner (extra): si hay, va arriba a lo ancho y la foto queda montada encima -->
       @if (perfil.banner) {
-        <img class="banner-perfil" [src]="urlBanner(perfil.banner, 1500)" alt="" />
+        <img width="1500" height="500" class="banner-perfil" [src]="urlBanner(perfil.banner, 1500)" alt="" />
       }
       <app-avatar [usuario]="perfil" class="foto" />
       <div class="identidad">
@@ -142,7 +142,7 @@
             @let tapada = publicacion.spoiler && publicacion.spoiler.liberado === null;
             <li class="mi-publicacion">
               @if (publicacion.imagen && !tapada) {
-                <img [src]="publicacion.imagen" alt="" class="miniatura" loading="lazy" />
+                <img width="160" height="160" [src]="publicacion.imagen" alt="" class="miniatura" loading="lazy" />
               }
               <div class="mi-publicacion-texto">
                 <h3>
@@ -204,7 +204,7 @@
                   [attr.aria-label]="entrada.titulo + ' en AniList (se abre en otra pestaña)'"
                 >
                   @if (entrada.imagen) {
-                    <img appImagenRespaldo [src]="entrada.imagen" alt="" loading="lazy" />
+                    <img width="230" height="345" appImagenRespaldo [src]="entrada.imagen" alt="" loading="lazy" />
                   }
                   <p class="tapa-titulo">{{ entrada.titulo }}</p>
                   <p class="tapa-detalle">

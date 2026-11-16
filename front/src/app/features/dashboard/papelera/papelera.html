@@ -47,7 +47,7 @@
       @for (publicacion of publicaciones(); track publicacion._id) {
         <li class="item">
           @if (publicacion.imagen) {
-            <img class="miniatura" [src]="miniatura(publicacion.imagen)" alt="" loading="lazy" />
+            <img width="120" height="120" class="miniatura" [src]="miniatura(publicacion.imagen)" alt="" loading="lazy" />
           } @else {
             <span class="miniatura miniatura-vacia" aria-hidden="true">
               <svg class="icono" viewBox="0 0 24 24" width="20" height="20">

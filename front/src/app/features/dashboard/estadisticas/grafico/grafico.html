@@ -92,7 +92,7 @@
           @if (cargando() || errorRango() || error()) {
             <span class="esqueleto-linea valor-esqueleto" aria-label="Cargando"></span>
           } @else {
-            {{ hayDatos() ? metrica.valor : '—' }}
+            {{ hayDatos() ? metrica.valor : 'Sin datos' }}
           }
         </dd>
         @if (metrica.nota && !cargando() && hayDatos()) {

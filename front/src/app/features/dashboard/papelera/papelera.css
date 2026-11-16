@@ -148,7 +148,7 @@
   overflow-wrap: anywhere;
   color: var(--color-error);
   background: rgb(var(--rgb-error) / 0.08);
-  border-radius: var(--radio-pildora);
+  border-radius: var(--radio-campo);
 }
 
 /* Bajas de antes de la papelera: sin datos de quién, en gris */

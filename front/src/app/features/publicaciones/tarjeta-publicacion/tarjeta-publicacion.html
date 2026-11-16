@@ -67,7 +67,7 @@
         <p class="descripcion"><app-texto-spoiler [texto]="pub.descripcion" /></p>
 
         @if (pub.imagen && !imagenRota()) {
-            <img
+            <img width="1200" height="900"
             [src]="pub.imagen"
             [alt]="'Imagen de la publicación: ' + pub.titulo"
             class="imagen"

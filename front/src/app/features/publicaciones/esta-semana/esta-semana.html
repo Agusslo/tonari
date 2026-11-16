@@ -33,7 +33,7 @@
               <li class="estreno">
                 @if (estreno.entrada.imagen) {
                   <!-- appImagenRespaldo: si la tapa no carga, se esconde y queda el fondo gris -->
-                  <img appImagenRespaldo class="tapa" [src]="estreno.entrada.imagen" alt="" loading="lazy" />
+                  <img width="230" height="345" appImagenRespaldo class="tapa" [src]="estreno.entrada.imagen" alt="" loading="lazy" />
                 } @else {
                   <span class="tapa"></span>
                 }
@@ -63,7 +63,7 @@
             @for (secuela of temporadas(); track secuela.obra.idAnilist) {
               <li class="estreno">
                 @if (secuela.obra.imagen) {
-                  <img appImagenRespaldo class="tapa" [src]="secuela.obra.imagen" alt="" loading="lazy" />
+                  <img width="230" height="345" appImagenRespaldo class="tapa" [src]="secuela.obra.imagen" alt="" loading="lazy" />
                 } @else {
                   <span class="tapa"></span>
                 }
@@ -124,7 +124,7 @@
             @for (precuela of faltantes(); track precuela.obra.idAnilist) {
               <li class="estreno">
                 @if (precuela.obra.imagen) {
-                  <img appImagenRespaldo class="tapa" [src]="precuela.obra.imagen" alt="" loading="lazy" />
+                  <img width="230" height="345" appImagenRespaldo class="tapa" [src]="precuela.obra.imagen" alt="" loading="lazy" />
                 } @else {
                   <span class="tapa"></span>
                 }
@@ -185,7 +185,7 @@
             @for (manga of mangas(); track manga.entrada._id) {
               <li class="estreno">
                 @if (manga.entrada.imagen) {
-                  <img appImagenRespaldo class="tapa" [src]="manga.entrada.imagen" alt="" loading="lazy" />
+                  <img width="230" height="345" appImagenRespaldo class="tapa" [src]="manga.entrada.imagen" alt="" loading="lazy" />
                 } @else {
                   <span class="tapa"></span>
                 }

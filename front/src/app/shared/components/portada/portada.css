@@ -24,7 +24,7 @@
         background: linear-gradient(180deg, rgb(var(--rgb-hueso) / 0.025), transparent 40%), var(--color-panel);
         border: 1px solid var(--linea-suave);
         border-radius: var(--radio-panel);
-        box-shadow: var(--brillo-borde), var(--sombra-panel);
+        box-shadow: var(--brillo-borde);
         isolation: isolate;
         animation: aparecer 0.6s ease-out both;
     }
@@ -166,8 +166,7 @@
         font-weight: 700;
         white-space: nowrap;
         color: var(--color-hueso);
-        background: rgb(var(--rgb-panel) / 0.85);
-        backdrop-filter: blur(10px);
+        background: rgb(var(--rgb-panel) / 0.96);
         border: 1px solid rgb(var(--rgb-hueso) / 0.12);
         border-radius: var(--radio-campo);
         box-shadow: 0 14px 30px -12px rgb(var(--rgb-sombra) / 0.7);
@@ -238,6 +237,22 @@
         color: var(--color-oro);
         rotate: 8deg;
         animation-delay: -2s;
+    }
+
+    /* Aviso de que la ilustración es de muestra (los números no son reales) */
+    .portada-ejemplo {
+        position: absolute;
+        bottom: -0.35rem;
+        left: 50%;
+        z-index: 4;
+        padding: 0.1rem 0.55rem;
+        font-size: 0.7rem;
+        color: var(--color-texto-sec);
+        white-space: nowrap;
+        background: var(--color-panel);
+        border: 1px solid var(--linea-suave);
+        border-radius: 6px;
+        transform: translateX(-50%);
     }
 
     /* ---------- Pie: el lema ---------- */

@@ -118,10 +118,9 @@
   padding: 0.3rem 0.75rem 0.3rem 0.6rem;
   color: var(--tono);
   text-shadow: none;
-  background: color-mix(in srgb, var(--tono) 14%, rgb(var(--rgb-noche) / 0.7));
+  background: color-mix(in srgb, var(--tono) 14%, rgb(var(--rgb-noche) / 0.92));
   border: 1px solid color-mix(in srgb, var(--tono) 45%, transparent);
   border-radius: var(--radio-pildora);
-  backdrop-filter: blur(6px);
 }
 
 .estado-publicacion.vivo {

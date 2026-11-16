@@ -1,7 +1,7 @@
 @if (fuente() !== 'iniciales') {
   <!-- no-referrer: las fotos de Google (cuentas creadas con Google) a veces
        no cargan si el navegador le dice a Google desde qué página se pide -->
-  <img [src]="url()" alt="" referrerpolicy="no-referrer" (error)="siguienteRespaldo()" />
+  <img width="96" height="96" [src]="url()" alt="" referrerpolicy="no-referrer" (error)="siguienteRespaldo()" />
 } @else {
   <span aria-hidden="true">{{ iniciales() }}</span>
 }

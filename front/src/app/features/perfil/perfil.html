@@ -4,7 +4,7 @@
     <section class="panel portada-perfil" [class.con-banner]="usuario.banner" aria-labelledby="nombre-perfil">
       <!-- Banner (extra): si hay, va arriba a lo ancho y la foto queda montada encima -->
       @if (usuario.banner) {
-        <img class="banner-perfil" [src]="urlBanner(usuario.banner, 1500)" alt="" />
+        <img width="1500" height="500" class="banner-perfil" [src]="urlBanner(usuario.banner, 1500)" alt="" />
       }
       <!-- Si la foto no carga, el avatar muestra las iniciales -->
       <app-avatar [usuario]="usuario" class="foto" />
@@ -130,7 +130,7 @@
           @for (publicacion of misPublicaciones(); track publicacion._id) {
             <li class="mi-publicacion">
               @if (publicacion.imagen) {
-                <img [src]="publicacion.imagen" alt="" class="miniatura" loading="lazy" />
+                <img width="160" height="160" [src]="publicacion.imagen" alt="" class="miniatura" loading="lazy" />
               }
               <div class="mi-publicacion-texto">
                 <!-- El título lleva a la página de la publicación (con todos sus comentarios) -->
@@ -170,7 +170,6 @@
                       } @else {
                         Comentar
                       }
-                      <span aria-hidden="true">→</span>
                     </a>
                   </div>
                 }
@@ -201,7 +200,7 @@
             <h2 id="titulo-mi-biblioteca">Mi Biblioteca</h2>
           </div>
           <a routerLink="/biblioteca" class="ver-biblioteca">
-            {{ entradas.length ? 'Ver toda' : 'Empezar' }} <span aria-hidden="true">→</span>
+            {{ entradas.length ? 'Ver toda' : 'Armar mi biblioteca' }}
           </a>
         </div>
 
@@ -218,7 +217,7 @@
                 <!-- Cada tapa lleva a la ficha de esa obra -->
                 <a class="tapa-enlace" [routerLink]="rutaFicha(entrada)">
                   @if (entrada.imagen) {
-                    <img appImagenRespaldo [src]="entrada.imagen" alt="" loading="lazy" />
+                    <img width="230" height="345" appImagenRespaldo [src]="entrada.imagen" alt="" loading="lazy" />
                   }
                   <p class="tapa-titulo">{{ entrada.titulo }}</p>
                   <p class="tapa-detalle">

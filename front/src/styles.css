@@ -70,17 +70,20 @@
   --color-tinta: #ffffff;
   --color-texto-sec: #5d5b67;
   --color-error: #c23b2c;
-  --color-oro: #9a6400;
+  --color-oro: #855600; /* 4.5:1 también sobre el gris de los campos */
 
   --rgb-hueso: 26 26 32;
   --rgb-menta: 11 122 98;
   --rgb-lila: 91 71 199;
   --rgb-error: 194 59 44;
-  --rgb-oro: 154 100 0;
+  --rgb-oro: 133 86 0;
   --rgb-noche: 244 243 239;
   --rgb-panel: 255 255 255;
   --rgb-burbuja: 255 255 255;
   --rgb-sombra: 40 40 60;
+
+  /* Borde de los campos: 3:1 contra su fondo, para que se vea dónde escribir */
+  --linea-campo: rgb(26 26 32 / 0.52);
 
   /* Sobre blanco, el filo de luz y la sombra van más suaves */
   --brillo-borde: inset 0 1px 0 rgb(255 255 255 / 0.7);
@@ -103,7 +106,10 @@ body {
   margin: 0;
   min-height: 100dvh;
   /* Dos brillos muy suaves (menta arriba a la izquierda, lila abajo a la derecha)
-     sobre una trama de puntos casi invisible: el fondo tiene profundidad sin distraer */
+     sobre una trama de puntos casi invisible.
+     Por qué los puntos: imitan la trama (screentone) de las páginas de manga, el mismo
+     recurso que usan la portada del login y las tapas vacías. Es parte de la identidad
+     de TONARI (anime y manga), no decoración genérica. */
   background:
     radial-gradient(60rem 36rem at 0% 0%, rgb(var(--rgb-menta) / 0.06), transparent 70%),
     radial-gradient(50rem 32rem at 100% 100%, rgb(var(--rgb-lila) / 0.05), transparent 70%),
@@ -129,6 +135,10 @@ h3 {
 
 img {
   max-width: 100%;
+  /* Cada <img> lleva width y height en el HTML para que el navegador reserve su lugar
+     antes de que cargue (la página no "salta"). height: auto mantiene la proporción
+     real cuando el CSS solo fija el ancho. */
+  height: auto;
 }
 
 a {
@@ -336,11 +346,14 @@ app-root {
     padding-inline: 0.75rem;
   }
 
+  /* Si no entra en un renglón (cuenta de administrador: un link más), baja
+     ordenado a un segundo renglón en vez de salirse de la pantalla */
   .navegacion {
-    flex-wrap: nowrap;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: center;
     width: 100%;
-    gap: 0;
+    gap: 0.15rem;
+    border-radius: 1.4rem;
   }
 
   .navegacion a {
@@ -423,10 +436,15 @@ app-root {
   background: linear-gradient(180deg, rgb(var(--rgb-hueso) / 0.025), transparent 40%), var(--color-panel);
   border: 1px solid var(--linea-suave);
   border-radius: var(--radio-panel);
-  box-shadow: var(--brillo-borde), var(--sombra-panel);
+  /* Sin sombra: los paneles están apoyados en la página. La sombra (--sombra-panel)
+     queda para lo que flota encima: modales, desplegables y avisos. */
+  box-shadow: var(--brillo-borde);
 }
 
-/* Kicker: etiqueta chiquita arriba de un título, con una rayita adelante */
+/* Kicker: etiqueta chiquita arriba de un título, con una rayita adelante.
+   Por qué mayúsculas separadas: casi siempre lleva una palabra en japonés
+   (タイムライン, 管理…) o el nombre de la sección, y es la firma visual que se
+   repite en todas las pantallas. Es una sola línea corta, nunca un párrafo. */
 .kicker {
   display: flex;
   align-items: center;
@@ -820,6 +838,48 @@ app-root {
 }
 
 /* ---------- 6. Movimiento reducido ---------- */
+/* Pantallas táctiles: todo lo que se toca mide al menos 44 px de alto, el mínimo
+   cómodo para un dedo. Con mouse se mantiene el tamaño compacto. */
+/* !important: los estilos de cada componente son más específicos que estos, y acá
+   tiene que ganar el mínimo para el dedo. Los links dentro de un texto (un @usuario
+   en una oración) quedan afuera: la norma (WCAG 2.5.8) los exceptúa. */
+@media (pointer: coarse) {
+  button,
+  select,
+  .boton,
+  .marca,
+  a.comentarios,
+  .navegacion a,
+  [role='button']:not(.spoiler) {
+    min-height: 44px !important;
+  }
+
+  /* Botones que son solo un ícono: también 44 de ancho (los redondos siguen redondos) */
+  .nav-tema,
+  .nav-salir,
+  .navegacion a.nav-perfil,
+  .campanita-boton,
+  .adjuntar,
+  .eliminar,
+  .borrar,
+  .cerrar,
+  .boton-imagen,
+  .quitar-imagen,
+  .quitar,
+  .quitar-opcion,
+  .paso {
+    min-width: 44px;
+  }
+}
+
+/* Celular táctil: el sol/luna mide 44px, así que la campanita (al lado, en la
+   esquina de la cabecera; ver app.css) se corre lo mismo para no pisarlo */
+@media (pointer: coarse) and (max-width: 480px) {
+  app-campanita {
+    right: calc(0.75rem + 44px + 0.25rem) !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

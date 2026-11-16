@@ -29,12 +29,12 @@
   <!-- ---------- Cabecera: banner de fondo, tapa y datos ---------- -->
   <section class="cabecera-obra" [attr.aria-labelledby]="'titulo-obra'">
     @if (fondo(); as imagen) {
-      <img appImagenRespaldo class="fondo" [class.desenfocado]="!f?.banner" [src]="imagen" alt="" />
+      <img width="1900" height="400" appImagenRespaldo class="fondo" [class.desenfocado]="!f?.banner" [src]="imagen" alt="" />
     }
     <div class="cabecera-contenido">
       <div class="tapa-grande">
         @if (f?.tapa ?? e.imagen; as tapa) {
-          <img appImagenRespaldo [src]="tapa" [alt]="'Tapa de ' + e.titulo" />
+          <img width="230" height="345" appImagenRespaldo [src]="tapa" [alt]="'Tapa de ' + e.titulo" />
         }
       </div>
 
@@ -271,6 +271,7 @@
       }
 
       @if (f) {
+        <!-- La flecha ↗ avisa que el link abre otro sitio en una pestaña nueva -->
         <div class="enlaces">
           <a [href]="f.urlAnilist" target="_blank" rel="noopener">Ver en AniList ↗</a>
           @if (f.idMal) {

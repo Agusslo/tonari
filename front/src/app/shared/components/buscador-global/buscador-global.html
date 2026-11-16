@@ -88,7 +88,7 @@
                     (click)="ir(['/publicaciones', p._id])"
                   >
                     @if (p.imagen) {
-                      <img class="miniatura" [src]="miniatura(p.imagen)" alt="" />
+                      <img width="80" height="80" class="miniatura" [src]="miniatura(p.imagen)" alt="" />
                     } @else {
                       <span class="miniatura miniatura-vacia" aria-hidden="true">
                         <svg class="icono" viewBox="0 0 24 24" width="16" height="16">

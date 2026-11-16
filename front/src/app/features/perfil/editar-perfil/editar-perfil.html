@@ -4,7 +4,7 @@
     <span class="etiqueta">Banner</span>
     <div class="banner-previo" [class.sin-banner]="!bannerVisible()">
       @if (bannerVisible(); as url) {
-        <img [src]="url" alt="Vista previa de tu banner" />
+        <img width="1500" height="500" [src]="url" alt="Vista previa de tu banner" />
       } @else {
         <span class="texto-secundario">Sin banner: se ve el fondo de TONARI</span>
       }
@@ -46,7 +46,7 @@
     <div class="foto-fila">
       <div class="foto-previa">
         @if (vistaPrevia(); as url) {
-          <img [src]="url" alt="Vista previa de tu nueva foto" />
+          <img width="160" height="160" [src]="url" alt="Vista previa de tu nueva foto" />
         } @else {
           <!-- La actual, con el mismo avatar de toda la app (si no carga, blobatar o iniciales) -->
           <app-avatar [usuario]="usuario()" />

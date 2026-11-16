@@ -4,7 +4,7 @@
          Si subiste un banner (extra), se ve tu imagen (y el fundido sigue encima). -->
     <div class="banner" aria-hidden="true">
       @if (usuario.banner) {
-        <img class="banner-imagen" [src]="urlBanner(usuario.banner, 600)" alt="" />
+        <img width="600" height="200" class="banner-imagen" [src]="urlBanner(usuario.banner, 600)" alt="" />
       }
     </div>
 
@@ -37,9 +37,6 @@
 
       <a routerLink="/mi-perfil" class="boton boton-secundario boton-ancho ver-perfil">
         Ver mi perfil
-        <svg class="icono" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-          <path d="M5 12h14M13 6l6 6-6 6" />
-        </svg>
       </a>
     </div>
   </article>

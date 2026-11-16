@@ -97,14 +97,13 @@ a.tapa-entrada:hover img {
   font-size: 0.72rem;
   font-weight: 700;
   border-radius: var(--radio-pildora);
-  backdrop-filter: blur(6px);
 }
 
 .estado-chip {
   left: 0.5rem;
   bottom: 0.5rem;
   color: var(--color-hueso);
-  background: rgb(var(--rgb-noche) / 0.78);
+  background: rgb(var(--rgb-noche) / 0.88);
   box-shadow: inset 0 0 0 1px rgb(var(--rgb-hueso) / 0.15);
 }
 
@@ -127,7 +126,7 @@ a.tapa-entrada:hover img {
   top: 0.5rem;
   right: 0.5rem;
   color: var(--color-oro);
-  background: rgb(var(--rgb-noche) / 0.78);
+  background: rgb(var(--rgb-noche) / 0.88);
 }
 
 /* ---------- Cuerpo ---------- */

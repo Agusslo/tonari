@@ -4,7 +4,7 @@
   <!-- La tapa y el título llevan a la ficha de la obra (/biblioteca/anime/154587-sousou-no-frieren) -->
   <a class="tapa-entrada" [routerLink]="rutaFicha(e)" [attr.aria-label]="'Abrir la ficha de ' + e.titulo">
     @if (e.imagen) {
-      <img appImagenRespaldo [src]="e.imagen" alt="" loading="lazy" />
+      <img width="230" height="345" appImagenRespaldo [src]="e.imagen" alt="" loading="lazy" />
     }
     <!-- El estado, como etiqueta de color sobre la portada -->
     <span class="estado-chip" [attr.data-estado]="e.estado">{{ e.estado | estadoObra: e.tipo }}</span>

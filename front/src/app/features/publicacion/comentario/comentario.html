@@ -59,7 +59,7 @@
       <!-- Imagen del comentario (extra): tocándola se abre entera en otra pestaña -->
       @if (c.imagen) {
         <a class="imagen-comentario" [href]="c.imagen" target="_blank" rel="noopener">
-          <img [src]="c.imagen" [alt]="'Imagen del comentario de ' + c.usuario.nombre" loading="lazy" />
+          <img width="1200" height="900" [src]="c.imagen" [alt]="'Imagen del comentario de ' + c.usuario.nombre" loading="lazy" />
         </a>
       }
       <div class="acciones">

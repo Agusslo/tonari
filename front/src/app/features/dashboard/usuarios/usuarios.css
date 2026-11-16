@@ -22,7 +22,7 @@
     linear-gradient(180deg, rgb(var(--rgb-hueso) / 0.025), transparent 60%), var(--color-panel);
   border: 1px solid var(--linea-suave);
   border-radius: 18px;
-  box-shadow: var(--brillo-borde), var(--sombra-panel);
+  box-shadow: var(--brillo-borde);
   transition: border-color 0.2s ease;
 }
 

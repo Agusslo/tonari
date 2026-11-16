@@ -32,7 +32,7 @@
   color: var(--color-texto-sec);
   background: rgb(var(--rgb-hueso) / 0.03);
   border: 1px solid var(--linea-suave);
-  border-radius: var(--radio-pildora);
+  border-radius: var(--radio-campo);
 }
 
 /* Dos gráficos por fila en pantallas anchas; la torta ocupa la fila entera */
